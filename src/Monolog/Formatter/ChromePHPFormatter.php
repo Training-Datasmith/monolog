@@ -43,7 +43,7 @@ class ChromePHPFormatter implements FormatterInterface
     /**
      * @inheritDoc
      */
-    public function format(LogRecord $record)
+    public function format(LogRecord $record): array
     {
         // Retrieve the line and file if set and remove them from the formatted extra
         $backtrace = 'unknown';
@@ -73,8 +73,9 @@ class ChromePHPFormatter implements FormatterInterface
 
     /**
      * @inheritDoc
+     * @return mixed[]
      */
-    public function formatBatch(array $records)
+    public function formatBatch(array $records): array
     {
         $formatted = [];
 

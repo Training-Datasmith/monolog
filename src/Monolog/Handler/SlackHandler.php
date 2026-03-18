@@ -26,14 +26,9 @@ use Monolog\LogRecord;
 class SlackHandler extends SocketHandler
 {
     /**
-     * Slack API token
-     */
-    private string $token;
-
-    /**
      * Instance of the SlackRecord util class preparing data for Slack API.
      */
-    private SlackRecord $slackRecord;
+    private readonly SlackRecord $slackRecord;
 
     /**
      * @param  string                    $token                  Slack API token
@@ -47,7 +42,7 @@ class SlackHandler extends SocketHandler
      * @throws MissingExtensionException If no OpenSSL PHP extension configured
      */
     public function __construct(
-        string $token,
+        private readonly string $token,
         string $channel,
         ?string $username = null,
         bool $useAttachment = true,
@@ -87,8 +82,6 @@ class SlackHandler extends SocketHandler
             $includeContextAndExtra,
             $excludeFields
         );
-
-        $this->token = $token;
     }
 
     public function getSlackRecord(): SlackRecord
@@ -145,9 +138,8 @@ class SlackHandler extends SocketHandler
         $header .= "Host: slack.com\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= "Content-Length: " . \strlen($content) . "\r\n";
-        $header .= "\r\n";
 
-        return $header;
+        return $header . "\r\n";
     }
 
     /**

@@ -32,9 +32,6 @@ class StreamHandler extends AbstractProcessingHandler
     protected $stream;
     protected string|null $url = null;
     private string|null $errorMessage = null;
-    protected int|null $filePermission;
-    protected bool $useLocking;
-    protected string $fileOpenMode;
     /** @var true|null */
     private bool|null $dirCreated = null;
     private bool $retrying = false;
@@ -48,7 +45,7 @@ class StreamHandler extends AbstractProcessingHandler
      *
      * @throws \InvalidArgumentException If stream is not a resource or string
      */
-    public function __construct($stream, int|string|Level $level = Level::Debug, bool $bubble = true, ?int $filePermission = null, bool $useLocking = false, string $fileOpenMode = 'a')
+    public function __construct($stream, int|string|Level $level = Level::Debug, bool $bubble = true, protected int|null $filePermission = null, protected bool $useLocking = false, protected string $fileOpenMode = 'a')
     {
         parent::__construct($level, $bubble);
 
@@ -74,10 +71,6 @@ class StreamHandler extends AbstractProcessingHandler
         } else {
             throw new \InvalidArgumentException('A stream must either be a resource or a string.');
         }
-
-        $this->fileOpenMode = $fileOpenMode;
-        $this->filePermission = $filePermission;
-        $this->useLocking = $useLocking;
     }
 
     /**
@@ -227,7 +220,7 @@ class StreamHandler extends AbstractProcessingHandler
             return \dirname($stream);
         }
 
-        if ('file://' === substr($stream, 0, 7)) {
+        if (str_starts_with($stream, 'file://')) {
             return \dirname(substr($stream, 7));
         }
 
@@ -244,12 +237,10 @@ class StreamHandler extends AbstractProcessingHandler
         $dir = $this->getDirFromStream($url);
         if (null !== $dir && !is_dir($dir)) {
             $this->errorMessage = null;
-            set_error_handler(function (...$args) {
-                return $this->customErrorHandler(...$args);
-            });
+            set_error_handler(fn(...$args) => $this->customErrorHandler(...$args));
             $status = mkdir($dir, 0777, true);
             restore_error_handler();
-            if (false === $status && !is_dir($dir) && strpos((string) $this->errorMessage, 'File exists') === false) {
+            if (false === $status && !is_dir($dir) && !str_contains((string) $this->errorMessage, 'File exists')) {
                 throw new \UnexpectedValueException(sprintf('There is no existing directory at "%s" and it could not be created: '.$this->errorMessage, $dir));
             }
         }

@@ -26,16 +26,9 @@ use Monolog\LogRecord;
 class SlackWebhookHandler extends AbstractProcessingHandler
 {
     /**
-     * Slack Webhook token
-     *
-     * @var non-empty-string
-     */
-    private string $webhookUrl;
-
-    /**
      * Instance of the SlackRecord util class preparing data for Slack API.
      */
-    private SlackRecord $slackRecord;
+    private readonly SlackRecord $slackRecord;
 
     /**
      * @param non-empty-string $webhookUrl             Slack Webhook URL
@@ -50,14 +43,17 @@ class SlackWebhookHandler extends AbstractProcessingHandler
      * @throws MissingExtensionException If the curl extension is missing
      */
     public function __construct(
-        string $webhookUrl,
+        /**
+         * Slack Webhook token
+         */
+        private readonly string $webhookUrl,
         ?string $channel = null,
         ?string $username = null,
         bool $useAttachment = true,
         ?string $iconEmoji = null,
         bool $useShortAttachment = false,
         bool $includeContextAndExtra = false,
-        $level = Level::Critical,
+        int|string|\Monolog\Level $level = Level::Critical,
         bool $bubble = true,
         array $excludeFields = []
     ) {
@@ -66,8 +62,6 @@ class SlackWebhookHandler extends AbstractProcessingHandler
         }
 
         parent::__construct($level, $bubble);
-
-        $this->webhookUrl = $webhookUrl;
 
         $this->slackRecord = new SlackRecord(
             $channel,

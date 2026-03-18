@@ -23,7 +23,6 @@ use Swift_Message;
 class MandrillHandler extends MailHandler
 {
     protected Swift_Message $message;
-    protected string $apiKey;
 
     /**
      * @phpstan-param (Swift_Message|callable(): Swift_Message) $message
@@ -33,7 +32,7 @@ class MandrillHandler extends MailHandler
      *
      * @throws \InvalidArgumentException if not a Swift Message is set
      */
-    public function __construct(string $apiKey, callable|Swift_Message $message, int|string|Level $level = Level::Error, bool $bubble = true)
+    public function __construct(protected string $apiKey, callable|Swift_Message $message, int|string|Level $level = Level::Error, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
 
@@ -44,7 +43,6 @@ class MandrillHandler extends MailHandler
             throw new \InvalidArgumentException('You must provide either a Swift_Message instance or a callable returning it');
         }
         $this->message = $message;
-        $this->apiKey = $apiKey;
     }
 
     /**
@@ -60,12 +58,8 @@ class MandrillHandler extends MailHandler
         $message = clone $this->message;
         $message->setBody($content, $mime);
         /** @phpstan-ignore-next-line */
-        if (version_compare(Swift::VERSION, '6.0.0', '>=')) {
-            $message->setDate(new \DateTimeImmutable());
-        } else {
-            /** @phpstan-ignore-next-line */
-            $message->setDate(time());
-        }
+        /** @phpstan-ignore-next-line */
+        $message->setDate(time());
 
         $ch = curl_init();
 

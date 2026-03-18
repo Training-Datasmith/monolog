@@ -25,7 +25,6 @@ use Monolog\LogRecord;
 abstract class AbstractHandler extends Handler implements ResettableInterface
 {
     protected Level $level = Level::Debug;
-    protected bool $bubble = true;
 
     /**
      * @param int|string|Level|LogLevel::* $level  The minimum logging level at which this handler will be triggered
@@ -33,10 +32,9 @@ abstract class AbstractHandler extends Handler implements ResettableInterface
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $level
      */
-    public function __construct(int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(int|string|Level $level = Level::Debug, protected bool $bubble = true)
     {
         $this->setLevel($level);
-        $this->bubble = $bubble;
     }
 
     /**

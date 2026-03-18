@@ -41,8 +41,6 @@ class DeduplicationHandler extends BufferHandler
     protected string $deduplicationStore;
 
     protected Level $deduplicationLevel;
-
-    protected int $time;
     protected bool $gc = false;
 
     /**
@@ -54,13 +52,12 @@ class DeduplicationHandler extends BufferHandler
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $deduplicationLevel
      */
-    public function __construct(HandlerInterface $handler, ?string $deduplicationStore = null, int|string|Level $deduplicationLevel = Level::Error, int $time = 60, bool $bubble = true)
+    public function __construct(HandlerInterface $handler, ?string $deduplicationStore = null, int|string|Level $deduplicationLevel = Level::Error, protected int $time = 60, bool $bubble = true)
     {
-        parent::__construct($handler, 0, Level::Debug, $bubble, false);
+        parent::__construct($handler, 0, Level::Debug, $bubble);
 
-        $this->deduplicationStore = $deduplicationStore === null ? sys_get_temp_dir() . '/monolog-dedup-' . substr(md5(__FILE__), 0, 20) .'.log' : $deduplicationStore;
+        $this->deduplicationStore = $deduplicationStore ?? sys_get_temp_dir() . '/monolog-dedup-' . substr(md5(__FILE__), 0, 20) . '.log';
         $this->deduplicationLevel = Logger::toMonologLevel($deduplicationLevel);
-        $this->time = $time;
     }
 
     public function flush(): void

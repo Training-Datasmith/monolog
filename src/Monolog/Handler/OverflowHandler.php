@@ -37,8 +37,6 @@ use Monolog\LogRecord;
  */
 class OverflowHandler extends AbstractHandler implements FormattableHandlerInterface
 {
-    private HandlerInterface $handler;
-
     /** @var array<int, int> */
     private array $thresholdMap = [];
 
@@ -53,12 +51,11 @@ class OverflowHandler extends AbstractHandler implements FormattableHandlerInter
      * @param array<int, int> $thresholdMap Dictionary of log level value => threshold
      */
     public function __construct(
-        HandlerInterface $handler,
+        private readonly HandlerInterface $handler,
         array $thresholdMap = [],
-        $level = Level::Debug,
+        int|string|\Monolog\Level $level = Level::Debug,
         bool $bubble = true
     ) {
-        $this->handler = $handler;
         foreach ($thresholdMap as $thresholdLevel => $threshold) {
             $this->thresholdMap[$thresholdLevel] = $threshold;
         }
@@ -122,7 +119,7 @@ class OverflowHandler extends AbstractHandler implements FormattableHandlerInter
             return $this;
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($this->handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$this->handler::class.' does not support formatters.');
     }
 
     /**
@@ -134,6 +131,6 @@ class OverflowHandler extends AbstractHandler implements FormattableHandlerInter
             return $this->handler->getFormatter();
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($this->handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$this->handler::class.' does not support formatters.');
     }
 }

@@ -23,17 +23,15 @@ use Monolog\LogRecord;
  */
 class MongoDBFormatter implements FormatterInterface
 {
-    private bool $exceptionTraceAsString;
-    private int $maxNestingLevel;
+    private readonly int $maxNestingLevel;
 
     /**
      * @param int  $maxNestingLevel        0 means infinite nesting, the $record itself is level 1, $record->context is 2
      * @param bool $exceptionTraceAsString set to false to log exception traces as a sub documents instead of strings
      */
-    public function __construct(int $maxNestingLevel = 3, bool $exceptionTraceAsString = true)
+    public function __construct(int $maxNestingLevel = 3, private readonly bool $exceptionTraceAsString = true)
     {
         $this->maxNestingLevel = max($maxNestingLevel, 0);
-        $this->exceptionTraceAsString = $exceptionTraceAsString;
     }
 
     /**
@@ -68,7 +66,7 @@ class MongoDBFormatter implements FormatterInterface
      * @param  mixed[]        $array
      * @return mixed[]|string Array except when max nesting level is reached then a string "[...]"
      */
-    protected function formatArray(array $array, int $nestingLevel = 0)
+    protected function formatArray(array $array, int $nestingLevel = 0): string|array
     {
         if ($this->maxNestingLevel > 0 && $nestingLevel > $this->maxNestingLevel) {
             return '[...]';
@@ -93,7 +91,7 @@ class MongoDBFormatter implements FormatterInterface
      * @param  mixed          $value
      * @return mixed[]|string
      */
-    protected function formatObject($value, int $nestingLevel)
+    protected function formatObject(object $value, int $nestingLevel)
     {
         $objectVars = get_object_vars($value);
         $objectVars['class'] = Utils::getClass($value);

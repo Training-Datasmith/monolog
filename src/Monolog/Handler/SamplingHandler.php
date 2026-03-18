@@ -34,25 +34,19 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
     use ProcessableHandlerTrait;
 
     /**
-     * Handler or factory Closure($record, $this)
-     *
-     * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
-     */
-    protected Closure|HandlerInterface $handler;
-
-    protected int $factor;
-
-    /**
      * @phpstan-param (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface $handler
      *
      * @param Closure|HandlerInterface $handler Handler or factory Closure($record|null, $samplingHandler).
      * @param int                      $factor  Sample factor (e.g. 10 means every ~10th record is sampled)
      */
-    public function __construct(Closure|HandlerInterface $handler, int $factor)
+    public function __construct(/**
+     * Handler or factory Closure($record, $this)
+     *
+     * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
+     */
+    protected Closure|HandlerInterface $handler, protected int $factor)
     {
         parent::__construct();
-        $this->handler = $handler;
-        $this->factor = $factor;
     }
 
     public function isHandling(LogRecord $record): bool
@@ -103,7 +97,7 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
             return $this;
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$handler::class.' does not support formatters.');
     }
 
     /**
@@ -116,6 +110,6 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
             return $handler->getFormatter();
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$handler::class.' does not support formatters.');
     }
 }

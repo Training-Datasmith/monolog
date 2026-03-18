@@ -19,14 +19,10 @@ use DateTimeZone;
  * @author Menno Holtkamp
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class JsonSerializableDateTimeImmutable extends \DateTimeImmutable implements \JsonSerializable
+class JsonSerializableDateTimeImmutable extends \DateTimeImmutable implements \JsonSerializable, \Stringable
 {
-    private bool $useMicroseconds;
-
-    public function __construct(bool $useMicroseconds, ?DateTimeZone $timezone = null)
+    public function __construct(private readonly bool $useMicroseconds, ?DateTimeZone $timezone = null)
     {
-        $this->useMicroseconds = $useMicroseconds;
-
         // if you like to use a custom time to pass to Logger::addRecord directly,
         // call modify() or setTimestamp() on this instance to change the date after creating it
         parent::__construct('now', $timezone);

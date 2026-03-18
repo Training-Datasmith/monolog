@@ -37,9 +37,6 @@ class SyslogUdpHandler extends AbstractSyslogHandler
     ];
 
     protected UdpSocket $socket;
-    protected string $ident;
-    /** @var self::RFC* */
-    protected int $rfc;
 
     /**
      * @param  string                    $host     Either IP/hostname or a path to a unix socket (port must be 0 then)
@@ -52,16 +49,13 @@ class SyslogUdpHandler extends AbstractSyslogHandler
      *
      * @phpstan-param self::RFC* $rfc
      */
-    public function __construct(string $host, int $port = 514, string|int $facility = LOG_USER, int|string|Level $level = Level::Debug, bool $bubble = true, string $ident = 'php', int $rfc = self::RFC5424)
+    public function __construct(string $host, int $port = 514, string|int $facility = LOG_USER, int|string|Level $level = Level::Debug, bool $bubble = true, protected string $ident = 'php', protected int $rfc = self::RFC5424)
     {
         if (!\extension_loaded('sockets')) {
             throw new MissingExtensionException('The sockets extension is required to use the SyslogUdpHandler');
         }
 
         parent::__construct($facility, $level, $bubble);
-
-        $this->ident = $ident;
-        $this->rfc = $rfc;
 
         $this->socket = new UdpSocket($host, $port);
     }

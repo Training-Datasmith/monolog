@@ -26,7 +26,6 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface, Reset
 
     /** @var HandlerInterface[] */
     protected array $handlers;
-    protected bool $bubble;
 
     /**
      * @param HandlerInterface[] $handlers Array of Handlers.
@@ -34,7 +33,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface, Reset
      *
      * @throws \InvalidArgumentException if an unsupported handler is set
      */
-    public function __construct(array $handlers, bool $bubble = true)
+    public function __construct(array $handlers, protected bool $bubble = true)
     {
         foreach ($handlers as $handler) {
             if (!$handler instanceof HandlerInterface) {
@@ -43,7 +42,6 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface, Reset
         }
 
         $this->handlers = $handlers;
-        $this->bubble = $bubble;
     }
 
     /**
@@ -90,7 +88,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface, Reset
         }
 
         foreach ($this->handlers as $handler) {
-            $handler->handleBatch(array_map(fn ($record) => clone $record, $records));
+            $handler->handleBatch(array_map(fn (\Monolog\LogRecord $record): \Monolog\LogRecord => clone $record, $records));
         }
     }
 

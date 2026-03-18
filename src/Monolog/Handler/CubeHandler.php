@@ -26,9 +26,9 @@ class CubeHandler extends AbstractProcessingHandler
 {
     private ?\Socket $udpConnection = null;
     private ?\CurlHandle $httpConnection = null;
-    private string $scheme;
-    private string $host;
-    private int $port;
+    private readonly string $scheme;
+    private readonly string $host;
+    private readonly int $port;
     /** @var string[] */
     private array $acceptedSchemes = ['http', 'udp'];
 

@@ -19,17 +19,15 @@ use Monolog\LogRecord;
  */
 class LogEntriesHandler extends SocketHandler
 {
-    protected string $logToken;
-
     /**
-     * @param string $token  Log token supplied by LogEntries
+     * @param string $logToken Log token supplied by LogEntries
      * @param bool   $useSSL Whether or not SSL encryption should be used.
      * @param string $host   Custom hostname to send the data to if needed
      *
      * @throws MissingExtensionException If SSL encryption is set to true and OpenSSL is missing
      */
     public function __construct(
-        string $token,
+        protected string $logToken,
         bool $useSSL = true,
         $level = Level::Debug,
         bool $bubble = true,
@@ -55,7 +53,6 @@ class LogEntriesHandler extends SocketHandler
             $connectionTimeout,
             $chunkSize
         );
-        $this->logToken = $token;
     }
 
     /**

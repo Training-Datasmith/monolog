@@ -42,14 +42,6 @@ class HtmlFormatter extends NormalizerFormatter
     }
 
     /**
-     * @param string|null $dateFormat The format of the timestamp: one supported by DateTime::format
-     */
-    public function __construct(?string $dateFormat = null)
-    {
-        parent::__construct($dateFormat);
-    }
-
-    /**
      * Creates an HTML table row
      *
      * @param string $th       Row header content

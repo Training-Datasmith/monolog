@@ -124,23 +124,12 @@ class Logger implements LoggerInterface, ResettableInterface
         0 => Level::Emergency,
     ];
 
-    protected string $name;
-
     /**
      * The handler stack
      *
      * @var list<HandlerInterface>
      */
     protected array $handlers;
-
-    /**
-     * Processors that will process all log records
-     *
-     * To process records of a single handler instead, add the processor on that specific handler
-     *
-     * @var array<(callable(LogRecord): LogRecord)|ProcessorInterface>
-     */
-    protected array $processors;
 
     protected bool $microsecondTimestamps = true;
 
@@ -172,11 +161,14 @@ class Logger implements LoggerInterface, ResettableInterface
      *
      * @phpstan-param array<(callable(LogRecord): LogRecord)|ProcessorInterface> $processors
      */
-    public function __construct(string $name, array $handlers = [], array $processors = [], DateTimeZone|null $timezone = null)
+    public function __construct(protected string $name, array $handlers = [], /**
+     * Processors that will process all log records
+     *
+     * To process records of a single handler instead, add the processor on that specific handler
+     */
+    protected array $processors = [], DateTimeZone|null $timezone = null)
     {
-        $this->name = $name;
         $this->setHandlers($handlers);
-        $this->processors = $processors;
         $this->timezone = $timezone ?? new DateTimeZone(date_default_timezone_get());
         $this->fiberLogDepth = new \WeakMap();
     }
@@ -344,12 +336,13 @@ class Logger implements LoggerInterface, ResettableInterface
         } else {
             $logDepth = 0;
         }
-
         if ($logDepth === 3) {
             $this->warning('A possible infinite logging loop was detected and aborted. It appears some of your handler code is triggering logging, see the previous log record for a hint as to what may be the cause.');
-
             return false;
-        } elseif ($logDepth >= 5) { // log depth 4 is let through, so we can log the warning above
+        }
+
+        if ($logDepth >= 5) {
+            // log depth 4 is let through, so we can log the warning above
             return false;
         }
 

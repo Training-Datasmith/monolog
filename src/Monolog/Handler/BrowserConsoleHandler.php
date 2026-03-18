@@ -112,7 +112,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     protected function registerShutdownFunction(): void
     {
         if (PHP_SAPI !== 'cli') {
-            register_shutdown_function(['Monolog\Handler\BrowserConsoleHandler', 'send']);
+            register_shutdown_function([\Monolog\Handler\BrowserConsoleHandler::class, 'send']);
         }
     }
 
@@ -226,8 +226,8 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
         static $colors = ['blue', 'green', 'red', 'magenta', 'orange', 'black', 'grey'];
         static $labels = [];
 
-        $style = preg_replace_callback('/macro\s*:(.*?)(?:;|$)/', function (array $m) use ($string, &$colors, &$labels) {
-            if (trim($m[1]) === 'autolabel') {
+        $style = preg_replace_callback('/macro\s*:(.*?)(?:;|$)/', function (array $m) use ($string, &$colors, &$labels): string {
+            if (trim((string) $m[1]) === 'autolabel') {
                 // Format the string as a label with consistent auto assigned background color
                 if (!isset($labels[$string])) {
                     $labels[$string] = $colors[\count($labels) % \count($colors)];
@@ -256,7 +256,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     private static function dump(string $title, array $dict): array
     {
         $script = [];
-        $dict = array_filter($dict, fn ($value) => $value !== null);
+        $dict = array_filter($dict, fn ($value): bool => $value !== null);
         if (\count($dict) === 0) {
             return $script;
         }
@@ -280,7 +280,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     /**
      * @param mixed $args
      */
-    private static function call(...$args): string
+    private static function call(string ...$args): string
     {
         $method = array_shift($args);
         if (!\is_string($method)) {

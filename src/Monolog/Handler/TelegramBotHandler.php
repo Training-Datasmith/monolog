@@ -53,18 +53,6 @@ class TelegramBotHandler extends AbstractProcessingHandler
     private const MAX_MESSAGE_LENGTH = 4096;
 
     /**
-     * Telegram bot access token provided by BotFather.
-     * Create telegram bot with https://telegram.me/BotFather and use access token from it.
-     */
-    private string $apiKey;
-
-    /**
-     * Telegram channel name.
-     * Since to start with '@' symbol as prefix.
-     */
-    private string $channel;
-
-    /**
      * The kind of formatting that is used for the message.
      * See available options at https://core.telegram.org/bots/api#formatting-options
      * or in AVAILABLE_PARSE_MODES
@@ -107,9 +95,9 @@ class TelegramBotHandler extends AbstractProcessingHandler
      * @throws MissingExtensionException If the curl extension is missing
      */
     public function __construct(
-        string $apiKey,
-        string $channel,
-        $level = Level::Debug,
+        private readonly string $apiKey,
+        private readonly string $channel,
+        int|string|\Monolog\Level $level = Level::Debug,
         bool   $bubble = true,
         ?string $parseMode = null,
         ?bool   $disableWebPagePreview = null,
@@ -123,9 +111,6 @@ class TelegramBotHandler extends AbstractProcessingHandler
         }
 
         parent::__construct($level, $bubble);
-
-        $this->apiKey = $apiKey;
-        $this->channel = $channel;
         $this->setParseMode($parseMode);
         $this->disableWebPagePreview($disableWebPagePreview);
         $this->disableNotification($disableNotification);

@@ -34,8 +34,6 @@ class IntrospectionProcessor implements ProcessorInterface
     /** @var string[] */
     protected array $skipClassesPartials;
 
-    protected int $skipStackFramesCount;
-
     protected const SKIP_FUNCTIONS = [
         'call_user_func',
         'call_user_func_array',
@@ -51,11 +49,10 @@ class IntrospectionProcessor implements ProcessorInterface
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $level
      */
-    public function __construct(int|string|Level $level = Level::Debug, array $skipClassesPartials = [], int $skipStackFramesCount = 0)
+    public function __construct(int|string|Level $level = Level::Debug, array $skipClassesPartials = [], protected int $skipStackFramesCount = 0)
     {
         $this->level = Logger::toMonologLevel($level);
         $this->skipClassesPartials = array_merge(static::SKIP_CLASSES, $skipClassesPartials);
-        $this->skipStackFramesCount = $skipStackFramesCount;
     }
 
     /**
@@ -80,7 +77,7 @@ class IntrospectionProcessor implements ProcessorInterface
         while ($this->isTraceClassOrSkippedFunction($trace, $i)) {
             if (isset($trace[$i]['class'])) {
                 foreach ($this->skipClassesPartials as $part) {
-                    if (strpos($trace[$i]['class'], $part) !== false) {
+                    if (str_contains($trace[$i]['class'], $part)) {
                         $i++;
 
                         continue 2;

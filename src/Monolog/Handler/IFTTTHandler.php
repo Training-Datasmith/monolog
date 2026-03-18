@@ -28,23 +28,17 @@ use Monolog\LogRecord;
  */
 class IFTTTHandler extends AbstractProcessingHandler
 {
-    private string $eventName;
-    private string $secretKey;
-
     /**
      * @param string $eventName The name of the IFTTT Maker event that should be triggered
      * @param string $secretKey A valid IFTTT secret key
      *
      * @throws MissingExtensionException If the curl extension is missing
      */
-    public function __construct(string $eventName, string $secretKey, int|string|Level $level = Level::Error, bool $bubble = true)
+    public function __construct(private readonly string $eventName, private readonly string $secretKey, int|string|Level $level = Level::Error, bool $bubble = true)
     {
         if (!\extension_loaded('curl')) {
             throw new MissingExtensionException('The curl extension is needed to use the IFTTTHandler');
         }
-
-        $this->eventName = $eventName;
-        $this->secretKey = $secretKey;
 
         parent::__construct($level, $bubble);
     }

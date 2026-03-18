@@ -31,13 +31,11 @@ use Monolog\LogRecord;
  */
 class FlowdockHandler extends SocketHandler
 {
-    protected string $apiToken;
-
     /**
      * @throws MissingExtensionException if OpenSSL is missing
      */
     public function __construct(
-        string $apiToken,
+        protected string $apiToken,
         $level = Level::Debug,
         bool $bubble = true,
         bool $persistent = false,
@@ -60,7 +58,6 @@ class FlowdockHandler extends SocketHandler
             $connectionTimeout,
             $chunkSize
         );
-        $this->apiToken = $apiToken;
     }
 
     /**
@@ -120,8 +117,7 @@ class FlowdockHandler extends SocketHandler
         $header .= "Host: api.flowdock.com\r\n";
         $header .= "Content-Type: application/json\r\n";
         $header .= "Content-Length: " . \strlen($content) . "\r\n";
-        $header .= "\r\n";
 
-        return $header;
+        return $header . "\r\n";
     }
 }

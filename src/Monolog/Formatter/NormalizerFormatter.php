@@ -39,13 +39,13 @@ class NormalizerFormatter implements FormatterInterface
      */
     public function __construct(?string $dateFormat = null)
     {
-        $this->dateFormat = null === $dateFormat ? static::SIMPLE_DATE : $dateFormat;
+        $this->dateFormat = $dateFormat ?? static::SIMPLE_DATE;
     }
 
     /**
      * @inheritDoc
      */
-    public function format(LogRecord $record)
+    public function format(LogRecord $record): array
     {
         return $this->normalizeRecord($record);
     }
@@ -63,7 +63,7 @@ class NormalizerFormatter implements FormatterInterface
     /**
      * @inheritDoc
      */
-    public function formatBatch(array $records)
+    public function formatBatch(array $records): array
     {
         foreach ($records as $key => $record) {
             $records[$key] = $this->format($record);
@@ -238,7 +238,7 @@ class NormalizerFormatter implements FormatterInterface
             if ($data instanceof \JsonSerializable) {
                 /** @var null|scalar|array<mixed[]|scalar|null> $value */
                 $value = $data->jsonSerialize();
-            } elseif (\get_class($data) === '__PHP_Incomplete_Class') {
+            } elseif ($data::class === '__PHP_Incomplete_Class') {
                 $accessor = new \ArrayObject($data);
                 $value = (string) $accessor['__PHP_Incomplete_Class_Name'];
             } elseif (method_exists($data, '__toString')) {
@@ -269,7 +269,7 @@ class NormalizerFormatter implements FormatterInterface
     /**
      * @return array<array-key, string|int|array<string|int|array<string>>>
      */
-    protected function normalizeException(Throwable $e, int $depth = 0)
+    protected function normalizeException(Throwable $e, int $depth = 0): array
     {
         if ($depth > $this->maxNormalizeDepth) {
             return ['Over ' . $this->maxNormalizeDepth . ' levels deep, aborting normalization'];

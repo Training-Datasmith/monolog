@@ -37,11 +37,6 @@ class GelfMessageFormatter extends NormalizerFormatter
     protected string $extraPrefix;
 
     /**
-     * @var string a prefix for 'context' fields from the Monolog record (optional)
-     */
-    protected string $contextPrefix;
-
-    /**
      * @var int max length per field
      */
     protected int $maxLength;
@@ -66,7 +61,10 @@ class GelfMessageFormatter extends NormalizerFormatter
     /**
      * @throws \RuntimeException
      */
-    public function __construct(?string $systemName = null, ?string $extraPrefix = null, string $contextPrefix = 'ctxt_', ?int $maxLength = null)
+    public function __construct(?string $systemName = null, ?string $extraPrefix = null, /**
+     * @var string a prefix for 'context' fields from the Monolog record (optional)
+     */
+    protected string $contextPrefix = 'ctxt_', ?int $maxLength = null)
     {
         if (!class_exists(Message::class)) {
             throw new \RuntimeException('Composer package graylog2/gelf-php is required to use Monolog\'s GelfMessageFormatter');
@@ -76,9 +74,8 @@ class GelfMessageFormatter extends NormalizerFormatter
 
         $this->systemName = (null === $systemName || $systemName === '') ? (string) gethostname() : $systemName;
 
-        $this->extraPrefix = null === $extraPrefix ? '' : $extraPrefix;
-        $this->contextPrefix = $contextPrefix;
-        $this->maxLength = null === $maxLength ? self::DEFAULT_MAX_LENGTH : $maxLength;
+        $this->extraPrefix = $extraPrefix ?? '';
+        $this->maxLength = $maxLength ?? self::DEFAULT_MAX_LENGTH;
     }
 
     /**
@@ -141,7 +138,7 @@ class GelfMessageFormatter extends NormalizerFormatter
         }
 
         if (!$message->hasAdditional('file') && isset($context['exception']['file'])) {
-            if (1 === preg_match("/^(.+):([0-9]+)$/", $context['exception']['file'], $matches)) {
+            if (1 === preg_match("/^(.+):([0-9]+)$/", (string) $context['exception']['file'], $matches)) {
                 $message->setAdditional('file', $matches[1]);
                 $message->setAdditional('line', $matches[2]);
             }

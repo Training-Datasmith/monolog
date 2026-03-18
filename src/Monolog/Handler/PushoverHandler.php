@@ -25,18 +25,12 @@ use Monolog\LogRecord;
  */
 class PushoverHandler extends SocketHandler
 {
-    private string $token;
-
     /** @var array<int|string> */
-    private array $users;
+    private readonly array $users;
 
-    private string $title;
+    private readonly string $title;
 
     private string|int|null $user = null;
-
-    private int $retry;
-
-    private int $expire;
 
     private Level $highPriorityLevel;
 
@@ -98,7 +92,7 @@ class PushoverHandler extends SocketHandler
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $emergencyLevel
      */
     public function __construct(
-        string $token,
+        private readonly string $token,
         $users,
         ?string $title = null,
         int|string|Level $level = Level::Critical,
@@ -106,8 +100,8 @@ class PushoverHandler extends SocketHandler
         bool $useSSL = true,
         int|string|Level $highPriorityLevel = Level::Critical,
         int|string|Level $emergencyLevel = Level::Emergency,
-        int $retry = 30,
-        int $expire = 25200,
+        private readonly int $retry = 30,
+        private readonly int $expire = 25200,
         bool $persistent = false,
         float $timeout = 0.0,
         float $writingTimeout = 10.0,
@@ -125,14 +119,10 @@ class PushoverHandler extends SocketHandler
             $connectionTimeout,
             $chunkSize
         );
-
-        $this->token = $token;
         $this->users = (array) $users;
         $this->title = $title ?? (string) gethostname();
         $this->highPriorityLevel = Logger::toMonologLevel($highPriorityLevel);
         $this->emergencyLevel = Logger::toMonologLevel($emergencyLevel);
-        $this->retry = $retry;
-        $this->expire = $expire;
     }
 
     protected function generateDataStream(LogRecord $record): string
@@ -189,9 +179,8 @@ class PushoverHandler extends SocketHandler
         $header .= "Host: api.pushover.net\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= "Content-Length: " . \strlen($content) . "\r\n";
-        $header .= "\r\n";
 
-        return $header;
+        return $header . "\r\n";
     }
 
     protected function write(LogRecord $record): void

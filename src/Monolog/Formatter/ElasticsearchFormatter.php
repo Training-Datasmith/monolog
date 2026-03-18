@@ -22,32 +22,19 @@ use Monolog\LogRecord;
 class ElasticsearchFormatter extends NormalizerFormatter
 {
     /**
-     * @var string Elasticsearch index name
-     */
-    protected string $index;
-
-    /**
-     * @var string Elasticsearch record type
-     */
-    protected string $type;
-
-    /**
      * @param string $index Elasticsearch index name
      * @param string $type  Elasticsearch record type
      */
-    public function __construct(string $index, string $type)
+    public function __construct(protected string $index, protected string $type)
     {
         // Elasticsearch requires an ISO 8601 format date with optional millisecond precision.
         parent::__construct(DateTimeInterface::ATOM);
-
-        $this->index = $index;
-        $this->type = $type;
     }
 
     /**
      * @inheritDoc
      */
-    public function format(LogRecord $record)
+    public function format(LogRecord $record): array
     {
         $record = parent::format($record);
 

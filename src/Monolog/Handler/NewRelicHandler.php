@@ -120,11 +120,7 @@ class NewRelicHandler extends AbstractProcessingHandler
      */
     protected function getAppName(array $context): ?string
     {
-        if (isset($context['appname'])) {
-            return $context['appname'];
-        }
-
-        return $this->appName;
+        return $context['appname'] ?? $this->appName;
     }
 
     /**
@@ -135,11 +131,7 @@ class NewRelicHandler extends AbstractProcessingHandler
      */
     protected function getTransactionName(array $context): ?string
     {
-        if (isset($context['transaction_name'])) {
-            return $context['transaction_name'];
-        }
-
-        return $this->transactionName;
+        return $context['transaction_name'] ?? $this->transactionName;
     }
 
     /**

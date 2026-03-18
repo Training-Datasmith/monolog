@@ -27,25 +27,11 @@ class JsonFormatter extends NormalizerFormatter
     public const BATCH_MODE_JSON = 1;
     public const BATCH_MODE_NEWLINES = 2;
 
-    /** @var self::BATCH_MODE_* */
-    protected int $batchMode;
-
-    protected bool $appendNewline;
-
-    protected bool $ignoreEmptyContextAndExtra;
-
-    protected bool $includeStacktraces = false;
-
     /**
      * @param self::BATCH_MODE_* $batchMode
      */
-    public function __construct(int $batchMode = self::BATCH_MODE_JSON, bool $appendNewline = true, bool $ignoreEmptyContextAndExtra = false, bool $includeStacktraces = false)
+    public function __construct(protected int $batchMode = self::BATCH_MODE_JSON, protected bool $appendNewline = true, protected bool $ignoreEmptyContextAndExtra = false, protected bool $includeStacktraces = false)
     {
-        $this->batchMode = $batchMode;
-        $this->appendNewline = $appendNewline;
-        $this->ignoreEmptyContextAndExtra = $ignoreEmptyContextAndExtra;
-        $this->includeStacktraces = $includeStacktraces;
-
         parent::__construct();
     }
 
@@ -132,7 +118,7 @@ class JsonFormatter extends NormalizerFormatter
      */
     protected function formatBatchJson(array $records): string
     {
-        $formatted = array_map(fn (LogRecord $record) => $this->normalizeRecord($record), $records);
+        $formatted = array_map($this->normalizeRecord(...), $records);
 
         return $this->toJson($formatted, true);
     }
@@ -147,7 +133,7 @@ class JsonFormatter extends NormalizerFormatter
     {
         $oldNewline = $this->appendNewline;
         $this->appendNewline = false;
-        $formatted = array_map(fn (LogRecord $record) => $this->format($record), $records);
+        $formatted = array_map($this->format(...), $records);
         $this->appendNewline = $oldNewline;
 
         return implode("\n", $formatted);
@@ -202,7 +188,7 @@ class JsonFormatter extends NormalizerFormatter
                 }
             }
 
-            if (\get_class($data) === '__PHP_Incomplete_Class') {
+            if ($data::class === '__PHP_Incomplete_Class') {
                 return new \ArrayObject($data);
             }
 

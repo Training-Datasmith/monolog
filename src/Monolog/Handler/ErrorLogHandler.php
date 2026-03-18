@@ -29,7 +29,6 @@ class ErrorLogHandler extends AbstractProcessingHandler
 
     /** @var 0|4 */
     protected int $messageType;
-    protected bool $expandNewlines;
 
     /**
      * @param 0|4 $messageType    Says where the error should go.
@@ -37,7 +36,7 @@ class ErrorLogHandler extends AbstractProcessingHandler
      *
      * @throws \InvalidArgumentException If an unsupported message type is set
      */
-    public function __construct(int $messageType = self::OPERATING_SYSTEM, int|string|Level $level = Level::Debug, bool $bubble = true, bool $expandNewlines = false)
+    public function __construct(int $messageType = self::OPERATING_SYSTEM, int|string|Level $level = Level::Debug, bool $bubble = true, protected bool $expandNewlines = false)
     {
         parent::__construct($level, $bubble);
 
@@ -48,7 +47,6 @@ class ErrorLogHandler extends AbstractProcessingHandler
         }
 
         $this->messageType = $messageType;
-        $this->expandNewlines = $expandNewlines;
     }
 
     /**

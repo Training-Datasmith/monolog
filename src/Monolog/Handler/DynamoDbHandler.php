@@ -31,16 +31,13 @@ class DynamoDbHandler extends AbstractProcessingHandler
 
     protected DynamoDbClient $client;
 
-    protected string $table;
-
     protected Marshaler $marshaler;
 
-    public function __construct(DynamoDbClient $client, string $table, int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(DynamoDbClient $client, protected string $table, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
         $this->marshaler = new Marshaler;
 
         $this->client = $client;
-        $this->table = $table;
 
         parent::__construct($level, $bubble);
     }
@@ -65,9 +62,7 @@ class DynamoDbHandler extends AbstractProcessingHandler
      */
     protected function filterEmptyFields(array $record): array
     {
-        return array_filter($record, function ($value) {
-            return [] !== $value;
-        });
+        return array_filter($record, fn($value) => [] !== $value);
     }
 
     /**

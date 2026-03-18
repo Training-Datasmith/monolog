@@ -28,15 +28,13 @@ class SqsHandler extends AbstractProcessingHandler
     /** 100 KB in bytes - head message size for new error log */
     protected const HEAD_MESSAGE_SIZE = 102400;
 
-    private SqsClient $client;
-    private string $queueUrl;
+    private readonly SqsClient $client;
 
-    public function __construct(SqsClient $sqsClient, string $queueUrl, int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(SqsClient $sqsClient, private readonly string $queueUrl, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
 
         $this->client = $sqsClient;
-        $this->queueUrl = $queueUrl;
     }
 
     /**

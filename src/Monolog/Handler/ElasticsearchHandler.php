@@ -59,18 +59,13 @@ use Elastic\Elasticsearch\Client as Client8;
  */
 class ElasticsearchHandler extends AbstractProcessingHandler
 {
-    protected Client|Client8 $client;
-
     /**
      * @var mixed[] Handler config options
      * @phpstan-var Options
      */
     protected array $options;
 
-    /**
-     * @var bool
-     */
-    private $needsType;
+    private bool $needsType;
 
     /**
      * @param Client|Client8 $client  Elasticsearch Client object
@@ -78,10 +73,9 @@ class ElasticsearchHandler extends AbstractProcessingHandler
      *
      * @phpstan-param InputOptions $options
      */
-    public function __construct(Client|Client8 $client, array $options = [], int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(protected Client|Client8 $client, array $options = [], int|string|Level $level = Level::Debug, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
-        $this->client = $client;
         $this->options = array_merge(
             [
                 'index'        => 'monolog', // Elastic index name
@@ -92,7 +86,7 @@ class ElasticsearchHandler extends AbstractProcessingHandler
             $options
         );
 
-        if ($client instanceof Client8 || $client::VERSION[0] === '7') {
+        if ($this->client instanceof Client8 || $this->client::VERSION[0] === '7') {
             $this->needsType = false;
             // force the type to _doc for ES8/ES7
             $this->options['type'] = '_doc';

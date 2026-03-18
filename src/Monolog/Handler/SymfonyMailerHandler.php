@@ -28,22 +28,15 @@ use Symfony\Component\Mime\Email;
  */
 class SymfonyMailerHandler extends MailHandler
 {
-    protected MailerInterface|TransportInterface $mailer;
-    /** @var Email|Closure(string, LogRecord[]): Email */
-    private Email|Closure $emailTemplate;
-
     /**
      * @phpstan-param Email|Closure(string, LogRecord[]): Email $email
      *
      * @param MailerInterface|TransportInterface $mailer The mailer to use
-     * @param Closure|Email                      $email  An email template, the subject/body will be replaced
+     * @param Closure|Email $emailTemplate An email template, the subject/body will be replaced
      */
-    public function __construct($mailer, Email|Closure $email, int|string|Level $level = Level::Error, bool $bubble = true)
+    public function __construct(protected MailerInterface|TransportInterface $mailer, private readonly Email|Closure $emailTemplate, int|string|Level $level = Level::Error, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
-
-        $this->mailer = $mailer;
-        $this->emailTemplate = $email;
     }
 
     /**

@@ -127,7 +127,7 @@ class TestHandler extends AbstractProcessingHandler
             $recordAssertions = ['message' => $recordAssertions];
         }
 
-        return $this->hasRecordThatPasses(function (LogRecord $rec) use ($recordAssertions) {
+        return $this->hasRecordThatPasses(function (LogRecord $rec) use ($recordAssertions): bool {
             if ($rec->message !== $recordAssertions['message']) {
                 return false;
             }
@@ -142,13 +142,13 @@ class TestHandler extends AbstractProcessingHandler
     #[NoDiscard]
     public function hasRecordThatContains(string $message, Level $level): bool
     {
-        return $this->hasRecordThatPasses(fn (LogRecord $rec) => str_contains($rec->message, $message), $level);
+        return $this->hasRecordThatPasses(fn (LogRecord $rec): bool => str_contains($rec->message, $message), $level);
     }
 
     #[NoDiscard]
     public function hasRecordThatMatches(string $regex, Level $level): bool
     {
-        return $this->hasRecordThatPasses(fn (LogRecord $rec) => preg_match($regex, $rec->message) > 0, $level);
+        return $this->hasRecordThatPasses(fn (LogRecord $rec): bool => preg_match($regex, $rec->message) > 0, $level);
     }
 
     /**
@@ -198,6 +198,6 @@ class TestHandler extends AbstractProcessingHandler
             }
         }
 
-        throw new \BadMethodCallException('Call to undefined method ' . \get_class($this) . '::' . $method . '()');
+        throw new \BadMethodCallException('Call to undefined method ' . static::class . '::' . $method . '()');
     }
 }

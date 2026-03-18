@@ -32,24 +32,12 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
     use ProcessableHandlerTrait;
 
     /**
-     * Handler or factory Closure($record, $this)
-     *
-     * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
-     */
-    protected Closure|HandlerInterface $handler;
-
-    /**
      * Minimum level for logs that are passed to handler
      *
      * @var bool[] Map of Level value => true
      * @phpstan-var array<value-of<Level::VALUES>, true>
      */
     protected array $acceptedLevels;
-
-    /**
-     * Whether the messages that are handled can bubble up the stack or not
-     */
-    protected bool $bubble;
 
     /**
      * @phpstan-param (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface $handler
@@ -62,10 +50,13 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::*|array<value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::*> $minLevelOrList
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $maxLevel
      */
-    public function __construct(Closure|HandlerInterface $handler, int|string|Level|array $minLevelOrList = Level::Debug, int|string|Level $maxLevel = Level::Emergency, bool $bubble = true)
+    public function __construct(/**
+     * Handler or factory Closure($record, $this)
+     *
+     * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
+     */
+    protected Closure|HandlerInterface $handler, int|string|Level|array $minLevelOrList = Level::Debug, int|string|Level $maxLevel = Level::Emergency, protected bool $bubble = true)
     {
-        $this->handler  = $handler;
-        $this->bubble   = $bubble;
         $this->setAcceptedLevels($minLevelOrList, $maxLevel);
     }
 
@@ -74,7 +65,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      */
     public function getAcceptedLevels(): array
     {
-        return array_map(fn (int $level) => Level::from($level), array_keys($this->acceptedLevels));
+        return array_map(Level::from(...), array_keys($this->acceptedLevels));
     }
 
     /**
@@ -92,7 +83,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         } else {
             $minLevelOrList = Logger::toMonologLevel($minLevelOrList);
             $maxLevel = Logger::toMonologLevel($maxLevel);
-            $acceptedLevels = array_values(array_filter(Level::cases(), fn (Level $level) => $level->value >= $minLevelOrList->value && $level->value <= $maxLevel->value));
+            $acceptedLevels = array_values(array_filter(Level::cases(), fn (Level $level): bool => $level->value >= $minLevelOrList->value && $level->value <= $maxLevel->value));
         }
         $this->acceptedLevels = [];
         foreach ($acceptedLevels as $level) {
@@ -175,7 +166,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
             return $this;
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$handler::class.' does not support formatters.');
     }
 
     /**
@@ -188,7 +179,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
             return $handler->getFormatter();
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$handler::class.' does not support formatters.');
     }
 
     public function reset(): void

@@ -33,25 +33,21 @@ class RotatingFileHandler extends StreamHandler
     public const FILE_PER_YEAR = 'Y';
 
     protected string $filename;
-    protected int $maxFiles;
     protected bool|null $mustRotate = null;
     protected \DateTimeImmutable $nextRotation;
     protected string $filenameFormat;
     protected string $dateFormat;
-    protected DateTimeZone|null $timezone = null;
 
     /**
      * @param int      $maxFiles       The maximal amount of files to keep (0 means unlimited)
      * @param int|null $filePermission Optional file permissions (default (0644) are only for owner read/write)
      * @param bool     $useLocking     Try to lock log file before doing any writes
      */
-    public function __construct(string $filename, int $maxFiles = 0, int|string|Level $level = Level::Debug, bool $bubble = true, ?int $filePermission = null, bool $useLocking = false, string $dateFormat = self::FILE_PER_DAY, string $filenameFormat  = '{filename}-{date}', DateTimeZone|null $timezone = null)
+    public function __construct(string $filename, protected int $maxFiles = 0, int|string|Level $level = Level::Debug, bool $bubble = true, ?int $filePermission = null, bool $useLocking = false, string $dateFormat = self::FILE_PER_DAY, string $filenameFormat  = '{filename}-{date}', protected DateTimeZone|null $timezone = null)
     {
         $this->filename = Utils::canonicalizePath($filename);
-        $this->maxFiles = $maxFiles;
         $this->setFilenameFormat($filenameFormat, $dateFormat);
         $this->nextRotation = $this->getNextRotation();
-        $this->timezone = $timezone;
 
         parent::__construct($this->getTimedFilename(), $level, $bubble, $filePermission, $useLocking);
     }
@@ -145,9 +141,7 @@ class RotatingFileHandler extends StreamHandler
         }
 
         // Sorting the files by name to remove the older ones
-        usort($logFiles, function ($a, $b) {
-            return strcmp($b, $a);
-        });
+        usort($logFiles, fn($a, $b) => strcmp((string) $b, (string) $a));
 
         $basePath = dirname($this->filename);
 
@@ -155,9 +149,7 @@ class RotatingFileHandler extends StreamHandler
             if (is_writable($file)) {
                 // suppress errors here as unlink() might fail if two processes
                 // are cleaning up/rotating at the same time
-                set_error_handler(function (int $errno, string $errstr, string $errfile, int $errline): bool {
-                    return true;
-                });
+                set_error_handler(fn(int $errno, string $errstr, string $errfile, int $errline): bool => true);
                 unlink($file);
 
                 $dir = dirname($file);

@@ -34,11 +34,8 @@ use Monolog\LogRecord;
  */
 class HandlerWrapper implements HandlerInterface, ProcessableHandlerInterface, FormattableHandlerInterface, ResettableInterface
 {
-    protected HandlerInterface $handler;
-
-    public function __construct(HandlerInterface $handler)
+    public function __construct(protected HandlerInterface $handler)
     {
-        $this->handler = $handler;
     }
 
     /**

@@ -57,7 +57,7 @@ class WhatFailureGroupHandler extends GroupHandler
 
         foreach ($this->handlers as $handler) {
             try {
-                $handler->handleBatch(array_map(fn ($record) => clone $record, $records));
+                $handler->handleBatch(array_map(fn (\Monolog\LogRecord $record): \Monolog\LogRecord => clone $record, $records));
             } catch (Throwable) {
                 // What failure?
             }
@@ -72,7 +72,7 @@ class WhatFailureGroupHandler extends GroupHandler
         foreach ($this->handlers as $handler) {
             try {
                 $handler->close();
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // What failure?
             }
         }

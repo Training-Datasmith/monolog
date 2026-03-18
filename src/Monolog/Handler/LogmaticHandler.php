@@ -21,14 +21,8 @@ use Monolog\LogRecord;
  */
 class LogmaticHandler extends SocketHandler
 {
-    private string $logToken;
-
-    private string $hostname;
-
-    private string $appName;
-
     /**
-     * @param string $token    Log token supplied by Logmatic.
+     * @param string $logToken Log token supplied by Logmatic.
      * @param string $hostname Host name supplied by Logmatic.
      * @param string $appName  Application name supplied by Logmatic.
      * @param bool   $useSSL   Whether or not SSL encryption should be used.
@@ -36,9 +30,9 @@ class LogmaticHandler extends SocketHandler
      * @throws MissingExtensionException If SSL encryption is set to true and OpenSSL is missing
      */
     public function __construct(
-        string $token,
-        string $hostname = '',
-        string $appName = '',
+        private readonly string $logToken,
+        private readonly string $hostname = '',
+        private readonly string $appName = '',
         bool $useSSL = true,
         $level = Level::Debug,
         bool $bubble = true,
@@ -65,10 +59,6 @@ class LogmaticHandler extends SocketHandler
             $connectionTimeout,
             $chunkSize
         );
-
-        $this->logToken = $token;
-        $this->hostname = $hostname;
-        $this->appName  = $appName;
     }
 
     /**

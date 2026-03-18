@@ -38,17 +38,17 @@ class SlackRecord
     /**
      * Slack channel (encoded ID or name)
      */
-    private string|null $channel;
+    private string|null $channel = null;
 
     /**
      * Name of a bot
      */
-    private string|null $username;
+    private string|null $username = null;
 
     /**
      * User icon e.g. 'ghost', 'http://example.com/user.png'
      */
-    private string|null $userIcon;
+    private string|null $userIcon = null;
 
     /**
      * Whether the message should be added to Slack as attachment (plain text otherwise)
@@ -150,10 +150,12 @@ class SlackRecord
 
             if ($this->includeContextAndExtra) {
                 foreach (['extra', 'context'] as $key) {
-                    if (!isset($recordData[$key]) || \count($recordData[$key]) === 0) {
+                    if (!isset($recordData[$key])) {
                         continue;
                     }
-
+                    if (\count($recordData[$key]) === 0) {
+                        continue;
+                    }
                     if ($this->useShortAttachment) {
                         $attachment['fields'][] = $this->generateAttachmentField(
                             $key,
@@ -209,8 +211,8 @@ class SlackRecord
         /** @var array<array<mixed>|bool|float|int|string|null> $normalized */
         $normalized = $this->normalizerFormatter->normalizeValue($fields);
 
-        $hasSecondDimension = \count(array_filter($normalized, 'is_array')) > 0;
-        $hasOnlyNonNumericKeys = \count(array_filter(array_keys($normalized), 'is_numeric')) === 0;
+        $hasSecondDimension = \count(array_filter($normalized, is_array(...))) > 0;
+        $hasOnlyNonNumericKeys = \count(array_filter(array_keys($normalized), is_numeric(...))) === 0;
 
         return $hasSecondDimension || $hasOnlyNonNumericKeys
             ? Utils::jsonEncode($normalized, JSON_PRETTY_PRINT|Utils::DEFAULT_JSON_FLAGS)
@@ -220,7 +222,6 @@ class SlackRecord
     /**
      * Channel used by the bot when posting
      *
-     * @param  ?string $channel
      * @return $this
      */
     public function setChannel(?string $channel = null): self
@@ -233,7 +234,6 @@ class SlackRecord
     /**
      * Username used by the bot when posting
      *
-     * @param  ?string $username
      * @return $this
      */
     public function setUsername(?string $username = null): self

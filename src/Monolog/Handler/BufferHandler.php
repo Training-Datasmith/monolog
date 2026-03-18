@@ -28,13 +28,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
 {
     use ProcessableHandlerTrait;
 
-    protected HandlerInterface $handler;
-
     protected int $bufferSize = 0;
-
-    protected int $bufferLimit;
-
-    protected bool $flushOnOverflow;
 
     /** @var LogRecord[] */
     protected array $buffer = [];
@@ -46,12 +40,9 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
      * @param int              $bufferLimit     How many entries should be buffered at most, beyond that the oldest items are removed from the buffer.
      * @param bool             $flushOnOverflow If true, the buffer is flushed when the max size has been reached, by default oldest entries are discarded
      */
-    public function __construct(HandlerInterface $handler, int $bufferLimit = 0, int|string|Level $level = Level::Debug, bool $bubble = true, bool $flushOnOverflow = false)
+    public function __construct(protected HandlerInterface $handler, protected int $bufferLimit = 0, int|string|Level $level = Level::Debug, bool $bubble = true, protected bool $flushOnOverflow = false)
     {
         parent::__construct($level, $bubble);
-        $this->handler = $handler;
-        $this->bufferLimit = $bufferLimit;
-        $this->flushOnOverflow = $flushOnOverflow;
     }
 
     /**
@@ -148,7 +139,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
             return $this;
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($this->handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$this->handler::class.' does not support formatters.');
     }
 
     /**
@@ -160,7 +151,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
             return $this->handler->getFormatter();
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($this->handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$this->handler::class.' does not support formatters.');
     }
 
     public function setHandler(HandlerInterface $handler): void

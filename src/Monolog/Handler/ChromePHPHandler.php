@@ -181,6 +181,6 @@ class ChromePHPHandler extends AbstractProcessingHandler
             return false;
         }
 
-        return preg_match(static::USER_AGENT_REGEX, $_SERVER['HTTP_USER_AGENT']) === 1;
+        return preg_match(static::USER_AGENT_REGEX, (string) $_SERVER['HTTP_USER_AGENT']) === 1;
     }
 }

@@ -37,14 +37,13 @@ use Monolog\LogRecord;
  */
 class FluentdFormatter implements FormatterInterface
 {
-    /**
-     * @var bool $levelTag should message level be a part of the fluentd tag
-     */
-    protected bool $levelTag = false;
-
-    public function __construct(bool $levelTag = false)
+    public function __construct(
+        /**
+         * @var bool $levelTag should message level be a part of the fluentd tag
+         */
+        protected bool $levelTag = false
+    )
     {
-        $this->levelTag = $levelTag;
     }
 
     public function isUsingLevelsInTag(): bool

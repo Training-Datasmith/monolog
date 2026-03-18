@@ -17,15 +17,10 @@ use Socket;
 class UdpSocket
 {
     protected const DATAGRAM_MAX_LENGTH = 65023;
-
-    protected string $ip;
-    protected int $port;
     protected ?Socket $socket = null;
 
-    public function __construct(string $ip, int $port = 514)
+    public function __construct(protected string $ip, protected int $port = 514)
     {
-        $this->ip = $ip;
-        $this->port = $port;
     }
 
     public function write(string $line, string $header = ""): void

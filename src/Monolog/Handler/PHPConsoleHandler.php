@@ -114,7 +114,7 @@ class PHPConsoleHandler extends AbstractProcessingHandler
         'dataStorage' => null, // \PhpConsole\Storage|null Fixes problem with custom $_SESSION handler (see https://github.com/barbushin/php-console#troubleshooting-with-_session-handler-overridden-in-some-frameworks)
     ];
 
-    private Connector $connector;
+    private readonly Connector $connector;
 
     /**
      * @param  array<string, mixed> $options   See \Monolog\Handler\PHPConsoleHandler::$options for more details

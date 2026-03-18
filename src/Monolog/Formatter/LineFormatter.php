@@ -28,8 +28,6 @@ class LineFormatter extends NormalizerFormatter
     public const SIMPLE_FORMAT = "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n";
 
     protected string $format;
-    protected bool $allowInlineLineBreaks;
-    protected bool $ignoreEmptyContextAndExtra;
     protected bool $includeStacktraces;
     protected ?int $maxLevelNameLength = null;
     protected string $indentStacktraces = '';
@@ -41,11 +39,9 @@ class LineFormatter extends NormalizerFormatter
      * @param string|null $dateFormat            The format of the timestamp: one supported by DateTime::format
      * @param bool        $allowInlineLineBreaks Whether to allow inline line breaks in log entries
      */
-    public function __construct(?string $format = null, ?string $dateFormat = null, bool $allowInlineLineBreaks = false, bool $ignoreEmptyContextAndExtra = false, bool $includeStacktraces = false)
+    public function __construct(?string $format = null, ?string $dateFormat = null, protected bool $allowInlineLineBreaks = false, protected bool $ignoreEmptyContextAndExtra = false, bool $includeStacktraces = false)
     {
-        $this->format = $format === null ? static::SIMPLE_FORMAT : $format;
-        $this->allowInlineLineBreaks = $allowInlineLineBreaks;
-        $this->ignoreEmptyContextAndExtra = $ignoreEmptyContextAndExtra;
+        $this->format = $format ?? static::SIMPLE_FORMAT;
         $this->includeStacktraces($includeStacktraces);
         parent::__construct($dateFormat);
     }
@@ -133,19 +129,19 @@ class LineFormatter extends NormalizerFormatter
         $vars = parent::format($record);
 
         if ($this->maxLevelNameLength !== null) {
-            $vars['level_name'] = substr($vars['level_name'], 0, $this->maxLevelNameLength);
+            $vars['level_name'] = substr((string) $vars['level_name'], 0, $this->maxLevelNameLength);
         }
 
         $output = $this->format;
         foreach ($vars['extra'] as $var => $val) {
-            if (false !== strpos($output, '%extra.'.$var.'%')) {
+            if (str_contains($output, '%extra.'.$var.'%')) {
                 $output = str_replace('%extra.'.$var.'%', $this->stringify($val), $output);
                 unset($vars['extra'][$var]);
             }
         }
 
         foreach ($vars['context'] as $var => $val) {
-            if (false !== strpos($output, '%context.'.$var.'%')) {
+            if (str_contains($output, '%context.'.$var.'%')) {
                 $output = str_replace('%context.'.$var.'%', $this->stringify($val), $output);
                 unset($vars['context'][$var]);
             }
@@ -164,13 +160,13 @@ class LineFormatter extends NormalizerFormatter
         }
 
         foreach ($vars as $var => $val) {
-            if (false !== strpos($output, '%'.$var.'%')) {
+            if (str_contains($output, '%'.$var.'%')) {
                 $output = str_replace('%'.$var.'%', $this->stringify($val), $output);
             }
         }
 
         // remove leftover %extra.xxx% and %context.xxx% if any
-        if (false !== strpos($output, '%')) {
+        if (str_contains($output, '%')) {
             $output = preg_replace('/%(?:extra|context)\..+?%/', '', $output);
             if (null === $output) {
                 $pcreErrorCode = preg_last_error();
@@ -237,7 +233,7 @@ class LineFormatter extends NormalizerFormatter
     protected function replaceNewlines(string $str): string
     {
         if ($this->allowInlineLineBreaks) {
-            if (0 === strpos($str, '{') || 0 === strpos($str, '[')) {
+            if (str_starts_with($str, '{') || str_starts_with($str, '[')) {
                 $str = preg_replace('/(?<!\\\\)\\\\[rn]/', "\n", $str);
                 if (null === $str) {
                     $pcreErrorCode = preg_last_error();
@@ -312,6 +308,6 @@ class LineFormatter extends NormalizerFormatter
 
     private function stacktracesParserCustom(string $trace): string
     {
-        return implode("\n", array_filter(array_map($this->stacktracesParser, explode("\n", $trace)), fn ($line) => is_string($line) && trim($line) !== ''));
+        return implode("\n", array_filter(array_map($this->stacktracesParser, explode("\n", $trace)), fn ($line): bool => is_string($line) && trim($line) !== ''));
     }
 }

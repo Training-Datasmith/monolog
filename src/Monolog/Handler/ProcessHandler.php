@@ -34,16 +34,14 @@ class ProcessHandler extends AbstractProcessingHandler
      */
     private $process;
 
-    private string $command;
+    private readonly string $command;
 
-    private ?string $cwd;
+    private readonly ?string $cwd;
 
     /**
      * @var resource[]
      */
     private array $pipes = [];
-
-    private float $timeout;
 
     /**
      * @var array<int, list<string>>
@@ -61,7 +59,7 @@ class ProcessHandler extends AbstractProcessingHandler
      * @param  float                     $timeout The maximum timeout (in seconds) for the stream_select() function.
      * @throws \InvalidArgumentException
      */
-    public function __construct(string $command, int|string|Level $level = Level::Debug, bool $bubble = true, ?string $cwd = null, float $timeout = 1.0)
+    public function __construct(string $command, int|string|Level $level = Level::Debug, bool $bubble = true, ?string $cwd = null, private readonly float $timeout = 1.0)
     {
         if ($command === '') {
             throw new \InvalidArgumentException('The command argument must be a non-empty string.');
@@ -74,7 +72,6 @@ class ProcessHandler extends AbstractProcessingHandler
 
         $this->command = $command;
         $this->cwd = $cwd;
-        $this->timeout = $timeout;
     }
 
     /**
@@ -142,10 +139,8 @@ class ProcessHandler extends AbstractProcessingHandler
 
     /**
      * Selects the STDERR stream.
-     *
-     * @return int|bool
      */
-    protected function selectErrorStream()
+    protected function selectErrorStream(): int|false
     {
         $empty = [];
         $errorPipes = [$this->pipes[2]];

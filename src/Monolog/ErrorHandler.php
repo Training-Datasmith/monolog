@@ -43,15 +43,13 @@ class ErrorHandler
 
     private string $fatalLevel = LogLevel::ALERT;
 
-    private string|null $reservedMemory = null;
-
     /** @var ?array{type: int, message: string, file: string, line: int, trace: mixed} */
     private array|null $lastFatalData = null;
 
     private const FATAL_ERRORS = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
 
     public function __construct(
-        private LoggerInterface $logger
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -131,9 +129,7 @@ class ErrorHandler
     public function registerFatalHandler($level = null, int $reservedMemorySize = 20): self
     {
         register_shutdown_function($this->handleFatalError(...));
-
-        $this->reservedMemory = str_repeat(' ', 1024 * $reservedMemorySize);
-        $this->fatalLevel = null === $level ? LogLevel::ALERT : $level;
+        $this->fatalLevel = $level ?? LogLevel::ALERT;
         $this->hasFatalErrorHandler = true;
 
         return $this;
@@ -232,8 +228,6 @@ class ErrorHandler
      */
     public function handleFatalError(): void
     {
-        $this->reservedMemory = '';
-
         if (\is_array($this->lastFatalData)) {
             $lastError = $this->lastFatalData;
         } else {

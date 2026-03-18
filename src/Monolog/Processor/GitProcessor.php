@@ -24,9 +24,9 @@ use Monolog\LogRecord;
  */
 class GitProcessor implements ProcessorInterface
 {
-    private Level $level;
+    private readonly Level $level;
     /** @var array{branch: string, commit: string}|array<never>|null */
-    private static $cache = null;
+    private static ?array $cache = null;
 
     /**
      * @param int|string|Level|LogLevel::* $level The minimum logging level at which this Processor will be triggered

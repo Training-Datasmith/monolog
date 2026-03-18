@@ -41,27 +41,14 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
 {
     use ProcessableHandlerTrait;
 
-    /**
-     * Handler or factory Closure($record, $this)
-     *
-     * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
-     */
-    protected Closure|HandlerInterface $handler;
-
     protected ActivationStrategyInterface $activationStrategy;
 
     protected bool $buffering = true;
 
-    protected int $bufferSize;
-
     /** @var LogRecord[] */
     protected array $buffer = [];
 
-    protected bool $stopBuffering;
-
     protected Level|null $passthruLevel = null;
-
-    protected bool $bubble;
 
     /**
      * @phpstan-param (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface $handler
@@ -76,7 +63,12 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::*|ActivationStrategyInterface|null $activationStrategy
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::*|null $passthruLevel
      */
-    public function __construct(Closure|HandlerInterface $handler, int|string|Level|ActivationStrategyInterface|null $activationStrategy = null, int $bufferSize = 0, bool $bubble = true, bool $stopBuffering = true, int|string|Level|null $passthruLevel = null)
+    public function __construct(/**
+     * Handler or factory Closure($record, $this)
+     *
+     * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
+     */
+    protected Closure|HandlerInterface $handler, int|string|Level|ActivationStrategyInterface|null $activationStrategy = null, protected int $bufferSize = 0, protected bool $bubble = true, protected bool $stopBuffering = true, int|string|Level|null $passthruLevel = null)
     {
         if (null === $activationStrategy) {
             $activationStrategy = new ErrorLevelActivationStrategy(Level::Warning);
@@ -86,12 +78,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         if (!$activationStrategy instanceof ActivationStrategyInterface) {
             $activationStrategy = new ErrorLevelActivationStrategy($activationStrategy);
         }
-
-        $this->handler = $handler;
         $this->activationStrategy = $activationStrategy;
-        $this->bufferSize = $bufferSize;
-        $this->bubble = $bubble;
-        $this->stopBuffering = $stopBuffering;
 
         if ($passthruLevel !== null) {
             $this->passthruLevel = Logger::toMonologLevel($passthruLevel);
@@ -182,9 +169,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
     {
         if (null !== $this->passthruLevel) {
             $passthruLevel = $this->passthruLevel;
-            $this->buffer = array_filter($this->buffer, static function ($record) use ($passthruLevel) {
-                return $passthruLevel->includes($record->level);
-            });
+            $this->buffer = array_filter($this->buffer, static fn(\Monolog\LogRecord $record) => $passthruLevel->includes($record->level));
             if (\count($this->buffer) > 0) {
                 $this->getHandler(end($this->buffer))->handleBatch($this->buffer);
             }
@@ -224,7 +209,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
             return $this;
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$handler::class.' does not support formatters.');
     }
 
     /**
@@ -237,6 +222,6 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
             return $handler->getFormatter();
         }
 
-        throw new \UnexpectedValueException('The nested handler of type '.\get_class($handler).' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type '.$handler::class.' does not support formatters.');
     }
 }

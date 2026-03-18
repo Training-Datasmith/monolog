@@ -35,7 +35,7 @@ class FallbackGroupHandler extends GroupHandler
             try {
                 $handler->handle(clone $record);
                 break;
-            } catch (Throwable $e) {
+            } catch (Throwable) {
                 // What throwable?
             }
         }
@@ -58,9 +58,9 @@ class FallbackGroupHandler extends GroupHandler
 
         foreach ($this->handlers as $handler) {
             try {
-                $handler->handleBatch(array_map(fn ($record) => clone $record, $records));
+                $handler->handleBatch(array_map(fn (\Monolog\LogRecord $record): \Monolog\LogRecord => clone $record, $records));
                 break;
-            } catch (Throwable $e) {
+            } catch (Throwable) {
                 // What throwable?
             }
         }

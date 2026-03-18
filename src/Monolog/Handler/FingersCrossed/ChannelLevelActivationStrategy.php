@@ -38,7 +38,7 @@ use Monolog\LogRecord;
  */
 class ChannelLevelActivationStrategy implements ActivationStrategyInterface
 {
-    private Level $defaultActionLevel;
+    private readonly Level $defaultActionLevel;
 
     /**
      * @var array<string, Level>

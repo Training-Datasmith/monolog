@@ -22,8 +22,6 @@ use ReflectionExtension;
  */
 class SignalHandler
 {
-    private LoggerInterface $logger;
-
     /** @var array<int, callable|string|int> SIG_DFL, SIG_IGN or previous callable */
     private array $previousSignalHandler = [];
     /** @var array<int, \Psr\Log\LogLevel::*> */
@@ -31,9 +29,8 @@ class SignalHandler
     /** @var array<int, bool> */
     private array $signalRestartSyscalls = [];
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     /**
@@ -63,7 +60,7 @@ class SignalHandler
             pcntl_async_signals($async);
         }
 
-        pcntl_signal($signo, [$this, 'handleSignal'], $restartSyscalls);
+        pcntl_signal($signo, $this->handleSignal(...), $restartSyscalls);
 
         return $this;
     }
@@ -79,7 +76,7 @@ class SignalHandler
         if (\count($signals) === 0 && \extension_loaded('pcntl')) {
             $pcntl = new ReflectionExtension('pcntl');
             foreach ($pcntl->getConstants() as $name => $value) {
-                if (substr($name, 0, 3) === 'SIG' && $name[3] !== '_' && \is_int($value)) {
+                if (str_starts_with($name, 'SIG') && $name[3] !== '_' && \is_int($value)) {
                     $signals[$value] = $name;
                 }
             }
@@ -104,7 +101,7 @@ class SignalHandler
                 posix_kill(posix_getpid(), $signo);
                 pcntl_signal_dispatch();
                 pcntl_sigprocmask(SIG_SETMASK, $oldset);
-                pcntl_signal($signo, [$this, 'handleSignal'], $restartSyscalls);
+                pcntl_signal($signo, $this->handleSignal(...), $restartSyscalls);
             }
         } elseif (\is_callable($this->previousSignalHandler[$signo])) {
             $this->previousSignalHandler[$signo]($signo, $siginfo);

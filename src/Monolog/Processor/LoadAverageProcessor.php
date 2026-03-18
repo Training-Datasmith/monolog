@@ -30,10 +30,7 @@ class LoadAverageProcessor implements ProcessorInterface
         self::LOAD_15_MINUTE,
     ];
 
-    /**
-     * @var int
-     */
-    protected $avgSystemLoad;
+    protected int $avgSystemLoad;
 
     /**
      * @param self::LOAD_* $avgSystemLoad

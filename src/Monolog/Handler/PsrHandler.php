@@ -27,23 +27,14 @@ use Monolog\LogRecord;
  */
 class PsrHandler extends AbstractHandler implements FormattableHandlerInterface
 {
-    /**
-     * PSR-3 compliant logger
-     */
-    protected LoggerInterface $logger;
-
     protected FormatterInterface|null $formatter = null;
-    private bool $includeExtra;
 
     /**
      * @param LoggerInterface $logger The underlying PSR-3 compliant logger to which messages will be proxied
      */
-    public function __construct(LoggerInterface $logger, int|string|Level $level = Level::Debug, bool $bubble = true, bool $includeExtra = false)
+    public function __construct(protected LoggerInterface $logger, int|string|Level $level = Level::Debug, bool $bubble = true, private readonly bool $includeExtra = false)
     {
         parent::__construct($level, $bubble);
-
-        $this->logger = $logger;
-        $this->includeExtra = $includeExtra;
     }
 
     /**

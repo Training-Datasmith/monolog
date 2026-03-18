@@ -31,11 +31,6 @@ class FleepHookHandler extends SocketHandler
     protected const FLEEP_HOOK_URI = '/hook/';
 
     /**
-     * @var string Webhook token (specifies the conversation where logs are sent)
-     */
-    protected string $token;
-
-    /**
      * Construct a new Fleep.io Handler.
      *
      * For instructions on how to create a new web hook in your conversations
@@ -45,7 +40,7 @@ class FleepHookHandler extends SocketHandler
      * @throws MissingExtensionException if OpenSSL is missing
      */
     public function __construct(
-        string $token,
+        protected string $token,
         $level = Level::Debug,
         bool $bubble = true,
         bool $persistent = false,
@@ -57,8 +52,6 @@ class FleepHookHandler extends SocketHandler
         if (!\extension_loaded('openssl')) {
             throw new MissingExtensionException('The OpenSSL PHP extension is required to use the FleepHookHandler');
         }
-
-        $this->token = $token;
 
         $connectionString = 'ssl://' . static::FLEEP_HOST . ':443';
         parent::__construct(
@@ -113,9 +106,8 @@ class FleepHookHandler extends SocketHandler
         $header .= "Host: " . static::FLEEP_HOST . "\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= "Content-Length: " . \strlen($content) . "\r\n";
-        $header .= "\r\n";
 
-        return $header;
+        return $header . "\r\n";
     }
 
     /**

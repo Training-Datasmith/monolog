@@ -37,8 +37,6 @@ class LogglyHandler extends AbstractProcessingHandler
      */
     protected array $curlHandlers = [];
 
-    protected string $token;
-
     /** @var string[] */
     protected array $tag = [];
 
@@ -47,13 +45,11 @@ class LogglyHandler extends AbstractProcessingHandler
      *
      * @throws MissingExtensionException If the curl extension is missing
      */
-    public function __construct(string $token, int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(protected string $token, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
         if (!\extension_loaded('curl')) {
             throw new MissingExtensionException('The curl extension is needed to use the LogglyHandler');
         }
-
-        $this->token = $token;
 
         parent::__construct($level, $bubble);
     }
@@ -124,9 +120,7 @@ class LogglyHandler extends AbstractProcessingHandler
     {
         $level = $this->level;
 
-        $records = array_filter($records, function ($record) use ($level) {
-            return ($record->level->value >= $level->value);
-        });
+        $records = array_filter($records, fn(\Monolog\LogRecord $record) => $record->level->value >= $level->value);
 
         if (\count($records) > 0) {
             $this->send($this->getFormatter()->formatBatch($records), static::ENDPOINT_BATCH);

@@ -31,19 +31,12 @@ use Redis;
  */
 class RedisPubSubHandler extends AbstractProcessingHandler
 {
-    /** @var Predis<Predis>|Redis */
-    private Predis|Redis $redisClient;
-    private string $channelKey;
-
     /**
-     * @param Predis<Predis>|Redis $redis The redis instance
-     * @param string               $key   The channel key to publish records to
+     * @param Predis<Predis>|Redis $redisClient The redis instance
+     * @param string $channelKey The channel key to publish records to
      */
-    public function __construct(Predis|Redis $redis, string $key, int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(private readonly Predis|Redis $redisClient, private readonly string $channelKey, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
-        $this->redisClient = $redis;
-        $this->channelKey = $key;
-
         parent::__construct($level, $bubble);
     }
 

@@ -26,10 +26,10 @@ class SyslogFormatter extends LineFormatter
     private const FORMAT = "<%extra.priority%>1 %datetime% %extra.hostname% %extra.app-name% %extra.procid% %channel% %extra.structured-data% %level_name%: %message% %context% %extra%\n";
     private const NILVALUE = '-';
 
-    private string $hostname;
-    private int $procid;
+    private readonly string $hostname;
+    private readonly int $procid;
 
-    public function __construct(private string $applicationName = self::NILVALUE)
+    public function __construct(private readonly string $applicationName = self::NILVALUE)
     {
         parent::__construct(self::FORMAT, 'Y-m-d\TH:i:s.uP', true, true);
         $this->hostname = (string) gethostname();

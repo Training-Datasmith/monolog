@@ -23,9 +23,9 @@ use Monolog\LogRecord;
  */
 class MercurialProcessor implements ProcessorInterface
 {
-    private Level $level;
+    private readonly Level $level;
     /** @var array{branch: string, revision: string}|array<never>|null */
-    private static $cache = null;
+    private static ?array $cache = null;
 
     /**
      * @param int|string|Level $level The minimum logging level at which this Processor will be triggered

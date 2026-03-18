@@ -22,15 +22,12 @@ use Monolog\LogRecord;
  */
 class SocketHandler extends AbstractProcessingHandler
 {
-    private string $connectionString;
     private float $connectionTimeout;
     /** @var resource|null */
     private $resource;
     private float $timeout;
     private float $writingTimeout;
     private int|null $lastSentBytes = null;
-    private int|null $chunkSize;
-    private bool $persistent;
     private int|null $errno = null;
     private string|null $errstr = null;
     private float|null $lastWritingAt = null;
@@ -47,29 +44,26 @@ class SocketHandler extends AbstractProcessingHandler
      * @throws \InvalidArgumentException If an invalid timeout value (less than 0) is passed.
      */
     public function __construct(
-        string $connectionString,
-        $level = Level::Debug,
+        private readonly string $connectionString,
+        int|string|\Monolog\Level $level = Level::Debug,
         bool $bubble = true,
-        bool $persistent = false,
+        private bool $persistent = false,
         float $timeout = 0.0,
         float $writingTimeout = 10.0,
         ?float $connectionTimeout = null,
-        ?int $chunkSize = null
+        private int|null $chunkSize = null
     ) {
         parent::__construct($level, $bubble);
-        $this->connectionString = $connectionString;
 
         if ($connectionTimeout !== null) {
             $this->validateTimeout($connectionTimeout);
         }
 
         $this->connectionTimeout = $connectionTimeout ?? (float) \ini_get('default_socket_timeout');
-        $this->persistent = $persistent;
         $this->validateTimeout($timeout);
         $this->timeout = $timeout;
         $this->validateTimeout($writingTimeout);
         $this->writingTimeout = $writingTimeout;
-        $this->chunkSize = $chunkSize;
     }
 
     /**
@@ -421,9 +415,8 @@ class SocketHandler extends AbstractProcessingHandler
             $this->lastSentBytes = $sent;
 
             return false;
-        } else {
-            usleep(100);
         }
+        usleep(100);
 
         if ((microtime(true) - (float) $this->lastWritingAt) >= $this->writingTimeout) {
             $this->closeSocket();

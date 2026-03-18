@@ -29,7 +29,7 @@ class UidProcessor implements ProcessorInterface, ResettableInterface
      */
     public function __construct(int $length = 7)
     {
-        if ($length > 32 || $length < 1) {
+        if ($length < 1) {
             throw new \InvalidArgumentException('The uid length must be an integer between 1 and 32');
         }
 

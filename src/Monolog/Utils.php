@@ -17,7 +17,7 @@ final class Utils
 
     public static function getClass(object $object): string
     {
-        $class = \get_class($object);
+        $class = $object::class;
 
         if (false === ($pos = strpos($class, "@anonymous\0"))) {
             return $class;
@@ -36,7 +36,7 @@ final class Utils
             return mb_strcut($string, $start, $length);
         }
 
-        return substr($string, $start, (null === $length) ? \strlen($string) : $length);
+        return substr($string, $start, $length ?? \strlen($string));
     }
 
     /**
@@ -47,18 +47,18 @@ final class Utils
     public static function canonicalizePath(string $streamUrl): string
     {
         $prefix = '';
-        if ('file://' === substr($streamUrl, 0, 7)) {
+        if (str_starts_with($streamUrl, 'file://')) {
             $streamUrl = substr($streamUrl, 7);
             $prefix = 'file://';
         }
 
         // other type of stream, not supported
-        if (false !== strpos($streamUrl, '://')) {
+        if (str_contains($streamUrl, '://')) {
             return $streamUrl;
         }
 
         // already absolute
-        if (substr($streamUrl, 0, 1) === '/' || substr($streamUrl, 1, 1) === ':' || substr($streamUrl, 0, 2) === '\\\\') {
+        if (str_starts_with($streamUrl, '/') || substr($streamUrl, 1, 1) === ':' || str_starts_with($streamUrl, '\\\\')) {
             return $prefix.$streamUrl;
         }
 
@@ -93,7 +93,7 @@ final class Utils
 
         $json = json_encode($data, $encodeFlags);
         if (false === $json) {
-            $json = self::handleJsonError(json_last_error(), $data);
+            return self::handleJsonError(json_last_error(), $data);
         }
 
         return $json;
@@ -122,7 +122,7 @@ final class Utils
         if (\is_string($data)) {
             self::detectAndCleanUtf8($data);
         } elseif (\is_array($data)) {
-            array_walk_recursive($data, ['Monolog\Utils', 'detectAndCleanUtf8']);
+            array_walk_recursive($data, \Monolog\Utils::detectAndCleanUtf8(...));
         } else {
             self::throwEncodeError($code, $data);
         }
@@ -175,16 +175,14 @@ final class Utils
      *
      * @param mixed $data Input to check and convert if needed, passed by ref
      */
-    private static function detectAndCleanUtf8(&$data): void
+    private static function detectAndCleanUtf8(string &$data): void
     {
-        if (\is_string($data) && preg_match('//u', $data) !== 1) {
+        if (preg_match('//u', $data) !== 1) {
             $data = preg_replace_callback(
                 '/[\x80-\xFF]+/',
-                function (array $m): string {
-                    return \function_exists('mb_convert_encoding')
-                        ? mb_convert_encoding($m[0], 'UTF-8', 'ISO-8859-1')
-                        : (\function_exists('utf8_encode') ? utf8_encode($m[0]) : '');
-                },
+                fn(array $m): string => \function_exists('mb_convert_encoding')
+                    ? mb_convert_encoding($m[0], 'UTF-8', 'ISO-8859-1')
+                    : (\function_exists('utf8_encode') ? utf8_encode((string) $m[0]) : ''),
                 $data
             );
             if (!\is_string($data)) {
@@ -206,7 +204,7 @@ final class Utils
      * @param  string|false $val
      * @return int|false    Returns an integer representing bytes. Returns FALSE in case of error.
      */
-    public static function expandIniShorthandBytes($val)
+    public static function expandIniShorthandBytes($val): false|int
     {
         if (!\is_string($val)) {
             return false;
@@ -248,7 +246,7 @@ final class Utils
             if (\count($record->extra) > 0) {
                 $extra = "\nExtra: " . json_encode($record->extra, JSON_THROW_ON_ERROR);
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // noop
         }
 

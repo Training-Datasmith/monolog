@@ -11,7 +11,7 @@
 
 namespace Monolog;
 
-class_alias(JsonSerializableDateTimeImmutable::class, 'Monolog\DateTimeImmutable');
+class_alias(JsonSerializableDateTimeImmutable::class, \Monolog\DateTimeImmutable::class);
 
 // @phpstan-ignore-next-line
 if (false) {

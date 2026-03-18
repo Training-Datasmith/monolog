@@ -31,22 +31,13 @@ use Redis;
  */
 class RedisHandler extends AbstractProcessingHandler
 {
-    /** @var Predis<Predis>|Redis */
-    private Predis|Redis $redisClient;
-    private string $redisKey;
-    protected int $capSize;
-
     /**
-     * @param Predis<Predis>|Redis $redis   The redis instance
-     * @param string               $key     The key name to push records to
+     * @param Predis<Predis>|Redis $redisClient The redis instance
+     * @param string $redisKey The key name to push records to
      * @param int                  $capSize Number of entries to limit list size to, 0 = unlimited
      */
-    public function __construct(Predis|Redis $redis, string $key, int|string|Level $level = Level::Debug, bool $bubble = true, int $capSize = 0)
+    public function __construct(private readonly Predis|Redis $redisClient, private readonly string $redisKey, int|string|Level $level = Level::Debug, bool $bubble = true, protected int $capSize = 0)
     {
-        $this->redisClient = $redis;
-        $this->redisKey = $key;
-        $this->capSize = $capSize;
-
         parent::__construct($level, $bubble);
     }
 
@@ -77,7 +68,7 @@ class RedisHandler extends AbstractProcessingHandler
         } else {
             $redisKey = $this->redisKey;
             $capSize = $this->capSize;
-            $this->redisClient->transaction(function ($tx) use ($record, $redisKey, $capSize) {
+            $this->redisClient->transaction(function ($tx) use ($record, $redisKey, $capSize): void {
                 $tx->rpush($redisKey, $record->formatted);
                 $tx->ltrim($redisKey, -$capSize, -1);
             });

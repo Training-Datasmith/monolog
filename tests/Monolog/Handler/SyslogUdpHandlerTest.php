@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -22,7 +24,7 @@ class SyslogUdpHandlerTest extends \Monolog\Test\MonologTestCase
     {
         $this->expectException(\UnexpectedValueException::class);
 
-        $handler = new SyslogUdpHandler("ip", 514, "invalidFacility");
+        $handler = new SyslogUdpHandler('ip', 514, 'invalidFacility');
     }
 
     public function testWeSplitIntoLines()
@@ -30,7 +32,7 @@ class SyslogUdpHandlerTest extends \Monolog\Test\MonologTestCase
         $pid = getmypid();
         $host = gethostname();
 
-        $handler = new \Monolog\Handler\SyslogUdpHandler("127.0.0.1", 514, "authpriv");
+        $handler = new \Monolog\Handler\SyslogUdpHandler('127.0.0.1', 514, 'authpriv');
         $handler->setFormatter(new \Monolog\Formatter\ChromePHPFormatter());
 
         $time = '2014-01-07T12:34:56+00:00';
@@ -45,8 +47,8 @@ class SyslogUdpHandlerTest extends \Monolog\Test\MonologTestCase
             ->method('write')
             ->willReturnCallback(function () use ($matcher, $time, $host, $pid) {
                 match ($matcher->numberOfInvocations()) {
-                    1 => $this->equalTo("lol") && $this->equalTo("<".(LOG_AUTHPRIV + LOG_WARNING).">1 $time $host php $pid - - "),
-                    2 => $this->equalTo("hej") && $this->equalTo("<".(LOG_AUTHPRIV + LOG_WARNING).">1 $time $host php $pid - - "),
+                    1 => $this->equalTo('lol') && $this->equalTo('<'.(LOG_AUTHPRIV + LOG_WARNING).">1 $time $host php $pid - - "),
+                    2 => $this->equalTo('hej') && $this->equalTo('<'.(LOG_AUTHPRIV + LOG_WARNING).">1 $time $host php $pid - - "),
                     default => $this->assertTrue(true)
                 };
             });
@@ -58,7 +60,7 @@ class SyslogUdpHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testSplitWorksOnEmptyMsg()
     {
-        $handler = new SyslogUdpHandler("127.0.0.1", 514, "authpriv");
+        $handler = new SyslogUdpHandler('127.0.0.1', 514, 'authpriv');
         $handler->setFormatter($this->getIdentityFormatter());
 
         $socket = $this->getMockBuilder('Monolog\Handler\SyslogUdp\UdpSocket')
@@ -80,7 +82,7 @@ class SyslogUdpHandlerTest extends \Monolog\Test\MonologTestCase
         $host = gethostname();
 
         $handler = $this->getMockBuilder('\Monolog\Handler\SyslogUdpHandler')
-            ->setConstructorArgs(["127.0.0.1", 514, "authpriv", 'debug', true, "php", \Monolog\Handler\SyslogUdpHandler::RFC3164])
+            ->setConstructorArgs(['127.0.0.1', 514, 'authpriv', 'debug', true, 'php', \Monolog\Handler\SyslogUdpHandler::RFC3164])
             ->onlyMethods([])
             ->getMock();
 
@@ -97,8 +99,8 @@ class SyslogUdpHandlerTest extends \Monolog\Test\MonologTestCase
             ->method('write')
             ->willReturnCallback(function () use ($matcher, $time, $host, $pid) {
                 match ($matcher->numberOfInvocations()) {
-                    1 => $this->equalTo("lol") && $this->equalTo("<".(LOG_AUTHPRIV + LOG_WARNING).">$time $host php[$pid]: "),
-                    2 => $this->equalTo("hej") && $this->equalTo("<".(LOG_AUTHPRIV + LOG_WARNING).">$time $host php[$pid]: "),
+                    1 => $this->equalTo('lol') && $this->equalTo('<'.(LOG_AUTHPRIV + LOG_WARNING).">$time $host php[$pid]: "),
+                    2 => $this->equalTo('hej') && $this->equalTo('<'.(LOG_AUTHPRIV + LOG_WARNING).">$time $host php[$pid]: "),
                     default => $this->assertTrue(true)
                 };
             });

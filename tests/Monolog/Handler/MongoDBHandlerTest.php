@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -24,7 +26,7 @@ class MongoDBHandlerTest extends \Monolog\Test\MonologTestCase
     {
         $this->expectException(\TypeError::class);
 
-        new MongoDBHandler(new \stdClass, 'db', 'collection');
+        new MongoDBHandler(new \stdClass(), 'db', 'collection');
     }
 
     public function testHandleWithLibraryClient()

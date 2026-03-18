@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -17,7 +19,7 @@ class CouchDBHandlerTest extends \Monolog\Test\MonologTestCase
 {
     public function testHandle()
     {
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new CouchDBHandler();
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -34,8 +36,8 @@ class LogglyFormatterTest extends MonologTestCase
         $formatter = new LogglyFormatter();
         $record = $this->getRecord();
         $formatted_decoded = json_decode($formatter->format($record), true);
-        $this->assertArrayNotHasKey("datetime", $formatted_decoded);
-        $this->assertArrayHasKey("timestamp", $formatted_decoded);
-        $this->assertEquals($record->datetime->format('Y-m-d\TH:i:s.uO'), $formatted_decoded["timestamp"]);
+        $this->assertArrayNotHasKey('datetime', $formatted_decoded);
+        $this->assertArrayHasKey('timestamp', $formatted_decoded);
+        $this->assertEquals($record->datetime->format('Y-m-d\TH:i:s.uO'), $formatted_decoded['timestamp']);
     }
 }

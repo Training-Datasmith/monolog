@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Level;
 use Monolog\LogRecord;
 
 /**

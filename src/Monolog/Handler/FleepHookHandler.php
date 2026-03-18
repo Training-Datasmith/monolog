@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -102,10 +104,10 @@ class FleepHookHandler extends SocketHandler
      */
     private function buildHeader(string $content): string
     {
-        $header = "POST " . static::FLEEP_HOOK_URI . $this->token . " HTTP/1.1\r\n";
-        $header .= "Host: " . static::FLEEP_HOST . "\r\n";
+        $header = 'POST ' . static::FLEEP_HOOK_URI . $this->token . " HTTP/1.1\r\n";
+        $header .= 'Host: ' . static::FLEEP_HOST . "\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-        $header .= "Content-Length: " . \strlen($content) . "\r\n";
+        $header .= 'Content-Length: ' . \strlen($content) . "\r\n";
 
         return $header . "\r\n";
     }

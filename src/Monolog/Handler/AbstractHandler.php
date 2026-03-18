@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -13,9 +15,9 @@ namespace Monolog\Handler;
 
 use Monolog\Level;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Monolog\ResettableInterface;
 use Psr\Log\LogLevel;
-use Monolog\LogRecord;
 
 /**
  * Base Handler class providing basic level/bubble support

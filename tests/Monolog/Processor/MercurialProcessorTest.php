@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -54,9 +56,9 @@ class MercurialProcessorTest extends \Monolog\Test\MonologTestCase
     public function testProcessor()
     {
         if (\defined('PHP_WINDOWS_VERSION_BUILD')) {
-            exec("where hg 2>NUL", $output, $result);
+            exec('where hg 2>NUL', $output, $result);
         } else {
-            exec("which hg 2>/dev/null >/dev/null", $output, $result);
+            exec('which hg 2>/dev/null >/dev/null', $output, $result);
         }
         if ($result != 0) {
             $this->markTestSkipped('hg is missing');

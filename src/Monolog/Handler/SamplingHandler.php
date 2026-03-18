@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -44,8 +46,9 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
      *
      * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
      */
-    protected Closure|HandlerInterface $handler, protected int $factor)
-    {
+        protected Closure|HandlerInterface $handler,
+        protected int $factor
+    ) {
         parent::__construct();
     }
 
@@ -77,7 +80,7 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
         if (!$this->handler instanceof HandlerInterface) {
             $handler = ($this->handler)($record, $this);
             if (!$handler instanceof HandlerInterface) {
-                throw new \RuntimeException("The factory Closure should return a HandlerInterface");
+                throw new \RuntimeException('The factory Closure should return a HandlerInterface');
             }
             $this->handler = $handler;
         }

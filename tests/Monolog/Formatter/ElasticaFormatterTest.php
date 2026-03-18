@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -19,7 +21,7 @@ class ElasticaFormatterTest extends MonologTestCase
     public function setUp(): void
     {
         if (!class_exists("Elastica\Document")) {
-            $this->markTestSkipped("ruflin/elastica not installed");
+            $this->markTestSkipped('ruflin/elastica not installed');
         }
     }
 
@@ -35,8 +37,8 @@ class ElasticaFormatterTest extends MonologTestCase
             Level::Error,
             'log',
             channel: 'meh',
-            context: ['foo' => 7, 'bar', 'class' => new \stdClass],
-            datetime: new \DateTimeImmutable("@0"),
+            context: ['foo' => 7, 'bar', 'class' => new \stdClass()],
+            datetime: new \DateTimeImmutable('@0'),
         );
 
         // expected values

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -35,7 +37,7 @@ class FluentdFormatterTest extends MonologTestCase
      */
     public function testFormat()
     {
-        $record = $this->getRecord(Level::Warning, datetime: new \DateTimeImmutable("@0"));
+        $record = $this->getRecord(Level::Warning, datetime: new \DateTimeImmutable('@0'));
 
         $formatter = new FluentdFormatter();
         $this->assertEquals(
@@ -49,7 +51,7 @@ class FluentdFormatterTest extends MonologTestCase
      */
     public function testFormatWithTag()
     {
-        $record = $this->getRecord(Level::Error, datetime: new \DateTimeImmutable("@0"));
+        $record = $this->getRecord(Level::Error, datetime: new \DateTimeImmutable('@0'));
 
         $formatter = new FluentdFormatter(true);
         $this->assertEquals(

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -14,8 +16,8 @@ namespace Monolog\Handler;
 use DateTimeZone;
 use InvalidArgumentException;
 use Monolog\Level;
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Stores logs to files that are rotated every day and a limited number of files are kept.
@@ -141,7 +143,7 @@ class RotatingFileHandler extends StreamHandler
         }
 
         // Sorting the files by name to remove the older ones
-        usort($logFiles, fn($a, $b) => strcmp((string) $b, (string) $a));
+        usort($logFiles, fn ($a, $b) => strcmp((string) $b, (string) $a));
 
         $basePath = dirname($this->filename);
 
@@ -149,7 +151,7 @@ class RotatingFileHandler extends StreamHandler
             if (is_writable($file)) {
                 // suppress errors here as unlink() might fail if two processes
                 // are cleaning up/rotating at the same time
-                set_error_handler(fn(int $errno, string $errstr, string $errfile, int $errline): bool => true);
+                set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline): bool => true);
                 unlink($file);
 
                 $dir = dirname($file);

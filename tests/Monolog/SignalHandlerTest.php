@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -72,7 +74,7 @@ class SignalHandlerTest extends MonologTestCase
 
     public function testHandleSignal()
     {
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new SignalHandler($logger);
         $signo = 2;  // SIGINT.
         $siginfo = ['signo' => $signo, 'errno' => 0, 'code' => 0];
@@ -102,7 +104,7 @@ class SignalHandlerTest extends MonologTestCase
         $this->setSignalHandler(SIGCONT, SIG_IGN);
         $this->setSignalHandler(SIGURG, SIG_IGN);
 
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new SignalHandler($logger);
         $pid = posix_getpid();
 
@@ -183,7 +185,7 @@ class SignalHandlerTest extends MonologTestCase
     {
         $this->setSignalHandler(SIGURG, SIG_IGN);
 
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new SignalHandler($logger);
         $previousCalled = 0;
         pcntl_signal(SIGURG, function ($signo, ?array $siginfo = null) use (&$previousCalled) {
@@ -227,7 +229,7 @@ class SignalHandlerTest extends MonologTestCase
         }
 
         $this->assertNotSame(-1, $pid);
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new SignalHandler($logger);
         $errHandler->registerSignalHandler(SIGURG, LogLevel::INFO, false, $restartSyscalls, false);
         if ($restartSyscalls) {
@@ -269,7 +271,7 @@ class SignalHandlerTest extends MonologTestCase
         $this->setSignalHandler(SIGURG, SIG_IGN);
         pcntl_async_signals($initialAsync);
 
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new SignalHandler($logger);
         $errHandler->registerSignalHandler(SIGURG, LogLevel::INFO, false, false, $desiredAsync);
         $this->assertTrue(posix_kill(posix_getpid(), SIGURG));

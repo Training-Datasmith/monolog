@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -60,30 +62,30 @@ class SyslogFormatterTest extends \Monolog\Test\MonologTestCase
     {
         return [
             'error' => [
-                'expected' => "<11>1 1970-01-01T00:00:00.000000+00:00 " . gethostname() . " - " . getmypid() ." meh - ERROR: log  \n",
-                'dateTime' => new DateTimeImmutable("@0"),
+                'expected' => '<11>1 1970-01-01T00:00:00.000000+00:00 ' . gethostname() . ' - ' . getmypid() ." meh - ERROR: log  \n",
+                'dateTime' => new DateTimeImmutable('@0'),
                 'channel' => 'meh',
                 'level' => Level::Error,
                 'message' => 'log',
             ],
             'info' => [
-                'expected' => "<11>1 1970-01-01T00:00:00.000000+00:00 " . gethostname() . " - " . getmypid() ." meh - ERROR: log  \n",
-                'dateTime' => new DateTimeImmutable("@0"),
+                'expected' => '<11>1 1970-01-01T00:00:00.000000+00:00 ' . gethostname() . ' - ' . getmypid() ." meh - ERROR: log  \n",
+                'dateTime' => new DateTimeImmutable('@0'),
                 'channel' => 'meh',
                 'level' => Level::Error,
                 'message' => 'log',
             ],
             'with app name' => [
-                'expected' => "<11>1 1970-01-01T00:00:00.000000+00:00 " . gethostname() . " my-app " . getmypid() ." meh - ERROR: log  \n",
-                'dateTime' => new DateTimeImmutable("@0"),
+                'expected' => '<11>1 1970-01-01T00:00:00.000000+00:00 ' . gethostname() . ' my-app ' . getmypid() ." meh - ERROR: log  \n",
+                'dateTime' => new DateTimeImmutable('@0'),
                 'channel' => 'meh',
                 'level' => Level::Error,
                 'message' => 'log',
                 'appName' => 'my-app',
             ],
             'with context' => [
-                'expected' => "<11>1 1970-01-01T00:00:00.000000+00:00 " . gethostname() . " - " . getmypid() ." meh - ERROR: log {\"additional-context\":\"test\"} \n",
-                'dateTime' => new DateTimeImmutable("@0"),
+                'expected' => '<11>1 1970-01-01T00:00:00.000000+00:00 ' . gethostname() . ' - ' . getmypid() ." meh - ERROR: log {\"additional-context\":\"test\"} \n",
+                'dateTime' => new DateTimeImmutable('@0'),
                 'channel' => 'meh',
                 'level' => Level::Error,
                 'message' => 'log',
@@ -91,8 +93,8 @@ class SyslogFormatterTest extends \Monolog\Test\MonologTestCase
                 'context' => ['additional-context' => 'test'],
             ],
             'with extra' => [
-                'expected' => "<11>1 1970-01-01T00:00:00.000000+00:00 " . gethostname() . " - " . getmypid() ." meh - ERROR: log  {\"userId\":1}\n",
-                'dateTime' => new DateTimeImmutable("@0"),
+                'expected' => '<11>1 1970-01-01T00:00:00.000000+00:00 ' . gethostname() . ' - ' . getmypid() ." meh - ERROR: log  {\"userId\":1}\n",
+                'dateTime' => new DateTimeImmutable('@0'),
                 'channel' => 'meh',
                 'level' => Level::Error,
                 'message' => 'log',

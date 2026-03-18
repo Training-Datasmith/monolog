@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -23,7 +25,7 @@ class UdpSocket
     {
     }
 
-    public function write(string $line, string $header = ""): void
+    public function write(string $line, string $header = ''): void
     {
         $this->send($this->assembleMessage($line, $header));
     }

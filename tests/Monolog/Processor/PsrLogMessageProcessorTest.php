@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -19,7 +21,7 @@ class PsrLogMessageProcessorTest extends \Monolog\Test\MonologTestCase
     #[DataProvider('getPairs')]
     public function testReplacement($val, $expected)
     {
-        $proc = new PsrLogMessageProcessor;
+        $proc = new PsrLogMessageProcessor();
 
         $message = $proc($this->getRecord(message: '{foo}', context: ['foo' => $val]));
         $this->assertEquals($expected, $message['message']);
@@ -37,7 +39,7 @@ class PsrLogMessageProcessorTest extends \Monolog\Test\MonologTestCase
 
     public function testCustomDateFormat()
     {
-        $format = "Y-m-d";
+        $format = 'Y-m-d';
         $date = new \DateTime();
 
         $proc = new PsrLogMessageProcessor($format);
@@ -59,7 +61,7 @@ class PsrLogMessageProcessorTest extends \Monolog\Test\MonologTestCase
             [true,     '1'],
             [false,    ''],
             [$date, $date->format(PsrLogMessageProcessor::SIMPLE_DATE)],
-            [new \stdClass, '[object stdClass]'],
+            [new \stdClass(), '[object stdClass]'],
             [[], 'array[]'],
             [[], 'array[]'],
             [[1, 2, 3], 'array[1,2,3]'],

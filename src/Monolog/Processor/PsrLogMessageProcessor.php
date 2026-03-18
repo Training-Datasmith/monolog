@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Processor;
 
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Processes a record's message according to PSR-3 rules
@@ -51,7 +53,7 @@ class PsrLogMessageProcessor implements ProcessorInterface
                 continue;
             }
 
-            if (null === $val || \is_scalar($val) || (\is_object($val) && method_exists($val, "__toString"))) {
+            if (null === $val || \is_scalar($val) || (\is_object($val) && method_exists($val, '__toString'))) {
                 $replacements[$placeholder] = $val;
             } elseif ($val instanceof \DateTimeInterface) {
                 if (null === $this->dateFormat && $val instanceof \Monolog\JsonSerializableDateTimeImmutable) {

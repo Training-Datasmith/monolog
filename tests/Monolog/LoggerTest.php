@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,8 +14,8 @@
 namespace Monolog;
 
 use Monolog\Handler\HandlerInterface;
-use Monolog\Processor\WebProcessor;
 use Monolog\Handler\TestHandler;
+use Monolog\Processor\WebProcessor;
 use Monolog\Test\MonologTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -63,7 +65,7 @@ class LoggerTest extends MonologTestCase
     public function testConvertRFC5424ToMonologLevelInAddRecordAndLog()
     {
         $logger = new Logger('test');
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $logger->pushHandler($handler);
 
         foreach ([
@@ -93,7 +95,7 @@ class LoggerTest extends MonologTestCase
     public function testChannel()
     {
         $logger = new Logger('foo');
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $logger->pushHandler($handler);
         $logger->warning('test');
         list($record) = $handler->getRecords();
@@ -173,8 +175,8 @@ class LoggerTest extends MonologTestCase
 
     public function testHandlersInCtor()
     {
-        $handler1 = new TestHandler;
-        $handler2 = new TestHandler;
+        $handler1 = new TestHandler();
+        $handler2 = new TestHandler();
         $logger = new Logger(__METHOD__, [$handler1, $handler2]);
 
         $this->assertEquals($handler1, $logger->popHandler());
@@ -183,8 +185,8 @@ class LoggerTest extends MonologTestCase
 
     public function testProcessorsInCtor()
     {
-        $processor1 = new WebProcessor;
-        $processor2 = new WebProcessor;
+        $processor1 = new WebProcessor();
+        $processor2 = new WebProcessor();
         $logger = new Logger(__METHOD__, [], [$processor1, $processor2]);
 
         $this->assertEquals($processor1, $logger->popProcessor());
@@ -198,8 +200,8 @@ class LoggerTest extends MonologTestCase
     public function testPushPopHandler()
     {
         $logger = new Logger(__METHOD__);
-        $handler1 = new TestHandler;
-        $handler2 = new TestHandler;
+        $handler1 = new TestHandler();
+        $handler2 = new TestHandler();
 
         $logger->pushHandler($handler1);
         $logger->pushHandler($handler2);
@@ -218,8 +220,8 @@ class LoggerTest extends MonologTestCase
     public function testSetHandlers()
     {
         $logger = new Logger(__METHOD__);
-        $handler1 = new TestHandler;
-        $handler2 = new TestHandler;
+        $handler1 = new TestHandler();
+        $handler2 = new TestHandler();
 
         $logger->pushHandler($handler1);
         $logger->setHandlers([$handler2]);
@@ -228,8 +230,8 @@ class LoggerTest extends MonologTestCase
         $this->assertEquals([$handler2], $logger->getHandlers());
 
         $logger->setHandlers([
-            "AMapKey" => $handler1,
-            "Woop" => $handler2,
+            'AMapKey' => $handler1,
+            'Woop' => $handler2,
         ]);
 
         // Keys have been scrubbed
@@ -243,8 +245,8 @@ class LoggerTest extends MonologTestCase
     public function testPushPopProcessor()
     {
         $logger = new Logger(__METHOD__);
-        $processor1 = new WebProcessor;
-        $processor2 = new WebProcessor;
+        $processor1 = new WebProcessor();
+        $processor2 = new WebProcessor();
 
         $logger->pushProcessor($processor1);
         $logger->pushProcessor($processor2);
@@ -263,7 +265,7 @@ class LoggerTest extends MonologTestCase
     public function testProcessorsAreExecuted()
     {
         $logger = new Logger(__METHOD__);
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $logger->pushHandler($handler);
         $logger->pushProcessor(function ($record) {
             $record->extra['win'] = true;
@@ -507,7 +509,7 @@ class LoggerTest extends MonologTestCase
     public function testLogMethods(string $method, Level $expectedLevel)
     {
         $logger = new Logger('foo');
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $logger->pushHandler($handler);
         $logger->{$method}('test');
         list($record) = $handler->getRecords();
@@ -537,7 +539,7 @@ class LoggerTest extends MonologTestCase
     {
         $logger = new Logger('foo');
         $logger->setTimezone($tz);
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $logger->pushHandler($handler);
         $logger->info('test');
         list($record) = $handler->getRecords();
@@ -565,7 +567,7 @@ class LoggerTest extends MonologTestCase
             $logger->useMicrosecondTimestamps($microseconds);
             $tz = new \DateTimeZone('America/New_York');
             $logger->setTimezone($tz);
-            $handler = new TestHandler;
+            $handler = new TestHandler();
             $logger->pushHandler($handler);
             $dt = new \DateTime('now', $tz);
             $logger->info('test');
@@ -588,7 +590,7 @@ class LoggerTest extends MonologTestCase
             $logger->useMicrosecondTimestamps($microseconds);
             $tz = new \DateTimeZone('America/New_York');
             $logger->setTimezone($tz);
-            $handler = new TestHandler;
+            $handler = new TestHandler();
             $logger->pushHandler($handler);
             $dt = new \DateTime('now', $tz);
             $logger->info('test');
@@ -617,7 +619,7 @@ class LoggerTest extends MonologTestCase
 
         $logger = new Logger('foo');
         $logger->useMicrosecondTimestamps($micro);
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $logger->pushHandler($handler);
         $logger->info('test');
         list($record) = $handler->getRecords();

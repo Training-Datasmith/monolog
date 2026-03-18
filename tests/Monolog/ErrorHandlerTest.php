@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -20,7 +22,7 @@ class ErrorHandlerTest extends \PHPUnit\Framework\TestCase
 {
     public function testRegister()
     {
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
 
         $this->assertInstanceOf(ErrorHandler::class, ErrorHandler::register($logger, false, false, false));
     }
@@ -28,7 +30,7 @@ class ErrorHandlerTest extends \PHPUnit\Framework\TestCase
     #[WithoutErrorHandler]
     public function testHandleError()
     {
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new ErrorHandler($logger);
 
         $phpunitHandler = set_error_handler($prevHandler = function () {
@@ -80,7 +82,7 @@ class ErrorHandlerTest extends \PHPUnit\Framework\TestCase
         $expectedReservedMemory,
         $expectedFatalLevel
     ) {
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new ErrorHandler($logger);
         $res = $errHandler->registerFatalHandler($level, $reservedMemorySize);
 
@@ -93,7 +95,7 @@ class ErrorHandlerTest extends \PHPUnit\Framework\TestCase
     #[WithoutErrorHandler]
     public function testHandleException()
     {
-        $logger = new Logger('test', [$handler = new TestHandler]);
+        $logger = new Logger('test', [$handler = new TestHandler()]);
         $errHandler = new ErrorHandler($logger);
 
         $resHandler = $errHandler->registerExceptionHandler($map = ['Monolog\CustomTestException' => LogLevel::DEBUG, 'TypeError' => LogLevel::NOTICE, 'Throwable' => LogLevel::WARNING], false);

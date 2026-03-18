@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Processor;
 
-use Monolog\ResettableInterface;
 use Monolog\LogRecord;
+use Monolog\ResettableInterface;
 
 /**
  * Adds a unique identifier into records

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -13,10 +15,10 @@ namespace Monolog\Handler;
 
 use Monolog\Formatter\ChromePHPFormatter;
 use Monolog\Formatter\FormatterInterface;
-use Monolog\Level;
-use Monolog\Utils;
-use Monolog\LogRecord;
 use Monolog\JsonSerializableDateTimeImmutable;
+use Monolog\Level;
+use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Handler sending logs to the ChromePHP extension (http://www.chromephp.com/)

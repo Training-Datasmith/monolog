@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -13,7 +15,7 @@ namespace Monolog;
 
 final class Utils
 {
-    const DEFAULT_JSON_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR;
+    public const DEFAULT_JSON_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR;
 
     public static function getClass(object $object): string
     {
@@ -180,7 +182,7 @@ final class Utils
         if (preg_match('//u', $data) !== 1) {
             $data = preg_replace_callback(
                 '/[\x80-\xFF]+/',
-                fn(array $m): string => \function_exists('mb_convert_encoding')
+                fn (array $m): string => \function_exists('mb_convert_encoding')
                     ? mb_convert_encoding($m[0], 'UTF-8', 'ISO-8859-1')
                     : (\function_exists('utf8_encode') ? utf8_encode((string) $m[0]) : ''),
                 $data

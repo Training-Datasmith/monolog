@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,10 +13,10 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
-use Monolog\ResettableInterface;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Level;
 use Monolog\LogRecord;
+use Monolog\ResettableInterface;
 
 /**
  * Buffers all records until closing the handler and then pass them as batch.

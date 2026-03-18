@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -26,13 +28,13 @@ class LogstashFormatterTest extends MonologTestCase
             Level::Error,
             'log',
             channel: 'meh',
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
         );
 
         $message = json_decode($formatter->format($record), true);
 
-        $this->assertEquals("1970-01-01T00:00:00.000000+00:00", $message['@timestamp']);
-        $this->assertEquals("1", $message['@version']);
+        $this->assertEquals('1970-01-01T00:00:00.000000+00:00', $message['@timestamp']);
+        $this->assertEquals('1', $message['@version']);
         $this->assertEquals('log', $message['message']);
         $this->assertEquals('meh', $message['channel']);
         $this->assertEquals(Level::Error->getName(), $message['level']);
@@ -58,7 +60,7 @@ class LogstashFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['file' => 'test', 'line' => 14],
         );
 
@@ -79,7 +81,7 @@ class LogstashFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => 'pair'],
         );
 
@@ -109,7 +111,7 @@ class LogstashFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => 'pair'],
         );
 
@@ -136,7 +138,7 @@ class LogstashFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => 'pair'],
         );
 
@@ -153,7 +155,7 @@ class LogstashFormatterTest extends MonologTestCase
             Level::Error,
             'log',
             channel: '¯\_(ツ)_/¯',
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: [
                 'user_agent' => "\xD6WN; FBCR/OrangeEspa\xF1a; Vers\xE3o/4.0; F\xE4rist",
             ],
@@ -161,7 +163,7 @@ class LogstashFormatterTest extends MonologTestCase
 
         $message = json_decode($formatter->format($record), true);
 
-        $this->assertEquals("1970-01-01T00:00:00.000000+00:00", $message['@timestamp']);
+        $this->assertEquals('1970-01-01T00:00:00.000000+00:00', $message['@timestamp']);
         $this->assertEquals('log', $message['message']);
         $this->assertEquals('¯\_(ツ)_/¯', $message['channel']);
         $this->assertEquals('ERROR', $message['level']);

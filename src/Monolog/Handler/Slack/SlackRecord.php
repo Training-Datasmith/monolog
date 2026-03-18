@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,11 +13,11 @@
 
 namespace Monolog\Handler\Slack;
 
-use Monolog\Level;
-use Monolog\Utils;
-use Monolog\Formatter\NormalizerFormatter;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\NormalizerFormatter;
+use Monolog\Level;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Slack record utility helping to log to Slack webhooks or API.
@@ -215,7 +217,7 @@ class SlackRecord
         $hasOnlyNonNumericKeys = \count(array_filter(array_keys($normalized), is_numeric(...))) === 0;
 
         return $hasSecondDimension || $hasOnlyNonNumericKeys
-            ? Utils::jsonEncode($normalized, JSON_PRETTY_PRINT|Utils::DEFAULT_JSON_FLAGS)
+            ? Utils::jsonEncode($normalized, JSON_PRETTY_PRINT | Utils::DEFAULT_JSON_FLAGS)
             : Utils::jsonEncode($normalized, Utils::DEFAULT_JSON_FLAGS);
     }
 

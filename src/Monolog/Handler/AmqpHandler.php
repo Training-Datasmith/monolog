@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,14 +13,14 @@
 
 namespace Monolog\Handler;
 
+use AMQPExchange;
 use Gelf\Message as GelfMessage;
-use Monolog\Level;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\JsonFormatter;
-use PhpAmqpLib\Message\AMQPMessage;
-use PhpAmqpLib\Channel\AMQPChannel;
-use AMQPExchange;
+use Monolog\Level;
 use Monolog\LogRecord;
+use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class AmqpHandler extends AbstractProcessingHandler
 {
@@ -77,7 +79,7 @@ class AmqpHandler extends AbstractProcessingHandler
         $data = $record->formatted;
         $routingKey = $this->getRoutingKey($record);
 
-        if($data instanceof GelfMessage) {
+        if ($data instanceof GelfMessage) {
             $data = json_encode($data->toArray());
         }
 
@@ -123,7 +125,7 @@ class AmqpHandler extends AbstractProcessingHandler
             $record = $this->processRecord($record);
             $data = $this->getFormatter()->format($record);
 
-            if($data instanceof GelfMessage) {
+            if ($data instanceof GelfMessage) {
                 $data = json_encode($data->toArray());
             }
 

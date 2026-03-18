@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -19,7 +21,7 @@ class GelfMessageFormatterTest extends MonologTestCase
     public function setUp(): void
     {
         if (!class_exists('\Gelf\Message')) {
-            $this->markTestSkipped("graylog2/gelf-php is not installed");
+            $this->markTestSkipped('graylog2/gelf-php is not installed');
         }
     }
 
@@ -33,7 +35,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             Level::Error,
             'log',
             channel: 'meh',
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
         );
 
         $message = $formatter->format($record);
@@ -66,7 +68,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['file' => 'test', 'line' => 14, 0 => 'foo'],
         );
 
@@ -88,7 +90,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger', 'trueBool' => true, 'falseBool' => false],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => 'pair'],
         );
 
@@ -136,15 +138,15 @@ class GelfMessageFormatterTest extends MonologTestCase
                 'file'  => '/some/file/in/dir.php:56',
                 'trace' => ['/some/file/1.php:23', '/some/file/2.php:3'],
             ]],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
         );
 
         $message = $formatter->format($record);
 
         $this->assertInstanceOf('Gelf\Message', $message);
 
-        $this->assertEquals("/some/file/in/dir.php", $message->getAdditional('file'));
-        $this->assertEquals("56", $message->getAdditional('line'));
+        $this->assertEquals('/some/file/in/dir.php', $message->getAdditional('file'));
+        $this->assertEquals('56', $message->getAdditional('line'));
     }
 
     /**
@@ -158,7 +160,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => 'pair', 'trueBool' => true, 'falseBool' => false],
         );
 
@@ -199,7 +201,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['exception' => str_repeat(' ', 32767)],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => str_repeat(' ', 32767)],
         );
         $message = $formatter->format($record);
@@ -225,7 +227,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['exception' => str_repeat(' ', 32767 * 2)],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => str_repeat(' ', 32767 * 2)],
         );
         $message = $formatter->format($record);
@@ -251,7 +253,7 @@ class GelfMessageFormatterTest extends MonologTestCase
             str_repeat('в', 32767),
             channel: 'meh',
             context: ['exception' => str_repeat('а', 32767)],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['key' => str_repeat('б', 32767)],
         );
         $message = $formatter->format($record);

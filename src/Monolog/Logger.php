@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -16,11 +18,11 @@ use DateTimeZone;
 use Fiber;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Processor\ProcessorInterface;
-use Psr\Log\LoggerInterface;
 use Psr\Log\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use Throwable;
 use Stringable;
+use Throwable;
 use WeakMap;
 
 /**
@@ -166,7 +168,7 @@ class Logger implements LoggerInterface, ResettableInterface
      *
      * To process records of a single handler instead, add the processor on that specific handler
      */
-    protected array $processors = [], DateTimeZone|null $timezone = null)
+        protected array $processors = [], DateTimeZone|null $timezone = null)
     {
         $this->setHandlers($handlers);
         $this->timezone = $timezone ?? new DateTimeZone(date_default_timezone_get());

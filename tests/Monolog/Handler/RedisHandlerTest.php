@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
 
 class RedisHandlerTest extends \Monolog\Test\MonologTestCase
 {
@@ -39,10 +41,10 @@ class RedisHandlerTest extends \Monolog\Test\MonologTestCase
             ->method('__call')
             ->with(self::equalTo('rpush'), self::equalTo(['key', 'test']));
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new RedisHandler($redis, 'key');
-        $handler->setFormatter(new LineFormatter("%message%"));
+        $handler->setFormatter(new LineFormatter('%message%'));
         $handler->handle($record);
     }
 
@@ -59,10 +61,10 @@ class RedisHandlerTest extends \Monolog\Test\MonologTestCase
             ->method('rPush')
             ->with('key', 'test');
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new RedisHandler($redis, 'key');
-        $handler->setFormatter(new LineFormatter("%message%"));
+        $handler->setFormatter(new LineFormatter('%message%'));
         $handler->handle($record);
     }
 
@@ -91,16 +93,16 @@ class RedisHandlerTest extends \Monolog\Test\MonologTestCase
             ->method('exec')
             ->willReturnSelf();
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new RedisHandler($redis, 'key', Level::Debug, true, 10);
-        $handler->setFormatter(new LineFormatter("%message%"));
+        $handler->setFormatter(new LineFormatter('%message%'));
         $handler->handle($record);
     }
 
     public function testPredisHandleCapped()
     {
-        $redis = new class extends \Predis\Client {
+        $redis = new class () extends \Predis\Client {
             public array $testResults = [];
 
             public function rpush(...$args)
@@ -125,10 +127,10 @@ class RedisHandlerTest extends \Monolog\Test\MonologTestCase
             }
         };
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new RedisHandler($redis, 'key', Level::Debug, true, 10);
-        $handler->setFormatter(new LineFormatter("%message%"));
+        $handler->setFormatter(new LineFormatter('%message%'));
         $handler->handle($record);
 
         self::assertsame([

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -15,7 +17,6 @@ use DateTimeInterface;
 use Monolog\Handler\SyslogUdp\UdpSocket;
 use Monolog\Level;
 use Monolog\LogRecord;
-use Monolog\Utils;
 
 /**
  * A Handler for logging to a remote syslogd server.
@@ -25,9 +26,9 @@ use Monolog\Utils;
  */
 class SyslogUdpHandler extends AbstractSyslogHandler
 {
-    const RFC3164 = 0;
-    const RFC5424 = 1;
-    const RFC5424e = 2;
+    public const RFC3164 = 0;
+    public const RFC5424 = 1;
+    public const RFC5424e = 2;
 
     /** @var array<self::RFC*, string> */
     private array $dateFormats = [
@@ -120,18 +121,18 @@ class SyslogUdpHandler extends AbstractSyslogHandler
             $date = $dateNew->format($this->dateFormats[$this->rfc]);
 
             return "<$priority>" .
-                $date . " " .
-                $hostname . " " .
-                $this->ident . "[" . $pid . "]: ";
+                $date . ' ' .
+                $hostname . ' ' .
+                $this->ident . '[' . $pid . ']: ';
         }
 
         $date = $datetime->format($this->dateFormats[$this->rfc]);
 
         return "<$priority>1 " .
-            $date . " " .
-            $hostname . " " .
-            $this->ident . " " .
-            $pid . " - - ";
+            $date . ' ' .
+            $hostname . ' ' .
+            $this->ident . ' ' .
+            $pid . ' - - ';
     }
 
     /**

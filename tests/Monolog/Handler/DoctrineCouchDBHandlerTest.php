@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -29,7 +31,7 @@ class DoctrineCouchDBHandlerTest extends \Monolog\Test\MonologTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $expected = [
             'message' => 'test',

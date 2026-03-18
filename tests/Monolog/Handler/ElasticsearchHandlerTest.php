@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,13 +13,13 @@
 
 namespace Monolog\Handler;
 
+use Elastic\Elasticsearch\Client as Client8;
+use Elastic\Elasticsearch\ClientBuilder as ClientBuilder8;
+use Elasticsearch\Client;
+use Elasticsearch\ClientBuilder;
 use Monolog\Formatter\ElasticsearchFormatter;
 use Monolog\Formatter\NormalizerFormatter;
 use Monolog\Level;
-use Elasticsearch\Client;
-use Elastic\Elasticsearch\Client as Client8;
-use Elasticsearch\ClientBuilder;
-use Elastic\Elasticsearch\ClientBuilder as ClientBuilder8;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -134,12 +136,12 @@ class ElasticsearchHandlerTest extends \Monolog\Test\MonologTestCase
      */
     public function testHandleBatchIntegration()
     {
-        $msg = $this->getRecord(Level::Error, 'log', context: ['foo' => 7, 'bar', 'class' => new \stdClass], datetime: new \DateTimeImmutable("@0"));
+        $msg = $this->getRecord(Level::Error, 'log', context: ['foo' => 7, 'bar', 'class' => new \stdClass()], datetime: new \DateTimeImmutable('@0'));
 
         $expected = $msg->toArray();
         $expected['datetime'] = $msg['datetime']->format(\DateTime::ATOM);
         $expected['context'] = [
-            'class' => ["stdClass" => []],
+            'class' => ['stdClass' => []],
             'foo' => 7,
             0 => 'bar',
         ];

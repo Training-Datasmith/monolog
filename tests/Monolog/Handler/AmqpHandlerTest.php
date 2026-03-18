@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -22,11 +24,11 @@ class AmqpHandlerTest extends \Monolog\Test\MonologTestCase
     public function testHandleAmqpExt()
     {
         if (!class_exists('AMQPConnection') || !class_exists('AMQPExchange')) {
-            $this->markTestSkipped("amqp-php not installed");
+            $this->markTestSkipped('amqp-php not installed');
         }
 
         if (!class_exists('AMQPChannel')) {
-            $this->markTestSkipped("Please update AMQP to version >= 1.0");
+            $this->markTestSkipped('Please update AMQP to version >= 1.0');
         }
 
         $messages = [];
@@ -45,7 +47,7 @@ class AmqpHandlerTest extends \Monolog\Test\MonologTestCase
 
         $handler = new AmqpHandler($exchange);
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $expected = [
             [
@@ -78,7 +80,7 @@ class AmqpHandlerTest extends \Monolog\Test\MonologTestCase
     public function testHandlePhpAmqpLib()
     {
         if (!class_exists('PhpAmqpLib\Channel\AMQPChannel')) {
-            $this->markTestSkipped("php-amqplib not installed");
+            $this->markTestSkipped('php-amqplib not installed');
         }
 
         $messages = [];
@@ -95,14 +97,14 @@ class AmqpHandlerTest extends \Monolog\Test\MonologTestCase
 
         $exchange->expects($this->any())
             ->method('basic_publish')
-            ->willReturnCallback(function (AMQPMessage $msg, $exchange = "", $routing_key = "", $mandatory = false, $immediate = false, $ticket = null) use (&$messages) {
+            ->willReturnCallback(function (AMQPMessage $msg, $exchange = '', $routing_key = '', $mandatory = false, $immediate = false, $ticket = null) use (&$messages) {
                 $messages[] = [$msg, $exchange, $routing_key, $mandatory, $immediate, $ticket];
             })
         ;
 
         $handler = new AmqpHandler($exchange, 'log');
 
-        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass, 'foo' => 34]);
+        $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $expected = [
             [

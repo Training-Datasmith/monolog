@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,8 +14,8 @@
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * IFTTTHandler uses cURL to trigger IFTTT Maker actions
@@ -49,19 +51,19 @@ class IFTTTHandler extends AbstractProcessingHandler
     public function write(LogRecord $record): void
     {
         $postData = [
-            "value1" => $record->channel,
-            "value2" => $record["level_name"],
-            "value3" => $record->message,
+            'value1' => $record->channel,
+            'value2' => $record['level_name'],
+            'value3' => $record->message,
         ];
         $postString = Utils::jsonEncode($postData);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://maker.ifttt.com/trigger/" . $this->eventName . "/with/key/" . $this->secretKey);
+        curl_setopt($ch, CURLOPT_URL, 'https://maker.ifttt.com/trigger/' . $this->eventName . '/with/key/' . $this->secretKey);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Content-Type: application/json",
+            'Content-Type: application/json',
         ]);
 
         Curl\Util::execute($ch);

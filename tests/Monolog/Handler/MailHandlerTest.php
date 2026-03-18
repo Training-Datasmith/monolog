@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -60,7 +62,7 @@ class MailHandlerTest extends \Monolog\Test\MonologTestCase
     public function testHandle()
     {
         $handler = $this->createPartialMock('Monolog\Handler\MailHandler', ['send']);
-        $handler->setFormatter(new \Monolog\Formatter\LineFormatter);
+        $handler->setFormatter(new \Monolog\Formatter\LineFormatter());
 
         $record = $this->getRecord(message: 'test handle');
         $record->formatted = '['.$record->datetime.'] test.WARNING: test handle [] []'."\n";

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -15,9 +17,9 @@ use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Manager;
-use Monolog\Level;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\MongoDBFormatter;
+use Monolog\Level;
 use Monolog\LogRecord;
 
 /**
@@ -67,7 +69,7 @@ class MongoDBHandler extends AbstractProcessingHandler
         }
 
         if (isset($this->manager, $this->namespace)) {
-            $bulk = new BulkWrite;
+            $bulk = new BulkWrite();
             $bulk->insert($record->formatted);
             $this->manager->executeBulkWrite($this->namespace, $bulk);
         }
@@ -78,6 +80,6 @@ class MongoDBHandler extends AbstractProcessingHandler
      */
     protected function getDefaultFormatter(): FormatterInterface
     {
-        return new MongoDBFormatter;
+        return new MongoDBFormatter();
     }
 }

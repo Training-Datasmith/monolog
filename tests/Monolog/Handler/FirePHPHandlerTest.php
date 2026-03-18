@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -26,7 +28,7 @@ class FirePHPHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testHeaders()
     {
-        $handler = new TestFirePHPHandler;
+        $handler = new TestFirePHPHandler();
         $handler->setFormatter($this->getIdentityFormatter());
         $handler->handle($this->getRecord(Level::Debug));
         $handler->handle($this->getRecord(Level::Warning));
@@ -44,12 +46,12 @@ class FirePHPHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testConcurrentHandlers()
     {
-        $handler = new TestFirePHPHandler;
+        $handler = new TestFirePHPHandler();
         $handler->setFormatter($this->getIdentityFormatter());
         $handler->handle($this->getRecord(Level::Debug));
         $handler->handle($this->getRecord(Level::Warning));
 
-        $handler2 = new TestFirePHPHandler;
+        $handler2 = new TestFirePHPHandler();
         $handler2->setFormatter($this->getIdentityFormatter());
         $handler2->handle($this->getRecord(Level::Debug));
         $handler2->handle($this->getRecord(Level::Warning));

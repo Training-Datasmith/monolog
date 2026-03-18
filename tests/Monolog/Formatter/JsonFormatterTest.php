@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,9 +14,9 @@
 namespace Monolog\Formatter;
 
 use Exception;
+use JsonSerializable;
 use Monolog\Level;
 use Monolog\LogRecord;
-use JsonSerializable;
 use Monolog\Test\MonologTestCase;
 
 class JsonFormatterTest extends MonologTestCase
@@ -327,10 +329,10 @@ class JsonFormatterTest extends MonologTestCase
             channel: 'test',
             datetime: new \DateTimeImmutable('2022-02-22 00:00:00'),
             context: [
-                'public' => new TestJsonNormPublic,
-                'private' => new TestJsonNormPrivate,
-                'withToStringAndJson' => new TestJsonNormWithToStringAndJson,
-                'withToString' => new TestJsonNormWithToString,
+                'public' => new TestJsonNormPublic(),
+                'private' => new TestJsonNormPrivate(),
+                'withToStringAndJson' => new TestJsonNormWithToStringAndJson(),
+                'withToString' => new TestJsonNormWithToString(),
             ],
         ));
 
@@ -349,7 +351,7 @@ class JsonFormatterTest extends MonologTestCase
             'bar',
             datetime: new \DateTimeImmutable('2025-05-19 00:00:00'),
             channel: 'test',
-            context: ['object' => new TestJsonNormWithFailingToString],
+            context: ['object' => new TestJsonNormWithFailingToString()],
         ));
 
         $this->assertSame(

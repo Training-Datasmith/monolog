@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -25,9 +27,9 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['stdClass', new \stdClass()],
-            ['class@anonymous', new class {
+            ['class@anonymous', new class () {
             }],
-            ['stdClass@anonymous', new class extends \stdClass {
+            ['stdClass@anonymous', new class () extends \stdClass {
             }],
         ];
     }
@@ -84,7 +86,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
 
     public static function providesDetectAndCleanUtf8()
     {
-        $obj = new \stdClass;
+        $obj = new \stdClass();
 
         return [
             'null' => [null, null],
@@ -112,7 +114,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
             ['1X', false],
             ['1K', 1024],
             ['1 K', 1024],
-            ['   5 M  ', 5*1024*1024],
+            ['   5 M  ', 5 * 1024 * 1024],
             ['1G', 1073741824],
             ['', false],
             [null, false],

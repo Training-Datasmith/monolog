@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -13,8 +15,8 @@ namespace Monolog\Handler\FingersCrossed;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Psr\Log\LogLevel;
 use Monolog\LogRecord;
+use Psr\Log\LogLevel;
 
 /**
  * Channel and Error level based monolog activation strategy. Allows to trigger activation

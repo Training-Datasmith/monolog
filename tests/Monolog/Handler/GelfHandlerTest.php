@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,15 +14,15 @@
 namespace Monolog\Handler;
 
 use Gelf\Message;
-use Monolog\Level;
 use Monolog\Formatter\GelfMessageFormatter;
+use Monolog\Level;
 
 class GelfHandlerTest extends \Monolog\Test\MonologTestCase
 {
     public function setUp(): void
     {
         if (!class_exists('Gelf\Publisher') || !class_exists('Gelf\Message')) {
-            $this->markTestSkipped("graylog2/gelf-php not installed");
+            $this->markTestSkipped('graylog2/gelf-php not installed');
         }
     }
 
@@ -50,7 +52,7 @@ class GelfHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testDebug()
     {
-        $record = $this->getRecord(Level::Debug, "A test debug message");
+        $record = $this->getRecord(Level::Debug, 'A test debug message');
         $expectedMessage = new Message();
         $expectedMessage
             ->setLevel(7)
@@ -71,7 +73,7 @@ class GelfHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testWarning()
     {
-        $record = $this->getRecord(Level::Warning, "A test warning message");
+        $record = $this->getRecord(Level::Warning, 'A test warning message');
         $expectedMessage = new Message();
         $expectedMessage
             ->setLevel(4)
@@ -94,7 +96,7 @@ class GelfHandlerTest extends \Monolog\Test\MonologTestCase
     {
         $record = $this->getRecord(
             Level::Warning,
-            "A test warning message",
+            'A test warning message',
             extra: ['blarg' => 'yep'],
             context: ['from' => 'logger'],
         );
@@ -103,11 +105,11 @@ class GelfHandlerTest extends \Monolog\Test\MonologTestCase
         $expectedMessage
             ->setLevel(4)
             ->setAdditional('facility', 'test')
-            ->setHost("mysystem")
+            ->setHost('mysystem')
             ->setShortMessage($record->message)
             ->setTimestamp($record->datetime)
-            ->setAdditional("EXTblarg", 'yep')
-            ->setAdditional("CTXfrom", 'logger')
+            ->setAdditional('EXTblarg', 'yep')
+            ->setAdditional('CTXfrom', 'logger')
         ;
 
         $messagePublisher = $this->getMessagePublisher();

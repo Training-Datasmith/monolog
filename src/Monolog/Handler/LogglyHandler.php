@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,10 +13,10 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
+use CurlHandle;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LogglyFormatter;
-use CurlHandle;
+use Monolog\Level;
 use Monolog\LogRecord;
 
 /**
@@ -71,7 +73,7 @@ class LogglyHandler extends AbstractProcessingHandler
      */
     private function loadCurlHandle(string $endpoint): CurlHandle
     {
-        $url = sprintf("https://%s/%s/%s/", static::HOST, $endpoint, $this->token);
+        $url = sprintf('https://%s/%s/%s/', static::HOST, $endpoint, $this->token);
 
         $ch = curl_init();
 
@@ -120,7 +122,7 @@ class LogglyHandler extends AbstractProcessingHandler
     {
         $level = $this->level;
 
-        $records = array_filter($records, fn(\Monolog\LogRecord $record) => $record->level->value >= $level->value);
+        $records = array_filter($records, fn (\Monolog\LogRecord $record) => $record->level->value >= $level->value);
 
         if (\count($records) > 0) {
             $this->send($this->getFormatter()->formatBatch($records), static::ENDPOINT_BATCH);

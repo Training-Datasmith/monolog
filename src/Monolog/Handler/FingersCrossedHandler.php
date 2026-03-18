@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,14 +14,14 @@
 namespace Monolog\Handler;
 
 use Closure;
-use Monolog\Handler\FingersCrossed\ErrorLevelActivationStrategy;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\FingersCrossed\ActivationStrategyInterface;
+use Monolog\Handler\FingersCrossed\ErrorLevelActivationStrategy;
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\ResettableInterface;
-use Monolog\Formatter\FormatterInterface;
-use Psr\Log\LogLevel;
 use Monolog\LogRecord;
+use Monolog\ResettableInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Buffers all records until a certain level is reached
@@ -68,8 +70,13 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
      *
      * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
      */
-    protected Closure|HandlerInterface $handler, int|string|Level|ActivationStrategyInterface|null $activationStrategy = null, protected int $bufferSize = 0, protected bool $bubble = true, protected bool $stopBuffering = true, int|string|Level|null $passthruLevel = null)
-    {
+        protected Closure|HandlerInterface $handler,
+        int|string|Level|ActivationStrategyInterface|null $activationStrategy = null,
+        protected int $bufferSize = 0,
+        protected bool $bubble = true,
+        protected bool $stopBuffering = true,
+        int|string|Level|null $passthruLevel = null
+    ) {
         if (null === $activationStrategy) {
             $activationStrategy = new ErrorLevelActivationStrategy(Level::Warning);
         }
@@ -169,7 +176,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
     {
         if (null !== $this->passthruLevel) {
             $passthruLevel = $this->passthruLevel;
-            $this->buffer = array_filter($this->buffer, static fn(\Monolog\LogRecord $record) => $passthruLevel->includes($record->level));
+            $this->buffer = array_filter($this->buffer, static fn (\Monolog\LogRecord $record) => $passthruLevel->includes($record->level));
             if (\count($this->buffer) > 0) {
                 $this->getHandler(end($this->buffer))->handleBatch($this->buffer);
             }
@@ -189,7 +196,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         if (!$this->handler instanceof HandlerInterface) {
             $handler = ($this->handler)($record, $this);
             if (!$handler instanceof HandlerInterface) {
-                throw new \RuntimeException("The factory Closure should return a HandlerInterface");
+                throw new \RuntimeException('The factory Closure should return a HandlerInterface');
             }
             $this->handler = $handler;
         }

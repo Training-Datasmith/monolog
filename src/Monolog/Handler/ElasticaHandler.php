@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,12 +14,12 @@
 namespace Monolog\Handler;
 
 use Elastic\Transport\Exception\TransportException;
-use Elastica\Document;
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\ElasticaFormatter;
-use Monolog\Level;
 use Elastica\Client;
+use Elastica\Document;
 use Elastica\Exception\ExceptionInterface;
+use Monolog\Formatter\ElasticaFormatter;
+use Monolog\Formatter\FormatterInterface;
+use Monolog\Level;
 use Monolog\LogRecord;
 
 /**
@@ -136,7 +138,7 @@ class ElasticaHandler extends AbstractProcessingHandler
             $this->client->addDocuments($documents);
         } catch (ExceptionInterface | TransportException $e) {
             if (!$this->options['ignore_error']) {
-                throw new \RuntimeException("Error sending messages to Elasticsearch", 0, $e);
+                throw new \RuntimeException('Error sending messages to Elasticsearch', 0, $e);
             }
         }
     }

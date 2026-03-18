@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -13,9 +15,9 @@ namespace Monolog\Handler;
 
 use Monolog\Level;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Monolog\Utils;
 use Psr\Log\LogLevel;
-use Monolog\LogRecord;
 
 /**
  * Sends notifications through the pushover api to mobile phones
@@ -178,7 +180,7 @@ class PushoverHandler extends SocketHandler
         $header = "POST /1/messages.json HTTP/1.1\r\n";
         $header .= "Host: api.pushover.net\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-        $header .= "Content-Length: " . \strlen($content) . "\r\n";
+        $header .= 'Content-Length: ' . \strlen($content) . "\r\n";
 
         return $header . "\r\n";
     }

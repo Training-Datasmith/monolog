@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,9 +13,9 @@
 
 namespace Monolog\Handler;
 
-use Monolog\ResettableInterface;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\LogRecord;
+use Monolog\ResettableInterface;
 
 /**
  * This simple wrapper class can be used to extend handlers functionality.

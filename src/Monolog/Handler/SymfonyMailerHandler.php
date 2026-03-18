@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,11 +14,11 @@
 namespace Monolog\Handler;
 
 use Closure;
+use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Level;
 use Monolog\LogRecord;
 use Monolog\Utils;
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LineFormatter;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;

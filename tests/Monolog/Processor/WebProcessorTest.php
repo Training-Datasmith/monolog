@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -118,6 +120,6 @@ class WebProcessorTest extends \Monolog\Test\MonologTestCase
     {
         $this->expectException(\TypeError::class);
 
-        new WebProcessor(new \stdClass);
+        new WebProcessor(new \stdClass());
     }
 }

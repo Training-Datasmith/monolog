@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,8 +14,8 @@
 namespace Monolog;
 
 use DateTimeZone;
-use Monolog\Handler\TestHandler;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\TestHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -36,8 +38,8 @@ class PsrLogCompatTest extends \Monolog\Test\MonologTestCase
     public function getLogger(): LoggerInterface
     {
         $logger = new Logger('foo');
-        $logger->pushHandler($handler = new TestHandler);
-        $logger->pushProcessor(new PsrLogMessageProcessor);
+        $logger->pushHandler($handler = new TestHandler());
+        $logger->pushProcessor(new PsrLogMessageProcessor());
         $handler->setFormatter(new LineFormatter('%level_name% %message%'));
 
         $this->handler = $handler;

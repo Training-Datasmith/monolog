@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Formatter;
 
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Class FluentdFormatter
@@ -42,8 +44,7 @@ class FluentdFormatter implements FormatterInterface
          * @var bool $levelTag should message level be a part of the fluentd tag
          */
         protected bool $levelTag = false
-    )
-    {
+    ) {
     }
 
     public function isUsingLevelsInTag(): bool

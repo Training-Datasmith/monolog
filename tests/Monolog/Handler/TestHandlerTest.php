@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -22,7 +24,7 @@ class TestHandlerTest extends \Monolog\Test\MonologTestCase
     #[DataProvider('methodProvider')]
     public function testHandler($method, Level $level)
     {
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $record = $this->getRecord($level, 'test'.$method);
         $this->assertFalse($handler->hasRecords($level));
         $this->assertFalse($handler->hasRecord($record->message, $level));
@@ -54,7 +56,7 @@ class TestHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testHandlerAssertEmptyContext()
     {
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $record  = $this->getRecord(Level::Warning, 'test', []);
         $this->assertFalse($handler->hasWarning([
             'message' => 'test',
@@ -77,7 +79,7 @@ class TestHandlerTest extends \Monolog\Test\MonologTestCase
 
     public function testHandlerAssertNonEmptyContext()
     {
-        $handler = new TestHandler;
+        $handler = new TestHandler();
         $record  = $this->getRecord(Level::Warning, 'test', ['foo' => 'bar']);
         $this->assertFalse($handler->hasWarning([
             'message' => 'test',

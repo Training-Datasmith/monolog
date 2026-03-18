@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -25,9 +27,9 @@ class NativeMailerHandlerTest extends \Monolog\Test\MonologTestCase
         $GLOBALS['mail'] = [];
     }
 
-    protected function newNativeMailerHandler(... $args) : NativeMailerHandler
+    protected function newNativeMailerHandler(... $args): NativeMailerHandler
     {
-        return new class(... $args) extends NativeMailerHandler {
+        return new class (... $args) extends NativeMailerHandler {
             public $mail = [];
 
             protected function mail(
@@ -36,7 +38,7 @@ class NativeMailerHandlerTest extends \Monolog\Test\MonologTestCase
                 string $content,
                 string $headers,
                 string $parameters
-            ) : void {
+            ): void {
                 $this->mail[] = \func_get_args();
             }
         };
@@ -88,7 +90,7 @@ class NativeMailerHandlerTest extends \Monolog\Test\MonologTestCase
         $from = 'receiver@example.org';
 
         $mailer = $this->newNativeMailerHandler($to, $subject, $from);
-        $mailer->setFormatter(new \Monolog\Formatter\LineFormatter);
+        $mailer->setFormatter(new \Monolog\Formatter\LineFormatter());
         $mailer->handleBatch([]);
 
         // batch is empty, nothing sent
@@ -124,7 +126,7 @@ class NativeMailerHandlerTest extends \Monolog\Test\MonologTestCase
     {
         $mailer = new NativeMailerHandler('to@example.org', 'subject', 'from@example.org');
         $mailer->addParameter('foo');
-        $mailer->handle($this->getRecord(Level::Error, "FooBarBaz"));
+        $mailer->handle($this->getRecord(Level::Error, 'FooBarBaz'));
         $this->assertNotEmpty($GLOBALS['mail']);
         $this->assertIsArray($GLOBALS['mail']);
         $this->assertArrayHasKey('0', $GLOBALS['mail']);
@@ -132,7 +134,7 @@ class NativeMailerHandlerTest extends \Monolog\Test\MonologTestCase
         $this->assertCount(5, $params);
         $this->assertSame('to@example.org', $params[0]);
         $this->assertSame('subject', $params[1]);
-        $this->assertStringContainsString("FooBarBaz", $params[2]);
+        $this->assertStringContainsString('FooBarBaz', $params[2]);
         $this->assertStringContainsString('From: from@example.org', $params[3]);
         $this->assertSame('foo', $params[4]);
     }

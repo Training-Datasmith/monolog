@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,10 +13,10 @@
 
 namespace Monolog\Formatter;
 
-use Monolog\Level;
 use Gelf\Message;
-use Monolog\Utils;
+use Monolog\Level;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Serializes a log message to GELF
@@ -64,7 +66,7 @@ class GelfMessageFormatter extends NormalizerFormatter
     public function __construct(?string $systemName = null, ?string $extraPrefix = null, /**
      * @var string a prefix for 'context' fields from the Monolog record (optional)
      */
-    protected string $contextPrefix = 'ctxt_', ?int $maxLength = null)
+        protected string $contextPrefix = 'ctxt_', ?int $maxLength = null)
     {
         if (!class_exists(Message::class)) {
             throw new \RuntimeException('Composer package graylog2/gelf-php is required to use Monolog\'s GelfMessageFormatter');
@@ -138,7 +140,7 @@ class GelfMessageFormatter extends NormalizerFormatter
         }
 
         if (!$message->hasAdditional('file') && isset($context['exception']['file'])) {
-            if (1 === preg_match("/^(.+):([0-9]+)$/", (string) $context['exception']['file'], $matches)) {
+            if (1 === preg_match('/^(.+):([0-9]+)$/', (string) $context['exception']['file'], $matches)) {
                 $message->setAdditional('file', $matches[1]);
                 $message->setAdditional('line', $matches[2]);
             }

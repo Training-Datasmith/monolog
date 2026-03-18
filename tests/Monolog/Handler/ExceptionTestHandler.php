@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -21,6 +23,6 @@ class ExceptionTestHandler extends TestHandler
      */
     protected function write(LogRecord $record): void
     {
-        throw new Exception("ExceptionTestHandler::handle");
+        throw new Exception('ExceptionTestHandler::handle');
     }
 }

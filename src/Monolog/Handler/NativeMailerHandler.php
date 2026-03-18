@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
 
 /**
  * NativeMailerHandler uses the mail() function to send the emails
@@ -158,7 +160,6 @@ class NativeMailerHandler extends MailHandler
 
         return $this;
     }
-
 
     protected function mail(string $to, string $subject, string $content, string $headers, string $parameters): void
     {

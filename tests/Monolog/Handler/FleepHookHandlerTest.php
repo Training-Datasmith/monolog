@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -22,7 +24,7 @@ class FleepHookHandlerTest extends \Monolog\Test\MonologTestCase
     /**
      * Default token to use in tests
      */
-    const TOKEN = '123abc';
+    public const TOKEN = '123abc';
 
     private FleepHookHandler $handler;
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -13,8 +15,8 @@ namespace Monolog\Formatter;
 
 use MongoDB\BSON\Type;
 use MongoDB\BSON\UTCDateTime;
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Formats a record for use with the MongoDBHandler.

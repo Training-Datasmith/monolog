@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,10 +13,10 @@
 
 namespace Monolog\Handler;
 
-use Aws\Sdk;
 use Aws\DynamoDb\DynamoDbClient;
-use Monolog\Formatter\FormatterInterface;
 use Aws\DynamoDb\Marshaler;
+use Aws\Sdk;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\ScalarFormatter;
 use Monolog\Level;
 use Monolog\LogRecord;
@@ -35,7 +37,7 @@ class DynamoDbHandler extends AbstractProcessingHandler
 
     public function __construct(DynamoDbClient $client, protected string $table, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
-        $this->marshaler = new Marshaler;
+        $this->marshaler = new Marshaler();
 
         $this->client = $client;
 
@@ -62,7 +64,7 @@ class DynamoDbHandler extends AbstractProcessingHandler
      */
     protected function filterEmptyFields(array $record): array
     {
-        return array_filter($record, fn($value) => [] !== $value);
+        return array_filter($record, fn ($value) => [] !== $value);
     }
 
     /**

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -363,14 +365,14 @@ class SocketHandler extends AbstractProcessingHandler
     private function setSocketTimeout(): void
     {
         if (!$this->streamSetTimeout()) {
-            throw new \UnexpectedValueException("Failed setting timeout with stream_set_timeout()");
+            throw new \UnexpectedValueException('Failed setting timeout with stream_set_timeout()');
         }
     }
 
     private function setStreamChunkSize(): void
     {
         if (null !== $this->chunkSize && false === $this->streamSetChunkSize()) {
-            throw new \UnexpectedValueException("Failed setting chunk size with stream_set_chunk_size()");
+            throw new \UnexpectedValueException('Failed setting chunk size with stream_set_chunk_size()');
         }
     }
 
@@ -386,12 +388,12 @@ class SocketHandler extends AbstractProcessingHandler
                 $chunk = $this->fwrite(substr($data, $sent));
             }
             if ($chunk === false) {
-                throw new \RuntimeException("Could not write to socket");
+                throw new \RuntimeException('Could not write to socket');
             }
             $sent += $chunk;
             $socketInfo = $this->streamGetMetadata();
             if (\is_array($socketInfo) && (bool) $socketInfo['timed_out']) {
-                throw new \RuntimeException("Write timed-out");
+                throw new \RuntimeException('Write timed-out');
             }
 
             if ($this->writingIsTimedOut($sent)) {

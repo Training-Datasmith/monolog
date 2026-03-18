@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,8 +14,8 @@
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Logs to Cube.
@@ -102,7 +104,7 @@ class CubeHandler extends AbstractProcessingHandler
         }
 
         $this->httpConnection = $httpConnection;
-        curl_setopt($this->httpConnection, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($this->httpConnection, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($this->httpConnection, CURLOPT_RETURNTRANSFER, true);
     }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,10 +13,10 @@
 
 namespace Monolog\Handler;
 
-use RuntimeException;
 use Monolog\Level;
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
+use RuntimeException;
 
 /**
  * Handler sends logs to Telegram using Telegram Bot API.
@@ -241,7 +243,7 @@ class TelegramBotHandler extends AbstractProcessingHandler
         if ('' === trim($message)) {
             return;
         }
-        
+
         $ch = curl_init();
         $url = self::BOT_API . $this->apiKey . '/SendMessage';
         curl_setopt($ch, CURLOPT_URL, $url);

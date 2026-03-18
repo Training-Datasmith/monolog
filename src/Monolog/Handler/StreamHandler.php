@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,8 +14,8 @@
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\Utils;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Stores to any stream resource
@@ -237,7 +239,7 @@ class StreamHandler extends AbstractProcessingHandler
         $dir = $this->getDirFromStream($url);
         if (null !== $dir && !is_dir($dir)) {
             $this->errorMessage = null;
-            set_error_handler(fn(...$args) => $this->customErrorHandler(...$args));
+            set_error_handler(fn (...$args) => $this->customErrorHandler(...$args));
             $status = mkdir($dir, 0777, true);
             restore_error_handler();
             if (false === $status && !is_dir($dir) && !str_contains((string) $this->errorMessage, 'File exists')) {

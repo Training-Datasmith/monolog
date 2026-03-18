@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -21,7 +23,7 @@ class ProcessHandlerTest extends \Monolog\Test\MonologTestCase
      *
      * @var string
      */
-    const DUMMY_COMMAND = 'php -r "echo fgets(STDIN);"';
+    public const DUMMY_COMMAND = 'php -r "echo fgets(STDIN);"';
 
     /**
      * @covers Monolog\Handler\ProcessHandler::__construct

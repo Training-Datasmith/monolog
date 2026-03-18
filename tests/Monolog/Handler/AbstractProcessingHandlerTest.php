@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,9 +13,9 @@
 
 namespace Monolog\Handler;
 
+use Monolog\Formatter\LineFormatter;
 use Monolog\Level;
 use Monolog\Processor\WebProcessor;
-use Monolog\Formatter\LineFormatter;
 
 class AbstractProcessingHandlerTest extends \Monolog\Test\MonologTestCase
 {
@@ -24,7 +26,7 @@ class AbstractProcessingHandlerTest extends \Monolog\Test\MonologTestCase
     public function testConstructAndGetSet()
     {
         $handler = $this->getMockBuilder('Monolog\Handler\AbstractProcessingHandler')->setConstructorArgs([Level::Warning, false])->onlyMethods(['write'])->getMock();
-        $handler->setFormatter($formatter = new LineFormatter);
+        $handler->setFormatter($formatter = new LineFormatter());
         $this->assertSame($formatter, $handler->getFormatter());
     }
 
@@ -96,8 +98,8 @@ class AbstractProcessingHandlerTest extends \Monolog\Test\MonologTestCase
     public function testPushPopProcessor()
     {
         $logger = $this->createPartialMock('Monolog\Handler\AbstractProcessingHandler', ['write']);
-        $processor1 = new WebProcessor;
-        $processor2 = new WebProcessor;
+        $processor1 = new WebProcessor();
+        $processor2 = new WebProcessor();
 
         $logger->pushProcessor($processor1);
         $logger->pushProcessor($processor2);

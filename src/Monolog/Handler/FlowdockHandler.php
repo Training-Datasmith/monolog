@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,11 +13,11 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
-use Monolog\Utils;
 use Monolog\Formatter\FlowdockFormatter;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Level;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Sends notifications through the Flowdock push API
@@ -113,10 +115,10 @@ class FlowdockHandler extends SocketHandler
      */
     private function buildHeader(string $content): string
     {
-        $header = "POST /v1/messages/team_inbox/" . $this->apiToken . " HTTP/1.1\r\n";
+        $header = 'POST /v1/messages/team_inbox/' . $this->apiToken . " HTTP/1.1\r\n";
         $header .= "Host: api.flowdock.com\r\n";
         $header .= "Content-Type: application/json\r\n";
-        $header .= "Content-Length: " . \strlen($content) . "\r\n";
+        $header .= 'Content-Length: ' . \strlen($content) . "\r\n";
 
         return $header . "\r\n";
     }

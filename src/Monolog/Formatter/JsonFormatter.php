@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,9 +13,9 @@
 
 namespace Monolog\Formatter;
 
+use Monolog\LogRecord;
 use Stringable;
 use Throwable;
-use Monolog\LogRecord;
 
 /**
  * Encodes whatever record data is passed to it as json
@@ -97,14 +99,14 @@ class JsonFormatter extends NormalizerFormatter
             if ($this->ignoreEmptyContextAndExtra) {
                 unset($normalized['context']);
             } else {
-                $normalized['context'] = new \stdClass;
+                $normalized['context'] = new \stdClass();
             }
         }
         if (isset($normalized['extra']) && $normalized['extra'] === []) {
             if ($this->ignoreEmptyContextAndExtra) {
                 unset($normalized['extra']);
             } else {
-                $normalized['extra'] = new \stdClass;
+                $normalized['extra'] = new \stdClass();
             }
         }
 

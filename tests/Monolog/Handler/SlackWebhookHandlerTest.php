@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,9 +13,9 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\Slack\SlackRecord;
+use Monolog\Level;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
@@ -22,7 +24,7 @@ use Monolog\Handler\Slack\SlackRecord;
  */
 class SlackWebhookHandlerTest extends \Monolog\Test\MonologTestCase
 {
-    const WEBHOOK_URL = 'https://hooks.slack.com/services/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E';
+    public const WEBHOOK_URL = 'https://hooks.slack.com/services/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E';
 
     /**
      * @covers ::__construct

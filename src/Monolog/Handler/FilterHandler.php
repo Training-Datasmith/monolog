@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,12 +14,12 @@
 namespace Monolog\Handler;
 
 use Closure;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\ResettableInterface;
-use Monolog\Formatter\FormatterInterface;
-use Psr\Log\LogLevel;
 use Monolog\LogRecord;
+use Monolog\ResettableInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Simple handler wrapper that filters records based on a list of levels
@@ -55,8 +57,11 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      *
      * @phpstan-var (Closure(LogRecord|null, HandlerInterface): HandlerInterface)|HandlerInterface
      */
-    protected Closure|HandlerInterface $handler, int|string|Level|array $minLevelOrList = Level::Debug, int|string|Level $maxLevel = Level::Emergency, protected bool $bubble = true)
-    {
+        protected Closure|HandlerInterface $handler,
+        int|string|Level|array $minLevelOrList = Level::Debug,
+        int|string|Level $maxLevel = Level::Emergency,
+        protected bool $bubble = true
+    ) {
         $this->setAcceptedLevels($minLevelOrList, $maxLevel);
     }
 
@@ -146,7 +151,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         if (!$this->handler instanceof HandlerInterface) {
             $handler = ($this->handler)($record, $this);
             if (!$handler instanceof HandlerInterface) {
-                throw new \RuntimeException("The factory Closure should return a HandlerInterface");
+                throw new \RuntimeException('The factory Closure should return a HandlerInterface');
             }
             $this->handler = $handler;
         }

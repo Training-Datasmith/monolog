@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -249,7 +251,7 @@ class SocketHandlerTest extends \Monolog\Test\MonologTestCase
         $this->writeRecord('Hello world');
         $this->assertIsResource($this->res);
         $this->handler->close();
-        $this->assertFalse(\is_resource($this->res), "Expected resource to be closed after closing handler");
+        $this->assertFalse(\is_resource($this->res), 'Expected resource to be closed after closing handler');
     }
 
     public function testCloseDoesNotClosePersistentSocket()

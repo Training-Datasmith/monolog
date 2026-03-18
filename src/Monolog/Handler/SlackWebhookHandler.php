@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,10 +14,10 @@
 namespace Monolog\Handler;
 
 use Monolog\Formatter\FormatterInterface;
-use Monolog\Level;
-use Monolog\Utils;
 use Monolog\Handler\Slack\SlackRecord;
+use Monolog\Level;
 use Monolog\LogRecord;
+use Monolog\Utils;
 
 /**
  * Sends notifications through Slack Webhooks

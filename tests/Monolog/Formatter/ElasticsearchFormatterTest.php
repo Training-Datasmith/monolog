@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -28,8 +30,8 @@ class ElasticsearchFormatterTest extends MonologTestCase
             Level::Error,
             'log',
             channel: 'meh',
-            context: ['foo' => 7, 'bar', 'class' => new \stdClass],
-            datetime: new \DateTimeImmutable("@0"),
+            context: ['foo' => 7, 'bar', 'class' => new \stdClass()],
+            datetime: new \DateTimeImmutable('@0'),
         );
 
         // Expected values

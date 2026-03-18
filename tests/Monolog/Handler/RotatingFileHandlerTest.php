@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -334,7 +336,7 @@ class RotatingFileHandlerTest extends \Monolog\Test\MonologTestCase
     public function testReuseCurrentFile()
     {
         $log = __DIR__.'/Fixtures/foo-'.date('Y-m-d').'.rot';
-        file_put_contents($log, "foo");
+        file_put_contents($log, 'foo');
         $handler = new RotatingFileHandler(__DIR__.'/Fixtures/foo.rot');
         $handler->setFormatter($this->getIdentityFormatter());
         $handler->handle($this->getRecord());

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,12 +13,12 @@
 
 namespace Monolog\Handler;
 
-use Monolog\Formatter\ElasticaFormatter;
-use Monolog\Formatter\NormalizerFormatter;
-use Monolog\Level;
 use Elastica\Client;
 use Elastica\Request;
 use Elastica\Response;
+use Monolog\Formatter\ElasticaFormatter;
+use Monolog\Formatter\NormalizerFormatter;
+use Monolog\Level;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -40,7 +42,7 @@ class ElasticaHandlerTest extends \Monolog\Test\MonologTestCase
     {
         // Elastica lib required
         if (!class_exists("Elastica\Client")) {
-            $this->markTestSkipped("ruflin/elastica not installed");
+            $this->markTestSkipped('ruflin/elastica not installed');
         }
 
         // base mock Elastica Client object
@@ -66,7 +68,7 @@ class ElasticaHandlerTest extends \Monolog\Test\MonologTestCase
     public function testHandle()
     {
         // log message
-        $msg = $this->getRecord(Level::Error, 'log', context: ['foo' => 7, 'bar', 'class' => new \stdClass], datetime: new \DateTimeImmutable("@0"));
+        $msg = $this->getRecord(Level::Error, 'log', context: ['foo' => 7, 'bar', 'class' => new \stdClass()], datetime: new \DateTimeImmutable('@0'));
 
         // format expected result
         $formatter = new ElasticaFormatter($this->options['index'], $this->options['type']);
@@ -163,7 +165,7 @@ class ElasticaHandlerTest extends \Monolog\Test\MonologTestCase
      */
     public function testHandleIntegrationNewESVersion()
     {
-        $msg = $this->getRecord(Level::Error, 'log', context: ['foo' => 7, 'bar', 'class' => new \stdClass], datetime: new \DateTimeImmutable("@0"));
+        $msg = $this->getRecord(Level::Error, 'log', context: ['foo' => 7, 'bar', 'class' => new \stdClass()], datetime: new \DateTimeImmutable('@0'));
 
         $expected = (array) $msg;
         $expected['datetime'] = $msg['datetime']->format(\DateTime::ATOM);
@@ -181,7 +183,7 @@ class ElasticaHandlerTest extends \Monolog\Test\MonologTestCase
         try {
             $handler->handleBatch([$msg]);
         } catch (\RuntimeException $e) {
-            $this->markTestSkipped("Cannot connect to Elastic Search server on localhost");
+            $this->markTestSkipped('Cannot connect to Elastic Search server on localhost');
         }
 
         // check document id from ES server response

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Monolog\Handler;
 
-use Monolog\Level;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
 
 class RedisPubSubHandlerTest extends \Monolog\Test\MonologTestCase
 {
@@ -44,7 +44,7 @@ class RedisPubSubHandlerTest extends \Monolog\Test\MonologTestCase
         $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new RedisPubSubHandler($redis, 'key');
-        $handler->setFormatter(new LineFormatter("%message%"));
+        $handler->setFormatter(new LineFormatter('%message%'));
         $handler->handle($record);
     }
 
@@ -63,7 +63,7 @@ class RedisPubSubHandlerTest extends \Monolog\Test\MonologTestCase
         $record = $this->getRecord(Level::Warning, 'test', ['data' => new \stdClass(), 'foo' => 34]);
 
         $handler = new RedisPubSubHandler($redis, 'key');
-        $handler->setFormatter(new LineFormatter("%message%"));
+        $handler->setFormatter(new LineFormatter('%message%'));
         $handler->handle($record);
     }
 }

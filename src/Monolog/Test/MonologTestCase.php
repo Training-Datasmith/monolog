@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,11 +13,11 @@
 
 namespace Monolog\Test;
 
+use Monolog\Formatter\FormatterInterface;
+use Monolog\JsonSerializableDateTimeImmutable;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;
-use Monolog\JsonSerializableDateTimeImmutable;
-use Monolog\Formatter\FormatterInterface;
 use Psr\Log\LogLevel;
 
 /**

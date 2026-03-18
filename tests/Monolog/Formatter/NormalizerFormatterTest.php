@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -25,7 +27,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
             Level::Error,
             'foo',
             channel: 'meh',
-            extra: ['foo' => new TestFooNorm, 'bar' => new TestBarNorm, 'baz' => [], 'res' => fopen('php://memory', 'rb')],
+            extra: ['foo' => new TestFooNorm(), 'bar' => new TestBarNorm(), 'baz' => [], 'res' => fopen('php://memory', 'rb')],
             context: [
                 'foo' => 'bar',
                 'baz' => 'qux',
@@ -42,7 +44,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
             'message' => 'foo',
             'datetime' => date('Y-m-d'),
             'extra' => [
-                'foo' => ['Monolog\\Formatter\\TestFooNorm' => ["foo" => "fooValue"]],
+                'foo' => ['Monolog\\Formatter\\TestFooNorm' => ['foo' => 'fooValue']],
                 'bar' => ['Monolog\\Formatter\\TestBarNorm' => 'bar'],
                 'baz' => [],
                 'res' => '[resource(stream)]',
@@ -298,7 +300,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
         $reflMethod = new \ReflectionMethod($formatter, 'toJson');
 
         // send an invalid unicode sequence as a object that can't be cleaned
-        $record = new \stdClass;
+        $record = new \stdClass();
         $record->message = "\xB1\x31";
 
         $this->assertsame('{"message":"�1"}', $reflMethod->invoke($formatter, $record));
@@ -336,7 +338,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
 
         $message = $this->formatRecordWithExceptionInContext($formatter, $throwable);
         $this->assertEquals(
-            ["..." => "Over 0 items (7 total), aborting normalization"],
+            ['...' => 'Over 0 items (7 total), aborting normalization'],
             $message
         );
     }
@@ -354,13 +356,13 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
         unset($message['context']['exception']['file']);
         $this->assertEquals(
             [
-                "message" => "foobar",
-                "context" => ['exception' => [
+                'message' => 'foobar',
+                'context' => ['exception' => [
                     'class' => 'Error',
                     'message' => 'Foo',
                     'code' => 0,
                ]],
-                "..." => "Over 2 items (7 total), aborting normalization",
+                '...' => 'Over 2 items (7 total), aborting normalization',
             ],
             $message
         );
@@ -372,7 +374,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
             // This will contain $resource and $wrappedResource as arguments in the trace item
             $resource = fopen('php://memory', 'rw+');
             fwrite($resource, 'test_resource');
-            $wrappedResource = new TestFooNorm;
+            $wrappedResource = new TestFooNorm();
             $wrappedResource->foo = $resource;
             // Just do something stupid with a resource/wrapped resource as argument
             $arr = [$wrappedResource, $resource];
@@ -410,7 +412,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
     public function testExceptionTraceDoesNotLeakCallUserFuncArgs()
     {
         try {
-            $arg = new TestInfoLeak;
+            $arg = new TestInfoLeak();
             \call_user_func([$this, 'throwHelper'], $arg, $dt = new \DateTime());
         } catch (\Exception $e) {
         }
@@ -420,7 +422,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
         $result = $formatter->format($record);
 
         $this->assertSame(
-            __FILE__ .':'.(__LINE__-9),
+            __FILE__ .':'.(__LINE__ - 9),
             $result['context']['exception']['trace'][0]
         );
     }
@@ -525,7 +527,7 @@ class NormalizerFormatterTest extends \Monolog\Test\MonologTestCase
 
     private function createDeepTraceException(): \Exception
     {
-        $createException = function(int $depth) use (&$createException): \Exception {
+        $createException = function (int $depth) use (&$createException): \Exception {
             if ($depth <= 0) {
                 return new \RuntimeException('Test exception with deep trace');
             }

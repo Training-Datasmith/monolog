@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -27,7 +29,7 @@ class ChromePHPFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['ip' => '127.0.0.1'],
         );
 
@@ -59,7 +61,7 @@ class ChromePHPFormatterTest extends MonologTestCase
             'log',
             channel: 'meh',
             context: ['from' => 'logger'],
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
             extra: ['ip' => '127.0.0.1', 'file' => 'test', 'line' => 14],
         );
 
@@ -90,7 +92,7 @@ class ChromePHPFormatterTest extends MonologTestCase
             Level::Debug,
             'log',
             channel: 'meh',
-            datetime: new \DateTimeImmutable("@0"),
+            datetime: new \DateTimeImmutable('@0'),
         );
 
         $message = $formatter->format($record);
@@ -117,13 +119,13 @@ class ChromePHPFormatterTest extends MonologTestCase
                 Level::Info,
                 'log',
                 channel: 'meh',
-                datetime: new \DateTimeImmutable("@0"),
+                datetime: new \DateTimeImmutable('@0'),
             ),
             $this->getRecord(
                 Level::Warning,
                 'log2',
                 channel: 'foo',
-                datetime: new \DateTimeImmutable("@0"),
+                datetime: new \DateTimeImmutable('@0'),
             ),
         ];
 

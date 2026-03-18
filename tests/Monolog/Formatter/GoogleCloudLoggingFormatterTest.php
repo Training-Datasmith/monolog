@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -12,8 +14,10 @@
 namespace Monolog\Formatter;
 
 use DateTimeInterface;
-use Monolog\Test\MonologTestCase;
+
 use function json_decode;
+
+use Monolog\Test\MonologTestCase;
 
 class GoogleCloudLoggingFormatterTest extends MonologTestCase
 {
@@ -29,9 +33,9 @@ class GoogleCloudLoggingFormatterTest extends MonologTestCase
         $record = $this->getRecord();
 
         $formatted_decoded = json_decode($formatter->format($record), true);
-        $this->assertArrayNotHasKey("datetime", $formatted_decoded);
-        $this->assertArrayHasKey("time", $formatted_decoded);
-        $this->assertSame($record->datetime->format(DateTimeInterface::RFC3339_EXTENDED), $formatted_decoded["time"]);
+        $this->assertArrayNotHasKey('datetime', $formatted_decoded);
+        $this->assertArrayHasKey('time', $formatted_decoded);
+        $this->assertSame($record->datetime->format(DateTimeInterface::RFC3339_EXTENDED), $formatted_decoded['time']);
     }
 
     /**
@@ -46,9 +50,9 @@ class GoogleCloudLoggingFormatterTest extends MonologTestCase
         $record = $this->getRecord();
 
         $formatted_decoded = json_decode($formatter->format($record), true);
-        $this->assertArrayNotHasKey("level", $formatted_decoded);
-        $this->assertArrayNotHasKey("level_name", $formatted_decoded);
-        $this->assertArrayHasKey("severity", $formatted_decoded);
-        $this->assertSame($record->level->getName(), $formatted_decoded["severity"]);
+        $this->assertArrayNotHasKey('level', $formatted_decoded);
+        $this->assertArrayNotHasKey('level_name', $formatted_decoded);
+        $this->assertArrayHasKey('severity', $formatted_decoded);
+        $this->assertSame($record->level->getName(), $formatted_decoded['severity']);
     }
 }

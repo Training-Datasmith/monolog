@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -27,9 +29,9 @@ class UdpSocketTest extends \Monolog\Test\MonologTestCase
 
         $socket
             ->method('send')
-            ->with("HEADER: The quick brown fox jumps over the lazy dog");
+            ->with('HEADER: The quick brown fox jumps over the lazy dog');
 
-        $socket->write("The quick brown fox jumps over the lazy dog", "HEADER: ");
+        $socket->write('The quick brown fox jumps over the lazy dog', 'HEADER: ');
     }
 
     public function testLongMessagesAreTruncated()
@@ -39,15 +41,15 @@ class UdpSocketTest extends \Monolog\Test\MonologTestCase
             ->setConstructorArgs(['lol'])
             ->getMock();
 
-        $truncatedString = str_repeat("derp", 16254).'d';
+        $truncatedString = str_repeat('derp', 16254).'d';
 
         $socket->expects($this->exactly(1))
             ->method('send')
-            ->with("HEADER" . $truncatedString);
+            ->with('HEADER' . $truncatedString);
 
-        $longString = str_repeat("derp", 20000);
+        $longString = str_repeat('derp', 20000);
 
-        $socket->write($longString, "HEADER");
+        $socket->write($longString, 'HEADER');
     }
 
     public function testDoubleCloseDoesNotError()
@@ -61,6 +63,6 @@ class UdpSocketTest extends \Monolog\Test\MonologTestCase
     {
         $socket = new UdpSocket('127.0.0.1', 514);
         $socket->close();
-        $socket->write('foo', "HEADER");
+        $socket->write('foo', 'HEADER');
     }
 }

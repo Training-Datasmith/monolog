@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -11,8 +13,8 @@
 
 namespace Monolog\Formatter;
 
-use Monolog\Test\MonologTestCase;
 use Monolog\Level;
+use Monolog\Test\MonologTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 
@@ -106,7 +108,7 @@ class LineFormatterTest extends MonologTestCase
             'foobar',
             channel: 'meh',
             context: [],
-            extra: ['foo' => new TestFoo, 'bar' => new TestBar, 'baz' => [], 'res' => fopen('php://memory', 'rb')],
+            extra: ['foo' => new TestFoo(), 'bar' => new TestBar(), 'baz' => [], 'res' => fopen('php://memory', 'rb')],
         ));
 
         $this->assertEquals('['.date('Y-m-d').'] meh.ERROR: foobar [] {"foo":{"Monolog\\\\Formatter\\\\TestFoo":{"foo":"fooValue"}},"bar":{"Monolog\\\\Formatter\\\\TestBar":"bar"},"baz":[],"res":"[resource(stream)]"}'."\n", $message);
@@ -148,9 +150,9 @@ class LineFormatterTest extends MonologTestCase
         $formatter = new LineFormatter(null, 'Y-m-d');
         $formatter->allowInlineLineBreaks();
 
-        self::assertSame('{"test":"foo'."\n".'bar\\\\name-with-n"}', $formatter->stringify(["test" => "foo\nbar\\name-with-n"]));
+        self::assertSame('{"test":"foo'."\n".'bar\\\\name-with-n"}', $formatter->stringify(['test' => "foo\nbar\\name-with-n"]));
         self::assertSame('["indexed'."\n".'arrays'."\n".'without'."\n".'key","foo'."\n".'bar\\\\name-with-n"]', $formatter->stringify(["indexed\narrays\nwithout\nkey", "foo\nbar\\name-with-n"]));
-        self::assertSame('[{"first":"multi-dimensional'."\n".'arrays"},{"second":"foo'."\n".'bar\\\\name-with-n"}]', $formatter->stringify([["first" => "multi-dimensional\narrays"], ["second" => "foo\nbar\\name-with-n"]]));
+        self::assertSame('[{"first":"multi-dimensional'."\n".'arrays"},{"second":"foo'."\n".'bar\\\\name-with-n"}]', $formatter->stringify([['first' => "multi-dimensional\narrays"], ['second' => "foo\nbar\\name-with-n"]]));
     }
 
     public function testDefFormatWithExceptionAndStacktraceParserFull()
@@ -283,7 +285,7 @@ class LineFormatterTest extends MonologTestCase
         $formatter->includeStacktraces();
         //$formatter->allowInlineLineBreaks();
         $formatter->indentStackTraces('    ');
-        $message = $formatter->format($this->getRecord(message: "foo", context: ['exception' => new RuntimeException('lala')]));
+        $message = $formatter->format($this->getRecord(message: 'foo', context: ['exception' => new RuntimeException('lala')]));
 
         $this->assertStringContainsString('    [stacktrace]', $message);
         $this->assertStringContainsString('    #0', $message);
@@ -296,7 +298,7 @@ class LineFormatterTest extends MonologTestCase
         $formatter->includeStacktraces();
         $formatter->setBasePath(\dirname(\dirname(\dirname(__DIR__))));
         $formatter->indentStackTraces('    ');
-        $message = $formatter->format($this->getRecord(message: "foo", context: ['exception' => new RuntimeException('lala')]));
+        $message = $formatter->format($this->getRecord(message: 'foo', context: ['exception' => new RuntimeException('lala')]));
 
         $this->assertStringContainsString('    [stacktrace]', $message);
         $this->assertStringContainsString('    #0 vendor/phpunit/phpunit/src/Framework/TestCase.php', $message);

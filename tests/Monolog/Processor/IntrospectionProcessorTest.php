@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Monolog package.
@@ -26,8 +28,8 @@ function tester($handler, $record)
 
 namespace Monolog\Processor;
 
-use Monolog\Level;
 use Monolog\Handler\TestHandler;
+use Monolog\Level;
 
 class IntrospectionProcessorTest extends \Monolog\Test\MonologTestCase
 {
@@ -43,7 +45,7 @@ class IntrospectionProcessorTest extends \Monolog\Test\MonologTestCase
     public function testProcessorFromClass()
     {
         $handler = $this->getHandler();
-        $tester = new \Acme\Tester;
+        $tester = new \Acme\Tester();
         $tester->test($handler, $this->getRecord());
         list($record) = $handler->getRecords();
         $this->assertEquals(__FILE__, $record->extra['file']);

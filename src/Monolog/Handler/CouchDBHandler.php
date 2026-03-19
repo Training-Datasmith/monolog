@@ -85,7 +85,10 @@ class CouchDBHandler extends AbstractProcessingHandler
         ]);
 
         if (false === @file_get_contents($url, false, $context)) {
-            throw new \RuntimeException(sprintf('Could not connect to %s', $url));
+            // Strip credentials from the URL before including it in the exception
+            // message to avoid leaking user:pass into logs or error output.
+            $safeUrl = 'http://' . $this->options['host'] . ':' . $this->options['port'] . '/' . $this->options['dbname'];
+            throw new \RuntimeException(sprintf('Could not connect to %s', $safeUrl));
         }
     }
 

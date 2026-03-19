@@ -111,7 +111,12 @@ class ProcessHandler extends AbstractProcessingHandler
      */
     private function startProcess(): void
     {
-        $this->process = proc_open($this->command, static::DESCRIPTOR_SPEC, $this->pipes, $this->cwd);
+        // Pass command as an array to proc_open to bypass shell interpretation
+        // and prevent shell injection when parts of the command are derived from
+        // untrusted input. Simple space-split covers the common case of
+        // whitespace-separated executable + arguments with no quoting.
+        $cmd = explode(' ', $this->command);
+        $this->process = proc_open($cmd, static::DESCRIPTOR_SPEC, $this->pipes, $this->cwd);
 
         foreach ($this->pipes as $pipe) {
             stream_set_blocking($pipe, false);

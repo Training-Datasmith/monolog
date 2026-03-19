@@ -114,7 +114,7 @@ class NativeMailerHandler extends MailHandler
         }
 
         $subjectFormatter = new LineFormatter($this->subject);
-        $subject = $subjectFormatter->format($this->getHighestRecord($records));
+        $subject = str_replace(["\r", "\n"], '', $subjectFormatter->format($this->getHighestRecord($records)));
 
         $parameters = implode(' ', $this->parameters);
         foreach ($this->to as $to) {

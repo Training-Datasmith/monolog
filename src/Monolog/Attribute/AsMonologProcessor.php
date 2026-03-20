@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Attribute;
 
 /**
@@ -22,7 +20,7 @@ namespace Monolog\Attribute;
  * needed and manually pushed to the loggers and to the processable handlers.
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-class AsMonologProcessor
+class As_Monolog_Processor
 {
     /**
      * @param string|null $channel  The logging channel the processor should be pushed to.
@@ -30,11 +28,7 @@ class AsMonologProcessor
      * @param string|null $method   The method that processes the records (if the attribute is used at the class level).
      * @param int|null    $priority The priority of the processor so the order can be determined.
      */
-    public function __construct(
-        public readonly ?string $channel = null,
-        public readonly ?string $handler = null,
-        public readonly ?string $method = null,
-        public readonly ?int $priority = null
-    ) {
+    public function __construct(public readonly ?string $channel = null, public readonly ?string $handler = null, public readonly ?string $method = null, public readonly ?int $priority = null)
+    {
     }
 }

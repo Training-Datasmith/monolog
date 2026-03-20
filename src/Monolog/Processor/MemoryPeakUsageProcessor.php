@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,32 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Processor;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Injects memory_get_peak_usage in all records
  *
  * @see Monolog\Processor\MemoryProcessor::__construct() for options
  * @author Rob Jensen
  */
-class MemoryPeakUsageProcessor extends MemoryProcessor
+class Memory_Peak_Usage_Processor extends Memory_Processor
 {
     /**
      * @inheritDoc
      */
-    public function __invoke(LogRecord $record): LogRecord
+    public function __invoke(Log_Record $record): Log_Record
     {
-        $usage = memory_get_peak_usage($this->realUsage);
-
-        if ($this->useFormatting) {
-            $usage = $this->formatBytes($usage);
+        $usage = memory_get_peak_usage($this->real_usage);
+        if ($this->use_formatting) {
+            $usage = $this->format_bytes($usage);
         }
-
         $record->extra['memory_peak_usage'] = $usage;
-
         return $record;
     }
 }

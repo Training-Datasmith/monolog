@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Processor;
 
 /**
@@ -18,34 +16,31 @@ namespace Monolog\Processor;
  *
  * @author Rob Jensen
  */
-abstract class MemoryProcessor implements ProcessorInterface
+abstract class Memory_Processor implements Processor_Interface
 {
     /**
      * @param bool $realUsage     Set this to true to get the real size of memory allocated from system.
      * @param bool $useFormatting If true, then format memory size to human readable string (MB, KB, B depending on size)
      */
-    public function __construct(protected bool $realUsage = true, protected bool $useFormatting = true)
+    public function __construct(protected bool $real_usage = true, protected bool $use_formatting = true)
     {
     }
-
     /**
      * Formats bytes into a human readable string if $this->useFormatting is true, otherwise return $bytes as is
      *
      * @return string|int Formatted string if $this->useFormatting is true, otherwise return $bytes as int
      */
-    protected function formatBytes(int $bytes)
+    protected function format_bytes(int $bytes)
     {
-        if (!$this->useFormatting) {
+        if (!$this->use_formatting) {
             return $bytes;
         }
         if ($bytes > 1024 * 1024) {
-            return round($bytes / 1024 / 1024, 2).' MB';
+            return round($bytes / 1024 / 1024, 2) . ' MB';
         }
-
         if ($bytes > 1024) {
-            return round($bytes / 1024, 2).' KB';
+            return round($bytes / 1024, 2) . ' KB';
         }
-
         return $bytes . ' B';
     }
 }

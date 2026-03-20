@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,28 +9,25 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Handler\Slack\SlackRecord;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Handler\Slack\Slack_Record;
 use Monolog\Level;
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Monolog\Utils;
-
 /**
  * Sends notifications through Slack Webhooks
  *
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  * @see    https://api.slack.com/incoming-webhooks
  */
-class SlackWebhookHandler extends AbstractProcessingHandler
+class Slack_Webhook_Handler extends Abstract_Processing_Handler
 {
     /**
      * Instance of the SlackRecord util class preparing data for Slack API.
      */
-    private readonly SlackRecord $slackRecord;
-
+    private readonly Slack_Record $slack_record;
     /**
      * @param non-empty-string $webhookUrl             Slack Webhook URL
      * @param string|null $channel                Slack channel (encoded ID or name)
@@ -48,79 +44,54 @@ class SlackWebhookHandler extends AbstractProcessingHandler
         /**
          * Slack Webhook token
          */
-        private readonly string $webhookUrl,
+        private readonly string $webhook_url,
         ?string $channel = null,
         ?string $username = null,
-        bool $useAttachment = true,
-        ?string $iconEmoji = null,
-        bool $useShortAttachment = false,
-        bool $includeContextAndExtra = false,
+        bool $use_attachment = true,
+        ?string $icon_emoji = null,
+        bool $use_short_attachment = false,
+        bool $include_context_and_extra = false,
         int|string|\Monolog\Level $level = Level::Critical,
         bool $bubble = true,
-        array $excludeFields = []
-    ) {
+        array $exclude_fields = []
+    )
+    {
         if (!\extension_loaded('curl')) {
-            throw new MissingExtensionException('The curl extension is needed to use the SlackWebhookHandler');
+            throw new Missing_Extension_Exception('The curl extension is needed to use the SlackWebhookHandler');
         }
-
         parent::__construct($level, $bubble);
-
-        $this->slackRecord = new SlackRecord(
-            $channel,
-            $username,
-            $useAttachment,
-            $iconEmoji,
-            $useShortAttachment,
-            $includeContextAndExtra,
-            $excludeFields
-        );
+        $this->slack_record = new Slack_Record($channel, $username, $use_attachment, $icon_emoji, $use_short_attachment, $include_context_and_extra, $exclude_fields);
     }
-
-    public function getSlackRecord(): SlackRecord
+    public function get_slack_record(): Slack_Record
     {
-        return $this->slackRecord;
+        return $this->slack_record;
     }
-
-    public function getWebhookUrl(): string
+    public function get_webhook_url(): string
     {
-        return $this->webhookUrl;
+        return $this->webhook_url;
     }
-
     /**
      * @inheritDoc
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
-        $postData = $this->slackRecord->getSlackData($record);
-        $postString = Utils::jsonEncode($postData);
-
+        $post_data = $this->slack_record->get_slack_data($record);
+        $post_string = Utils::json_encode($post_data);
         $ch = curl_init();
-        $options = [
-            CURLOPT_URL => $this->webhookUrl,
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => ['Content-type: application/json'],
-            CURLOPT_POSTFIELDS => $postString,
-        ];
-
+        $options = [CURLOPT_URL => $this->webhook_url, CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_HTTPHEADER => ['Content-type: application/json'], CURLOPT_POSTFIELDS => $post_string];
         curl_setopt_array($ch, $options);
-
         Curl\Util::execute($ch);
     }
-
-    public function setFormatter(FormatterInterface $formatter): HandlerInterface
+    public function set_formatter(Formatter_Interface $formatter): Handler_Interface
     {
-        parent::setFormatter($formatter);
-        $this->slackRecord->setFormatter($formatter);
-
+        parent::set_formatter($formatter);
+        $this->slack_record->set_formatter($formatter);
         return $this;
     }
-
-    public function getFormatter(): FormatterInterface
+    public function get_formatter(): Formatter_Interface
     {
-        $formatter = parent::getFormatter();
-        $this->slackRecord->setFormatter($formatter);
-
+        $formatter = parent::get_formatter();
+        $this->slack_record->set_formatter($formatter);
         return $formatter;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 /**
@@ -18,25 +16,23 @@ namespace Monolog\Handler;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-abstract class Handler implements HandlerInterface
+abstract class Handler implements Handler_Interface
 {
     /**
      * @inheritDoc
      */
-    public function handleBatch(array $records): void
+    public function handle_batch(array $records): void
     {
         foreach ($records as $record) {
             $this->handle($record);
         }
     }
-
     /**
      * @inheritDoc
      */
     public function close(): void
     {
     }
-
     public function __destruct()
     {
         try {
@@ -45,11 +41,9 @@ abstract class Handler implements HandlerInterface
             // do nothing
         }
     }
-
     public function __serialize(): array
     {
         $this->close();
-
         return (array) $this;
     }
 }

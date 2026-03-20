@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Interface that all Monolog Handlers must implement
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-interface HandlerInterface
+interface Handler_Interface
 {
     /**
      * Checks whether the given record will be handled by this handler.
@@ -33,8 +30,7 @@ interface HandlerInterface
      *
      * @param LogRecord $record Partial log record having only a level initialized
      */
-    public function isHandling(LogRecord $record): bool;
-
+    public function is_handling(Log_Record $record): bool;
     /**
      * Handles a record.
      *
@@ -49,15 +45,13 @@ interface HandlerInterface
      * @return bool      true means that this handler handled the record, and that bubbling is not permitted.
      *                   false means the record was either not processed or that this handler allows bubbling.
      */
-    public function handle(LogRecord $record): bool;
-
+    public function handle(Log_Record $record): bool;
     /**
      * Handles a set of records at once.
      *
      * @param array<LogRecord> $records The records to handle
      */
-    public function handleBatch(array $records): void;
-
+    public function handle_batch(array $records): void;
     /**
      * Closes the handler.
      *

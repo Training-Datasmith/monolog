@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\LogRecord;
-use Monolog\Processor\ProcessorInterface;
-
+use Monolog\Log_Record;
+use Monolog\Processor\Processor_Interface;
 /**
  * Interface to describe loggers that have processors
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-interface ProcessableHandlerInterface
+interface Processable_Handler_Interface
 {
     /**
      * Adds a processor in the stack.
@@ -30,8 +27,7 @@ interface ProcessableHandlerInterface
      *
      * @return HandlerInterface            self
      */
-    public function pushProcessor(callable $callback): HandlerInterface;
-
+    public function push_processor(callable $callback): Handler_Interface;
     /**
      * Removes the processor on top of the stack and returns it.
      *
@@ -39,5 +35,5 @@ interface ProcessableHandlerInterface
      *
      * @throws \LogicException             In case the processor stack is empty
      */
-    public function popProcessor(): callable;
+    public function pop_processor(): callable;
 }

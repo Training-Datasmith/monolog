@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,51 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use AMQPExchange;
+use Amqp_Exchange;
 use Gelf\Message as GelfMessage;
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\JsonFormatter;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Json_Formatter;
 use Monolog\Level;
-use Monolog\LogRecord;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Message\AMQPMessage;
-
-class AmqpHandler extends AbstractProcessingHandler
+use Monolog\Log_Record;
+use Php_Amqp_Lib\Channel\Amqp_Channel;
+use Php_Amqp_Lib\Message\Amqp_Message;
+class Amqp_Handler extends Abstract_Processing_Handler
 {
-    protected AMQPExchange|AMQPChannel $exchange;
-
+    protected Amqp_Exchange|Amqp_Channel $exchange;
     /** @var array<string, mixed> */
-    private array $extraAttributes = [];
-
-    protected string $exchangeName;
-
+    private array $extra_attributes = [];
+    protected string $exchange_name;
     /**
      * @param AMQPExchange|AMQPChannel $exchange     AMQPExchange (php AMQP ext) or PHP AMQP lib channel, ready for use
      * @param string|null              $exchangeName Optional exchange name, for AMQPChannel (PhpAmqpLib) only
      */
-    public function __construct(AMQPExchange|AMQPChannel $exchange, ?string $exchangeName = null, int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(Amqp_Exchange|Amqp_Channel $exchange, ?string $exchange_name = null, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
-        if ($exchange instanceof AMQPChannel) {
-            $this->exchangeName = (string) $exchangeName;
-        } elseif ($exchangeName !== null) {
+        if ($exchange instanceof Amqp_Channel) {
+            $this->exchange_name = (string) $exchange_name;
+        } elseif ($exchange_name !== null) {
             @trigger_error('The $exchangeName parameter can only be passed when using PhpAmqpLib, if using an AMQPExchange instance configure it beforehand', E_USER_DEPRECATED);
         }
         $this->exchange = $exchange;
-
         parent::__construct($level, $bubble);
     }
-
     /**
      * @return array<string, mixed>
      */
-    public function getExtraAttributes(): array
+    public function get_extra_attributes(): array
     {
-        return $this->extraAttributes;
+        return $this->extra_attributes;
     }
-
     /**
      * Configure extra attributes to pass to the AMQPExchange (if you are using the amqp extension)
      *
@@ -64,109 +55,74 @@ class AmqpHandler extends AbstractProcessingHandler
      *                                               or reply_to, headers.
      * @return $this
      */
-    public function setExtraAttributes(array $extraAttributes): self
+    public function set_extra_attributes(array $extra_attributes): self
     {
-        $this->extraAttributes = $extraAttributes;
-
+        $this->extra_attributes = $extra_attributes;
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
         $data = $record->formatted;
-        $routingKey = $this->getRoutingKey($record);
-
-        if ($data instanceof GelfMessage) {
-            $data = json_encode($data->toArray());
+        $routing_key = $this->get_routing_key($record);
+        if ($data instanceof Gelf_Message) {
+            $data = json_encode($data->to_array());
         }
-
-        if ($this->exchange instanceof AMQPExchange) {
-            $attributes = [
-                'delivery_mode' => 2,
-                'content_type'  => 'application/json',
-            ];
-            if (\count($this->extraAttributes) > 0) {
-                $attributes = array_merge($attributes, $this->extraAttributes);
+        if ($this->exchange instanceof Amqp_Exchange) {
+            $attributes = ['delivery_mode' => 2, 'content_type' => 'application/json'];
+            if (\count($this->extra_attributes) > 0) {
+                $attributes = array_merge($attributes, $this->extra_attributes);
             }
-            $this->exchange->publish(
-                $data,
-                $routingKey,
-                0,
-                $attributes
-            );
+            $this->exchange->publish($data, $routing_key, 0, $attributes);
         } else {
-            $this->exchange->basic_publish(
-                $this->createAmqpMessage($data),
-                $this->exchangeName,
-                $routingKey
-            );
+            $this->exchange->basic_publish($this->create_amqp_message($data), $this->exchange_name, $routing_key);
         }
     }
-
     /**
      * @inheritDoc
      */
-    public function handleBatch(array $records): void
+    public function handle_batch(array $records): void
     {
-        if ($this->exchange instanceof AMQPExchange) {
-            parent::handleBatch($records);
-
+        if ($this->exchange instanceof Amqp_Exchange) {
+            parent::handle_batch($records);
             return;
         }
-
         foreach ($records as $record) {
-            if (!$this->isHandling($record)) {
+            if (!$this->is_handling($record)) {
                 continue;
             }
-
-            $record = $this->processRecord($record);
-            $data = $this->getFormatter()->format($record);
-
-            if ($data instanceof GelfMessage) {
-                $data = json_encode($data->toArray());
+            $record = $this->process_record($record);
+            $data = $this->get_formatter()->format($record);
+            if ($data instanceof Gelf_Message) {
+                $data = json_encode($data->to_array());
             }
-
-            $this->exchange->batch_basic_publish(
-                $this->createAmqpMessage($data),
-                $this->exchangeName,
-                $this->getRoutingKey($record)
-            );
+            $this->exchange->batch_basic_publish($this->create_amqp_message($data), $this->exchange_name, $this->get_routing_key($record));
         }
-
         $this->exchange->publish_batch();
     }
-
     /**
      * Gets the routing key for the AMQP exchange
      */
-    protected function getRoutingKey(LogRecord $record): string
+    protected function get_routing_key(Log_Record $record): string
     {
-        $routingKey = sprintf('%s.%s', $record->level->name, $record->channel);
-
-        return strtolower($routingKey);
+        $routing_key = sprintf('%s.%s', $record->level->name, $record->channel);
+        return strtolower($routing_key);
     }
-
-    private function createAmqpMessage(string $data): AMQPMessage
+    private function create_amqp_message(string $data): Amqp_Message
     {
-        $attributes = [
-            'delivery_mode' => 2,
-            'content_type' => 'application/json',
-        ];
-        if (\count($this->extraAttributes) > 0) {
-            $attributes = array_merge($attributes, $this->extraAttributes);
+        $attributes = ['delivery_mode' => 2, 'content_type' => 'application/json'];
+        if (\count($this->extra_attributes) > 0) {
+            $attributes = array_merge($attributes, $this->extra_attributes);
         }
-
-        return new AMQPMessage($data, $attributes);
+        return new Amqp_Message($data, $attributes);
     }
-
     /**
      * @inheritDoc
      */
-    protected function getDefaultFormatter(): FormatterInterface
+    protected function get_default_formatter(): Formatter_Interface
     {
-        return new JsonFormatter(JsonFormatter::BATCH_MODE_JSON, false);
+        return new Json_Formatter(Json_Formatter::BATCH_MODE_JSON, false);
     }
 }

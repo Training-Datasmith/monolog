@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Throwable;
-
 /**
  * Forwards records to at most one handler
  *
@@ -23,15 +20,15 @@ use Throwable;
  *
  * As soon as one handler handles a record successfully, the handling stops there.
  */
-class FallbackGroupHandler extends GroupHandler
+class Fallback_Group_Handler extends Group_Handler
 {
     /**
      * @inheritDoc
      */
-    public function handle(LogRecord $record): bool
+    public function handle(Log_Record $record): bool
     {
         if (\count($this->processors) > 0) {
-            $record = $this->processRecord($record);
+            $record = $this->process_record($record);
         }
         foreach ($this->handlers as $handler) {
             try {
@@ -41,26 +38,23 @@ class FallbackGroupHandler extends GroupHandler
                 // What throwable?
             }
         }
-
         return false === $this->bubble;
     }
-
     /**
      * @inheritDoc
      */
-    public function handleBatch(array $records): void
+    public function handle_batch(array $records): void
     {
         if (\count($this->processors) > 0) {
             $processed = [];
             foreach ($records as $record) {
-                $processed[] = $this->processRecord($record);
+                $processed[] = $this->process_record($record);
             }
             $records = $processed;
         }
-
         foreach ($this->handlers as $handler) {
             try {
-                $handler->handleBatch(array_map(fn (\Monolog\LogRecord $record): \Monolog\LogRecord => clone $record, $records));
+                $handler->handle_batch(array_map(fn(\Monolog\Log_Record $record): \Monolog\Log_Record => clone $record, $records));
                 break;
             } catch (Throwable) {
                 // What throwable?

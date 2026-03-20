@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Logs to syslog service.
  *
@@ -29,7 +26,7 @@ use Monolog\LogRecord;
  *
  * @author Sven Paulus <sven@karlsruhe.org>
  */
-class SyslogHandler extends AbstractSyslogHandler
+class Syslog_Handler extends Abstract_Syslog_Handler
 {
     /**
      * @param string|int $facility Either one of the names of the keys in $this->facilities, or a LOG_* facility constant
@@ -39,7 +36,6 @@ class SyslogHandler extends AbstractSyslogHandler
     {
         parent::__construct($facility, $level, $bubble);
     }
-
     /**
      * @inheritDoc
      */
@@ -47,13 +43,12 @@ class SyslogHandler extends AbstractSyslogHandler
     {
         closelog();
     }
-
     /**
      * @inheritDoc
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
         openlog($this->ident, $this->logopts, $this->facility);
-        syslog($this->toSyslogPriority($record->level), (string) $record->formatted);
+        syslog($this->to_syslog_priority($record->level), (string) $record->formatted);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Attribute;
 
 /**
@@ -22,10 +20,9 @@ namespace Monolog\Attribute;
  * other classes is not managed by Monolog.
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
-final class WithMonologChannel
+final class With_Monolog_Channel
 {
-    public function __construct(
-        public readonly string $channel
-    ) {
+    public function __construct(public readonly string $channel)
+    {
     }
 }

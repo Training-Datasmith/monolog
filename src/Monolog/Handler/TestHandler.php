@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,15 +9,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\LogRecord;
-use NoDiscard;
-use Psr\Log\LogLevel;
-
+use Monolog\Log_Record;
+use No_Discard;
+use Psr\Log\Log_Level;
 /**
  * Used for testing purposes.
  *
@@ -71,135 +68,117 @@ use Psr\Log\LogLevel;
  * @method bool hasInfoThatPasses(callable $predicate)
  * @method bool hasDebugThatPasses(callable $predicate)
  */
-class TestHandler extends AbstractProcessingHandler
+class Test_Handler extends Abstract_Processing_Handler
 {
     /** @var LogRecord[] */
     protected array $records = [];
     /** @phpstan-var array<value-of<Level::VALUES>, LogRecord[]> */
-    protected array $recordsByLevel = [];
-    private bool $skipReset = false;
-
+    protected array $records_by_level = [];
+    private bool $skip_reset = false;
     /**
      * @return array<LogRecord>
      */
-    #[NoDiscard]
-    public function getRecords(): array
+    #[No_Discard]
+    public function get_records(): array
     {
         return $this->records;
     }
-
     public function clear(): void
     {
         $this->records = [];
-        $this->recordsByLevel = [];
+        $this->records_by_level = [];
     }
-
     public function reset(): void
     {
-        if (!$this->skipReset) {
+        if (!$this->skip_reset) {
             $this->clear();
         }
     }
-
-    public function setSkipReset(bool $skipReset): void
+    public function set_skip_reset(bool $skip_reset): void
     {
-        $this->skipReset = $skipReset;
+        $this->skip_reset = $skip_reset;
     }
-
     /**
      * @param int|string|Level|LogLevel::* $level Logging level value or name
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $level
      */
-    #[NoDiscard]
-    public function hasRecords(int|string|Level $level): bool
+    #[No_Discard]
+    public function has_records(int|string|Level $level): bool
     {
-        return isset($this->recordsByLevel[Logger::toMonologLevel($level)->value]);
+        return isset($this->records_by_level[Logger::to_monolog_level($level)->value]);
     }
-
     /**
      * @param string|array $recordAssertions Either a message string or an array containing message and optionally context keys that will be checked against all records
      *
      * @phpstan-param array{message: string, context?: mixed[]}|string $recordAssertions
      */
-    #[NoDiscard]
-    public function hasRecord(string|array $recordAssertions, Level $level): bool
+    #[No_Discard]
+    public function has_record(string|array $record_assertions, Level $level): bool
     {
-        if (\is_string($recordAssertions)) {
-            $recordAssertions = ['message' => $recordAssertions];
+        if (\is_string($record_assertions)) {
+            $record_assertions = ['message' => $record_assertions];
         }
-
-        return $this->hasRecordThatPasses(function (LogRecord $rec) use ($recordAssertions): bool {
-            if ($rec->message !== $recordAssertions['message']) {
+        return $this->has_record_that_passes(function (Log_Record $rec) use ($record_assertions): bool {
+            if ($rec->message !== $record_assertions['message']) {
                 return false;
             }
-            if (isset($recordAssertions['context']) && $rec->context !== $recordAssertions['context']) {
+            if (isset($record_assertions['context']) && $rec->context !== $record_assertions['context']) {
                 return false;
             }
-
             return true;
         }, $level);
     }
-
-    #[NoDiscard]
-    public function hasRecordThatContains(string $message, Level $level): bool
+    #[No_Discard]
+    public function has_record_that_contains(string $message, Level $level): bool
     {
-        return $this->hasRecordThatPasses(fn (LogRecord $rec): bool => str_contains($rec->message, $message), $level);
+        return $this->has_record_that_passes(fn(Log_Record $rec): bool => str_contains($rec->message, $message), $level);
     }
-
-    #[NoDiscard]
-    public function hasRecordThatMatches(string $regex, Level $level): bool
+    #[No_Discard]
+    public function has_record_that_matches(string $regex, Level $level): bool
     {
-        return $this->hasRecordThatPasses(fn (LogRecord $rec): bool => preg_match($regex, $rec->message) > 0, $level);
+        return $this->has_record_that_passes(fn(Log_Record $rec): bool => preg_match($regex, $rec->message) > 0, $level);
     }
-
     /**
      * @phpstan-param callable(LogRecord, int): mixed $predicate
      */
-    #[NoDiscard]
-    public function hasRecordThatPasses(callable $predicate, Level $level): bool
+    #[No_Discard]
+    public function has_record_that_passes(callable $predicate, Level $level): bool
     {
-        $level = Logger::toMonologLevel($level);
-
-        if (!isset($this->recordsByLevel[$level->value])) {
+        $level = Logger::to_monolog_level($level);
+        if (!isset($this->records_by_level[$level->value])) {
             return false;
         }
-
-        foreach ($this->recordsByLevel[$level->value] as $i => $rec) {
+        foreach ($this->records_by_level[$level->value] as $i => $rec) {
             if ((bool) $predicate($rec, $i)) {
                 return true;
             }
         }
-
         return false;
     }
-
     /**
      * @inheritDoc
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
-        $this->recordsByLevel[$record->level->value][] = $record;
+        $this->records_by_level[$record->level->value][] = $record;
         $this->records[] = $record;
     }
-
     /**
      * @param mixed[] $args
      */
-    #[NoDiscard]
+    #[No_Discard]
     public function __call(string $method, array $args): bool
     {
         if ((bool) preg_match('/(.*)(Debug|Info|Notice|Warning|Error|Critical|Alert|Emergency)(.*)/', $method, $matches)) {
-            $genericMethod = $matches[1] . ('Records' !== $matches[3] ? 'Record' : '') . $matches[3];
-            $level = \constant(Level::class.'::' . $matches[2]);
-            $callback = [$this, $genericMethod];
+            $generic_method = $matches[1] . ('Records' !== $matches[3] ? 'Record' : '') . $matches[3];
+            $level = \constant(Level::class . '::' . $matches[2]);
+            $callback = [$this, $generic_method];
             if (\is_callable($callback)) {
                 $args[] = $level;
-
                 return \call_user_func_array($callback, $args);
             }
         }
-
         throw new \BadMethodCallException('Call to undefined method ' . static::class . '::' . $method . '()');
     }
 }

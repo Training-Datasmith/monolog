@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,16 +9,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Line_Formatter;
 use Monolog\Level;
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Predis\Client as Predis;
 use Redis;
-
 /**
  * Sends the message to a Redis Pub/Sub channel using PUBLISH
  *
@@ -31,30 +28,28 @@ use Redis;
  *
  * @author Gaëtan Faugère <gaetan@fauge.re>
  */
-class RedisPubSubHandler extends AbstractProcessingHandler
+class Redis_Pub_Sub_Handler extends Abstract_Processing_Handler
 {
     /**
      * @param Predis<Predis>|Redis $redisClient The redis instance
      * @param string $channelKey The channel key to publish records to
      */
-    public function __construct(private readonly Predis|Redis $redisClient, private readonly string $channelKey, int|string|Level $level = Level::Debug, bool $bubble = true)
+    public function __construct(private readonly Predis|Redis $redis_client, private readonly string $channel_key, int|string|Level $level = Level::Debug, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
     }
-
     /**
      * @inheritDoc
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
-        $this->redisClient->publish($this->channelKey, $record->formatted);
+        $this->redis_client->publish($this->channel_key, $record->formatted);
     }
-
     /**
      * @inheritDoc
      */
-    protected function getDefaultFormatter(): FormatterInterface
+    protected function get_default_formatter(): Formatter_Interface
     {
-        return new LineFormatter();
+        return new Line_Formatter();
     }
 }

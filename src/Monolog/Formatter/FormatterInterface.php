@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,17 +9,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Interface for formatters
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-interface FormatterInterface
+interface Formatter_Interface
 {
     /**
      * Formats a log record.
@@ -28,13 +25,12 @@ interface FormatterInterface
      * @param  LogRecord $record A record to format
      * @return mixed     The formatted record
      */
-    public function format(LogRecord $record);
-
+    public function format(Log_Record $record);
     /**
      * Formats a set of log records.
      *
      * @param  array<LogRecord> $records A set of records to format
      * @return mixed            The formatted set of records
      */
-    public function formatBatch(array $records);
+    public function format_batch(array $records);
 }

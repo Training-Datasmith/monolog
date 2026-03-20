@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,19 +9,17 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Line_Formatter;
 use Monolog\Level;
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Monolog\Utils;
-use PhpConsole\Connector;
-use PhpConsole\Handler as VendorPhpConsoleHandler;
-use PhpConsole\Helper;
-use PhpConsole\Storage;
-
+use Php_Console\Connector;
+use Php_Console\Handler as VendorPhpConsoleHandler;
+use Php_Console\Helper;
+use Php_Console\Storage;
 /**
  * Monolog handler for Google Chrome extension "PHP Console"
  *
@@ -88,36 +85,53 @@ use PhpConsole\Storage;
  *
  * @deprecated Since 2.8.0 and 3.2.0, PHPConsole is abandoned and thus we will drop this handler in Monolog 4
  */
-class PHPConsoleHandler extends AbstractProcessingHandler
+class Php_Console_Handler extends Abstract_Processing_Handler
 {
     /**
      * @phpstan-var Options
      */
     private array $options = [
-        'enabled' => true, // bool Is PHP Console server enabled
-        'classesPartialsTraceIgnore' => ['Monolog\\'], // array Hide calls of classes started with...
-        'debugTagsKeysInContext' => [0, 'tag'], // bool Is PHP Console server enabled
-        'useOwnErrorsHandler' => false, // bool Enable errors handling
-        'useOwnExceptionsHandler' => false, // bool Enable exceptions handling
-        'sourcesBasePath' => null, // string Base path of all project sources to strip in errors source paths
-        'registerHelper' => true, // bool Register PhpConsole\Helper that allows short debug calls like PC::debug($var, 'ta.g.s')
-        'serverEncoding' => null, // string|null Server internal encoding
-        'headersLimit' => null, // int|null Set headers size limit for your web-server
-        'password' => null, // string|null Protect PHP Console connection by password
-        'enableSslOnlyMode' => false, // bool Force connection by SSL for clients with PHP Console installed
-        'ipMasks' => [], // array Set IP masks of clients that will be allowed to connect to PHP Console: array('192.168.*.*', '127.0.0.1')
-        'enableEvalListener' => false, // bool Enable eval request to be handled by eval dispatcher(if enabled, 'password' option is also required)
-        'dumperDetectCallbacks' => false, // bool Convert callback items in dumper vars to (callback SomeClass::someMethod) strings
-        'dumperLevelLimit' => 5, // int Maximum dumped vars array or object nested dump level
-        'dumperItemsCountLimit' => 100, // int Maximum dumped var same level array items or object properties number
-        'dumperItemSizeLimit' => 5000, // int Maximum length of any string or dumped array item
-        'dumperDumpSizeLimit' => 500000, // int Maximum approximate size of dumped vars result formatted in JSON
-        'detectDumpTraceAndSource' => false, // bool Autodetect and append trace data to debug
-        'dataStorage' => null, // \PhpConsole\Storage|null Fixes problem with custom $_SESSION handler (see https://github.com/barbushin/php-console#troubleshooting-with-_session-handler-overridden-in-some-frameworks)
+        'enabled' => true,
+        // bool Is PHP Console server enabled
+        'classesPartialsTraceIgnore' => ['Monolog\\'],
+        // array Hide calls of classes started with...
+        'debugTagsKeysInContext' => [0, 'tag'],
+        // bool Is PHP Console server enabled
+        'useOwnErrorsHandler' => false,
+        // bool Enable errors handling
+        'useOwnExceptionsHandler' => false,
+        // bool Enable exceptions handling
+        'sourcesBasePath' => null,
+        // string Base path of all project sources to strip in errors source paths
+        'registerHelper' => true,
+        // bool Register PhpConsole\Helper that allows short debug calls like PC::debug($var, 'ta.g.s')
+        'serverEncoding' => null,
+        // string|null Server internal encoding
+        'headersLimit' => null,
+        // int|null Set headers size limit for your web-server
+        'password' => null,
+        // string|null Protect PHP Console connection by password
+        'enableSslOnlyMode' => false,
+        // bool Force connection by SSL for clients with PHP Console installed
+        'ipMasks' => [],
+        // array Set IP masks of clients that will be allowed to connect to PHP Console: array('192.168.*.*', '127.0.0.1')
+        'enableEvalListener' => false,
+        // bool Enable eval request to be handled by eval dispatcher(if enabled, 'password' option is also required)
+        'dumperDetectCallbacks' => false,
+        // bool Convert callback items in dumper vars to (callback SomeClass::someMethod) strings
+        'dumperLevelLimit' => 5,
+        // int Maximum dumped vars array or object nested dump level
+        'dumperItemsCountLimit' => 100,
+        // int Maximum dumped var same level array items or object properties number
+        'dumperItemSizeLimit' => 5000,
+        // int Maximum length of any string or dumped array item
+        'dumperDumpSizeLimit' => 500000,
+        // int Maximum approximate size of dumped vars result formatted in JSON
+        'detectDumpTraceAndSource' => false,
+        // bool Autodetect and append trace data to debug
+        'dataStorage' => null,
     ];
-
     private readonly Connector $connector;
-
     /**
      * @param  array<string, mixed> $options   See \Monolog\Handler\PHPConsoleHandler::$options for more details
      * @param  Connector|null       $connector Instance of \PhpConsole\Connector class (optional)
@@ -130,10 +144,9 @@ class PHPConsoleHandler extends AbstractProcessingHandler
             throw new \RuntimeException('PHP Console library not found. See https://github.com/barbushin/php-console#installation');
         }
         parent::__construct($level, $bubble);
-        $this->options = $this->initOptions($options);
-        $this->connector = $this->initConnector($connector);
+        $this->options = $this->init_options($options);
+        $this->connector = $this->init_connector($connector);
     }
-
     /**
      * @param  array<string, mixed> $options
      * @return array<string, mixed>
@@ -141,165 +154,142 @@ class PHPConsoleHandler extends AbstractProcessingHandler
      * @phpstan-param InputOptions $options
      * @phpstan-return Options
      */
-    private function initOptions(array $options): array
+    private function init_options(array $options): array
     {
-        $wrongOptions = array_diff(array_keys($options), array_keys($this->options));
-        if (\count($wrongOptions) > 0) {
-            throw new \RuntimeException('Unknown options: ' . implode(', ', $wrongOptions));
+        $wrong_options = array_diff(array_keys($options), array_keys($this->options));
+        if (\count($wrong_options) > 0) {
+            throw new \RuntimeException('Unknown options: ' . implode(', ', $wrong_options));
         }
-
         return array_replace($this->options, $options);
     }
-
-    private function initConnector(?Connector $connector = null): Connector
+    private function init_connector(?Connector $connector = null): Connector
     {
         if (null === $connector) {
             if ($this->options['dataStorage'] instanceof Storage) {
-                Connector::setPostponeStorage($this->options['dataStorage']);
+                Connector::set_postpone_storage($this->options['dataStorage']);
             }
-            $connector = Connector::getInstance();
+            $connector = Connector::get_instance();
         }
-
-        if ($this->options['registerHelper'] && !Helper::isRegistered()) {
+        if ($this->options['registerHelper'] && !Helper::is_registered()) {
             Helper::register();
         }
-
-        if ($this->options['enabled'] && $connector->isActiveClient()) {
+        if ($this->options['enabled'] && $connector->is_active_client()) {
             if ($this->options['useOwnErrorsHandler'] || $this->options['useOwnExceptionsHandler']) {
-                $handler = VendorPhpConsoleHandler::getInstance();
-                $handler->setHandleErrors($this->options['useOwnErrorsHandler']);
-                $handler->setHandleExceptions($this->options['useOwnExceptionsHandler']);
+                $handler = Vendor_Php_Console_Handler::get_instance();
+                $handler->set_handle_errors($this->options['useOwnErrorsHandler']);
+                $handler->set_handle_exceptions($this->options['useOwnExceptionsHandler']);
                 $handler->start();
             }
             if (null !== $this->options['sourcesBasePath']) {
-                $connector->setSourcesBasePath($this->options['sourcesBasePath']);
+                $connector->set_sources_base_path($this->options['sourcesBasePath']);
             }
             if (null !== $this->options['serverEncoding']) {
-                $connector->setServerEncoding($this->options['serverEncoding']);
+                $connector->set_server_encoding($this->options['serverEncoding']);
             }
             if (null !== $this->options['password']) {
-                $connector->setPassword($this->options['password']);
+                $connector->set_password($this->options['password']);
             }
             if ($this->options['enableSslOnlyMode']) {
-                $connector->enableSslOnlyMode();
+                $connector->enable_ssl_only_mode();
             }
             if (\count($this->options['ipMasks']) > 0) {
-                $connector->setAllowedIpMasks($this->options['ipMasks']);
+                $connector->set_allowed_ip_masks($this->options['ipMasks']);
             }
             if (null !== $this->options['headersLimit'] && $this->options['headersLimit'] > 0) {
-                $connector->setHeadersLimit($this->options['headersLimit']);
+                $connector->set_headers_limit($this->options['headersLimit']);
             }
             if ($this->options['detectDumpTraceAndSource']) {
-                $connector->getDebugDispatcher()->detectTraceAndSource = true;
+                $connector->get_debug_dispatcher()->detect_trace_and_source = true;
             }
-            $dumper = $connector->getDumper();
-            $dumper->levelLimit = $this->options['dumperLevelLimit'];
-            $dumper->itemsCountLimit = $this->options['dumperItemsCountLimit'];
-            $dumper->itemSizeLimit = $this->options['dumperItemSizeLimit'];
-            $dumper->dumpSizeLimit = $this->options['dumperDumpSizeLimit'];
-            $dumper->detectCallbacks = $this->options['dumperDetectCallbacks'];
+            $dumper = $connector->get_dumper();
+            $dumper->level_limit = $this->options['dumperLevelLimit'];
+            $dumper->items_count_limit = $this->options['dumperItemsCountLimit'];
+            $dumper->item_size_limit = $this->options['dumperItemSizeLimit'];
+            $dumper->dump_size_limit = $this->options['dumperDumpSizeLimit'];
+            $dumper->detect_callbacks = $this->options['dumperDetectCallbacks'];
             if ($this->options['enableEvalListener']) {
-                $connector->startEvalRequestsListener();
+                $connector->start_eval_requests_listener();
             }
         }
-
         return $connector;
     }
-
-    public function getConnector(): Connector
+    public function get_connector(): Connector
     {
         return $this->connector;
     }
-
     /**
      * @return array<string, mixed>
      */
-    public function getOptions(): array
+    public function get_options(): array
     {
         return $this->options;
     }
-
-    public function handle(LogRecord $record): bool
+    public function handle(Log_Record $record): bool
     {
-        if ($this->options['enabled'] && $this->connector->isActiveClient()) {
+        if ($this->options['enabled'] && $this->connector->is_active_client()) {
             return parent::handle($record);
         }
-
         return !$this->bubble;
     }
-
     /**
      * Writes the record down to the log of the implementing handler
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
-        if ($record->level->isLowerThan(Level::Notice)) {
-            $this->handleDebugRecord($record);
+        if ($record->level->is_lower_than(Level::Notice)) {
+            $this->handle_debug_record($record);
         } elseif (isset($record->context['exception']) && $record->context['exception'] instanceof \Throwable) {
-            $this->handleExceptionRecord($record);
+            $this->handle_exception_record($record);
         } else {
-            $this->handleErrorRecord($record);
+            $this->handle_error_record($record);
         }
     }
-
-    private function handleDebugRecord(LogRecord $record): void
+    private function handle_debug_record(Log_Record $record): void
     {
-        [$tags, $filteredContext] = $this->getRecordTags($record);
+        [$tags, $filtered_context] = $this->get_record_tags($record);
         $message = $record->message;
-        if (\count($filteredContext) > 0) {
-            $message .= ' ' . Utils::jsonEncode($this->connector->getDumper()->dump(array_filter($filteredContext)), null, true);
+        if (\count($filtered_context) > 0) {
+            $message .= ' ' . Utils::json_encode($this->connector->get_dumper()->dump(array_filter($filtered_context)), null, true);
         }
-        $this->connector->getDebugDispatcher()->dispatchDebug($message, $tags, $this->options['classesPartialsTraceIgnore']);
+        $this->connector->get_debug_dispatcher()->dispatch_debug($message, $tags, $this->options['classesPartialsTraceIgnore']);
     }
-
-    private function handleExceptionRecord(LogRecord $record): void
+    private function handle_exception_record(Log_Record $record): void
     {
-        $this->connector->getErrorsDispatcher()->dispatchException($record->context['exception']);
+        $this->connector->get_errors_dispatcher()->dispatch_exception($record->context['exception']);
     }
-
-    private function handleErrorRecord(LogRecord $record): void
+    private function handle_error_record(Log_Record $record): void
     {
         $context = $record->context;
-
-        $this->connector->getErrorsDispatcher()->dispatchError(
-            $context['code'] ?? null,
-            $context['message'] ?? $record->message,
-            $context['file'] ?? null,
-            $context['line'] ?? null,
-            $this->options['classesPartialsTraceIgnore']
-        );
+        $this->connector->get_errors_dispatcher()->dispatch_error($context['code'] ?? null, $context['message'] ?? $record->message, $context['file'] ?? null, $context['line'] ?? null, $this->options['classesPartialsTraceIgnore']);
     }
-
     /**
      * @return array{string, mixed[]}
      */
-    private function getRecordTags(LogRecord $record): array
+    private function get_record_tags(Log_Record $record): array
     {
         $tags = null;
-        $filteredContext = [];
+        $filtered_context = [];
         if ($record->context !== []) {
-            $filteredContext = $record->context;
+            $filtered_context = $record->context;
             foreach ($this->options['debugTagsKeysInContext'] as $key) {
-                if (isset($filteredContext[$key])) {
-                    $tags = $filteredContext[$key];
+                if (isset($filtered_context[$key])) {
+                    $tags = $filtered_context[$key];
                     if ($key === 0) {
-                        array_shift($filteredContext);
+                        array_shift($filtered_context);
                     } else {
-                        unset($filteredContext[$key]);
+                        unset($filtered_context[$key]);
                     }
                     break;
                 }
             }
         }
-
-        return [$tags ?? $record->level->toPsrLogLevel(), $filteredContext];
+        return [$tags ?? $record->level->to_psr_log_level(), $filtered_context];
     }
-
     /**
      * @inheritDoc
      */
-    protected function getDefaultFormatter(): FormatterInterface
+    protected function get_default_formatter(): Formatter_Interface
     {
-        return new LineFormatter('%message%');
+        return new Line_Formatter('%message%');
     }
 }

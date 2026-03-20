@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,50 +9,43 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LineFormatter;
-
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Line_Formatter;
 /**
  * Helper trait for implementing FormattableInterface
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-trait FormattableHandlerTrait
+trait Formattable_Handler_Trait
 {
-    protected FormatterInterface|null $formatter = null;
-
+    protected Formatter_Interface|null $formatter = null;
     /**
      * @inheritDoc
      */
-    public function setFormatter(FormatterInterface $formatter): HandlerInterface
+    public function set_formatter(Formatter_Interface $formatter): Handler_Interface
     {
         $this->formatter = $formatter;
-
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function getFormatter(): FormatterInterface
+    public function get_formatter(): Formatter_Interface
     {
         if (null === $this->formatter) {
-            $this->formatter = $this->getDefaultFormatter();
+            $this->formatter = $this->get_default_formatter();
         }
-
         return $this->formatter;
     }
-
     /**
      * Gets the default formatter.
      *
      * Overwrite this if the LineFormatter is not a good default for your handler.
      */
-    protected function getDefaultFormatter(): FormatterInterface
+    protected function get_default_formatter(): Formatter_Interface
     {
-        return new LineFormatter();
+        return new Line_Formatter();
     }
 }

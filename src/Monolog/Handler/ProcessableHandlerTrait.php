@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,61 +9,52 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\LogRecord;
-use Monolog\Processor\ProcessorInterface;
-use Monolog\ResettableInterface;
-
+use Monolog\Log_Record;
+use Monolog\Processor\Processor_Interface;
+use Monolog\Resettable_Interface;
 /**
  * Helper trait for implementing ProcessableInterface
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-trait ProcessableHandlerTrait
+trait Processable_Handler_Trait
 {
     /**
      * @var callable[]
      * @phpstan-var array<(callable(LogRecord): LogRecord)|ProcessorInterface>
      */
     protected array $processors = [];
-
     /**
      * @inheritDoc
      */
-    public function pushProcessor(callable $callback): HandlerInterface
+    public function push_processor(callable $callback): Handler_Interface
     {
         array_unshift($this->processors, $callback);
-
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function popProcessor(): callable
+    public function pop_processor(): callable
     {
         if (\count($this->processors) === 0) {
             throw new \LogicException('You tried to pop from an empty processor stack.');
         }
-
         return array_shift($this->processors);
     }
-
-    protected function processRecord(LogRecord $record): LogRecord
+    protected function process_record(Log_Record $record): Log_Record
     {
         foreach ($this->processors as $processor) {
             $record = $processor($record);
         }
-
         return $record;
     }
-
-    protected function resetProcessors(): void
+    protected function reset_processors(): void
     {
         foreach ($this->processors as $processor) {
-            if ($processor instanceof ResettableInterface) {
+            if ($processor instanceof Resettable_Interface) {
                 $processor->reset();
             }
         }

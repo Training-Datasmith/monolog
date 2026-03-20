@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
 use DateTimeInterface;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Format a log message into an Elasticsearch record
  *
  * @author Avtandil Kikabidze <akalongman@gmail.com>
  */
-class ElasticsearchFormatter extends NormalizerFormatter
+class Elasticsearch_Formatter extends Normalizer_Formatter
 {
     /**
      * @param string $index Elasticsearch index name
@@ -32,44 +29,38 @@ class ElasticsearchFormatter extends NormalizerFormatter
         // Elasticsearch requires an ISO 8601 format date with optional millisecond precision.
         parent::__construct(DateTimeInterface::ATOM);
     }
-
     /**
      * @inheritDoc
      */
-    public function format(LogRecord $record): array
+    public function format(Log_Record $record): array
     {
         $record = parent::format($record);
-
-        return $this->getDocument($record);
+        return $this->get_document($record);
     }
-
     /**
      * Getter index
      */
-    public function getIndex(): string
+    public function get_index(): string
     {
         return $this->index;
     }
-
     /**
      * Getter type
      */
-    public function getType(): string
+    public function get_type(): string
     {
         return $this->type;
     }
-
     /**
      * Convert a log message into an Elasticsearch record
      *
      * @param  mixed[] $record Log message
      * @return mixed[]
      */
-    protected function getDocument(array $record): array
+    protected function get_document(array $record): array
     {
         $record['_index'] = $this->index;
         $record['_type'] = $this->type;
-
         return $record;
     }
 }

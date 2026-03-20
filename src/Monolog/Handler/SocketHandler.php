@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,30 +9,27 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Stores to any socket - uses fsockopen() or pfsockopen().
  *
  * @author Pablo de Leon Belloc <pablolb@gmail.com>
  * @see    http://php.net/manual/en/function.fsockopen.php
  */
-class SocketHandler extends AbstractProcessingHandler
+class Socket_Handler extends Abstract_Processing_Handler
 {
-    private float $connectionTimeout;
+    private float $connection_timeout;
     /** @var resource|null */
     private $resource;
     private float $timeout;
-    private float $writingTimeout;
-    private int|null $lastSentBytes = null;
+    private float $writing_timeout;
+    private int|null $last_sent_bytes = null;
     private int|null $errno = null;
     private string|null $errstr = null;
-    private float|null $lastWritingAt = null;
-
+    private float|null $last_writing_at = null;
     /**
      * @param string     $connectionString  Socket connection string
      * @param bool       $persistent        Flag to enable/disable persistent connections
@@ -45,29 +41,18 @@ class SocketHandler extends AbstractProcessingHandler
      *
      * @throws \InvalidArgumentException If an invalid timeout value (less than 0) is passed.
      */
-    public function __construct(
-        private readonly string $connectionString,
-        int|string|\Monolog\Level $level = Level::Debug,
-        bool $bubble = true,
-        private bool $persistent = false,
-        float $timeout = 0.0,
-        float $writingTimeout = 10.0,
-        ?float $connectionTimeout = null,
-        private int|null $chunkSize = null
-    ) {
+    public function __construct(private readonly string $connection_string, int|string|\Monolog\Level $level = Level::Debug, bool $bubble = true, private bool $persistent = false, float $timeout = 0.0, float $writing_timeout = 10.0, ?float $connection_timeout = null, private int|null $chunk_size = null)
+    {
         parent::__construct($level, $bubble);
-
-        if ($connectionTimeout !== null) {
-            $this->validateTimeout($connectionTimeout);
+        if ($connection_timeout !== null) {
+            $this->validate_timeout($connection_timeout);
         }
-
-        $this->connectionTimeout = $connectionTimeout ?? (float) \ini_get('default_socket_timeout');
-        $this->validateTimeout($timeout);
+        $this->connection_timeout = $connection_timeout ?? (float) \ini_get('default_socket_timeout');
+        $this->validate_timeout($timeout);
         $this->timeout = $timeout;
-        $this->validateTimeout($writingTimeout);
-        $this->writingTimeout = $writingTimeout;
+        $this->validate_timeout($writing_timeout);
+        $this->writing_timeout = $writing_timeout;
     }
-
     /**
      * Connect (if necessary) and write to the socket
      *
@@ -76,159 +61,139 @@ class SocketHandler extends AbstractProcessingHandler
      * @throws \UnexpectedValueException
      * @throws \RuntimeException
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
-        $this->connectIfNotConnected();
-        $data = $this->generateDataStream($record);
-        $this->writeToSocket($data);
+        $this->connect_if_not_connected();
+        $data = $this->generate_data_stream($record);
+        $this->write_to_socket($data);
     }
-
     /**
      * We will not close a PersistentSocket instance so it can be reused in other requests.
      */
     public function close(): void
     {
-        if (!$this->isPersistent()) {
-            $this->closeSocket();
+        if (!$this->is_persistent()) {
+            $this->close_socket();
         }
     }
-
     /**
      * Close socket, if open
      */
-    public function closeSocket(): void
+    public function close_socket(): void
     {
         if (\is_resource($this->resource)) {
             fclose($this->resource);
             $this->resource = null;
         }
     }
-
     /**
      * Set socket connection to be persistent. It only has effect before the connection is initiated.
      *
      * @return $this
      */
-    public function setPersistent(bool $persistent): self
+    public function set_persistent(bool $persistent): self
     {
         $this->persistent = $persistent;
-
         return $this;
     }
-
     /**
      * Set connection timeout.  Only has effect before we connect.
      *
      * @see http://php.net/manual/en/function.fsockopen.php
      * @return $this
      */
-    public function setConnectionTimeout(float $seconds): self
+    public function set_connection_timeout(float $seconds): self
     {
-        $this->validateTimeout($seconds);
-        $this->connectionTimeout = $seconds;
-
+        $this->validate_timeout($seconds);
+        $this->connection_timeout = $seconds;
         return $this;
     }
-
     /**
      * Set write timeout. Only has effect before we connect.
      *
      * @see http://php.net/manual/en/function.stream-set-timeout.php
      * @return $this
      */
-    public function setTimeout(float $seconds): self
+    public function set_timeout(float $seconds): self
     {
-        $this->validateTimeout($seconds);
+        $this->validate_timeout($seconds);
         $this->timeout = $seconds;
-
         return $this;
     }
-
     /**
      * Set writing timeout. Only has effect during connection in the writing cycle.
      *
      * @param  float $seconds 0 for no timeout
      * @return $this
      */
-    public function setWritingTimeout(float $seconds): self
+    public function set_writing_timeout(float $seconds): self
     {
-        $this->validateTimeout($seconds);
-        $this->writingTimeout = $seconds;
-
+        $this->validate_timeout($seconds);
+        $this->writing_timeout = $seconds;
         return $this;
     }
-
     /**
      * Set chunk size. Only has effect during connection in the writing cycle.
      *
      * @return $this
      */
-    public function setChunkSize(int $bytes): self
+    public function set_chunk_size(int $bytes): self
     {
-        $this->chunkSize = $bytes;
-
+        $this->chunk_size = $bytes;
         return $this;
     }
-
     /**
      * Get current connection string
      */
-    public function getConnectionString(): string
+    public function get_connection_string(): string
     {
-        return $this->connectionString;
+        return $this->connection_string;
     }
-
     /**
      * Get persistent setting
      */
-    public function isPersistent(): bool
+    public function is_persistent(): bool
     {
         return $this->persistent;
     }
-
     /**
      * Get current connection timeout setting
      */
-    public function getConnectionTimeout(): float
+    public function get_connection_timeout(): float
     {
-        return $this->connectionTimeout;
+        return $this->connection_timeout;
     }
-
     /**
      * Get current in-transfer timeout
      */
-    public function getTimeout(): float
+    public function get_timeout(): float
     {
         return $this->timeout;
     }
-
     /**
      * Get current local writing timeout
      */
-    public function getWritingTimeout(): float
+    public function get_writing_timeout(): float
     {
-        return $this->writingTimeout;
+        return $this->writing_timeout;
     }
-
     /**
      * Get current chunk size
      */
-    public function getChunkSize(): ?int
+    public function get_chunk_size(): ?int
     {
-        return $this->chunkSize;
+        return $this->chunk_size;
     }
-
     /**
      * Check to see if the socket is currently available.
      *
      * UDP might appear to be connected but might fail when writing.  See http://php.net/fsockopen for details.
      */
-    public function isConnected(): bool
+    public function is_connected(): bool
     {
-        return \is_resource($this->resource)
-            && !feof($this->resource);  // on TCP - other party can close connection.
+        return \is_resource($this->resource) && !feof($this->resource);
+        // on TCP - other party can close connection.
     }
-
     /**
      * Wrapper to allow mocking
      *
@@ -236,9 +201,8 @@ class SocketHandler extends AbstractProcessingHandler
      */
     protected function pfsockopen()
     {
-        return @pfsockopen($this->connectionString, -1, $this->errno, $this->errstr, $this->connectionTimeout);
+        return @pfsockopen($this->connection_string, -1, $this->errno, $this->errstr, $this->connection_timeout);
     }
-
     /**
      * Wrapper to allow mocking
      *
@@ -246,26 +210,22 @@ class SocketHandler extends AbstractProcessingHandler
      */
     protected function fsockopen()
     {
-        return @fsockopen($this->connectionString, -1, $this->errno, $this->errstr, $this->connectionTimeout);
+        return @fsockopen($this->connection_string, -1, $this->errno, $this->errstr, $this->connection_timeout);
     }
-
     /**
      * Wrapper to allow mocking
      *
      * @see http://php.net/manual/en/function.stream-set-timeout.php
      */
-    protected function streamSetTimeout(): bool
+    protected function stream_set_timeout(): bool
     {
         $seconds = floor($this->timeout);
-        $microseconds = round(($this->timeout - $seconds) * 1e6);
-
+        $microseconds = round(($this->timeout - $seconds) * 1000000.0);
         if (!\is_resource($this->resource)) {
             throw new \LogicException('streamSetTimeout called but $this->resource is not a resource');
         }
-
         return stream_set_timeout($this->resource, (int) $seconds, (int) $microseconds);
     }
-
     /**
      * Wrapper to allow mocking
      *
@@ -273,19 +233,16 @@ class SocketHandler extends AbstractProcessingHandler
      *
      * @return int|false
      */
-    protected function streamSetChunkSize(): int|bool
+    protected function stream_set_chunk_size(): int|bool
     {
         if (!\is_resource($this->resource)) {
             throw new \LogicException('streamSetChunkSize called but $this->resource is not a resource');
         }
-
-        if (null === $this->chunkSize) {
+        if (null === $this->chunk_size) {
             throw new \LogicException('streamSetChunkSize called but $this->chunkSize is not set');
         }
-
-        return stream_set_chunk_size($this->resource, $this->chunkSize);
+        return stream_set_chunk_size($this->resource, $this->chunk_size);
     }
-
     /**
      * Wrapper to allow mocking
      *
@@ -296,92 +253,80 @@ class SocketHandler extends AbstractProcessingHandler
         if (!\is_resource($this->resource)) {
             throw new \LogicException('fwrite called but $this->resource is not a resource');
         }
-
         return @fwrite($this->resource, $data);
     }
-
     /**
      * Wrapper to allow mocking
      *
      * @return mixed[]|bool
      */
-    protected function streamGetMetadata(): array|bool
+    protected function stream_get_metadata(): array|bool
     {
         if (!\is_resource($this->resource)) {
             throw new \LogicException('streamGetMetadata called but $this->resource is not a resource');
         }
-
         return stream_get_meta_data($this->resource);
     }
-
-    private function validateTimeout(float $value): void
+    private function validate_timeout(float $value): void
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("Timeout must be 0 or a positive float (got $value)");
+            throw new \InvalidArgumentException("Timeout must be 0 or a positive float (got {$value})");
         }
     }
-
-    private function connectIfNotConnected(): void
+    private function connect_if_not_connected(): void
     {
-        if ($this->isConnected()) {
+        if ($this->is_connected()) {
             return;
         }
         $this->connect();
     }
-
-    protected function generateDataStream(LogRecord $record): string
+    protected function generate_data_stream(Log_Record $record): string
     {
         return (string) $record->formatted;
     }
-
     /**
      * @return resource|null
      */
-    protected function getResource()
+    protected function get_resource()
     {
         return $this->resource;
     }
-
     private function connect(): void
     {
-        $this->createSocketResource();
-        $this->setSocketTimeout();
-        $this->setStreamChunkSize();
+        $this->create_socket_resource();
+        $this->set_socket_timeout();
+        $this->set_stream_chunk_size();
     }
-
-    private function createSocketResource(): void
+    private function create_socket_resource(): void
     {
-        if ($this->isPersistent()) {
+        if ($this->is_persistent()) {
             $resource = $this->pfsockopen();
         } else {
             $resource = $this->fsockopen();
         }
         if (\is_bool($resource)) {
-            throw new \UnexpectedValueException("Failed connecting to $this->connectionString ($this->errno: $this->errstr)");
+            throw new \UnexpectedValueException("Failed connecting to {$this->connection_string} ({$this->errno}: {$this->errstr})");
         }
         $this->resource = $resource;
     }
-
-    private function setSocketTimeout(): void
+    private function set_socket_timeout(): void
     {
-        if (!$this->streamSetTimeout()) {
+        if (!$this->stream_set_timeout()) {
             throw new \UnexpectedValueException('Failed setting timeout with stream_set_timeout()');
         }
     }
-
-    private function setStreamChunkSize(): void
+    private function set_stream_chunk_size(): void
     {
-        if (null !== $this->chunkSize && false === $this->streamSetChunkSize()) {
+        if (null !== $this->chunk_size && false === $this->stream_set_chunk_size()) {
             throw new \UnexpectedValueException('Failed setting chunk size with stream_set_chunk_size()');
         }
     }
-
-    private function writeToSocket(string $data): void
+    private function write_to_socket(string $data): void
     {
         $length = \strlen($data);
         $sent = 0;
-        $this->lastSentBytes = $sent;
-        while ($this->isConnected() && $sent < $length) {
+        $this->last_sent_bytes = $sent;
+        while ($this->is_connected() && $sent < $length) {
             if (0 === $sent) {
                 $chunk = $this->fwrite($data);
             } else {
@@ -391,41 +336,34 @@ class SocketHandler extends AbstractProcessingHandler
                 throw new \RuntimeException('Could not write to socket');
             }
             $sent += $chunk;
-            $socketInfo = $this->streamGetMetadata();
-            if (\is_array($socketInfo) && (bool) $socketInfo['timed_out']) {
+            $socket_info = $this->stream_get_metadata();
+            if (\is_array($socket_info) && (bool) $socket_info['timed_out']) {
                 throw new \RuntimeException('Write timed-out');
             }
-
-            if ($this->writingIsTimedOut($sent)) {
-                throw new \RuntimeException("Write timed-out, no data sent for `{$this->writingTimeout}` seconds, probably we got disconnected (sent $sent of $length)");
+            if ($this->writing_is_timed_out($sent)) {
+                throw new \RuntimeException("Write timed-out, no data sent for `{$this->writing_timeout}` seconds, probably we got disconnected (sent {$sent} of {$length})");
             }
         }
-        if (!$this->isConnected() && $sent < $length) {
-            throw new \RuntimeException("End-of-file reached, probably we got disconnected (sent $sent of $length)");
+        if (!$this->is_connected() && $sent < $length) {
+            throw new \RuntimeException("End-of-file reached, probably we got disconnected (sent {$sent} of {$length})");
         }
     }
-
-    private function writingIsTimedOut(int $sent): bool
+    private function writing_is_timed_out(int $sent): bool
     {
         // convert to ms
-        if (0.0 === $this->writingTimeout) {
+        if (0.0 === $this->writing_timeout) {
             return false;
         }
-
-        if ($sent !== $this->lastSentBytes) {
-            $this->lastWritingAt = microtime(true);
-            $this->lastSentBytes = $sent;
-
+        if ($sent !== $this->last_sent_bytes) {
+            $this->last_writing_at = microtime(true);
+            $this->last_sent_bytes = $sent;
             return false;
         }
         usleep(100);
-
-        if ((microtime(true) - (float) $this->lastWritingAt) >= $this->writingTimeout) {
-            $this->closeSocket();
-
+        if (microtime(true) - (float) $this->last_writing_at >= $this->writing_timeout) {
+            $this->close_socket();
             return true;
         }
-
         return false;
     }
 }

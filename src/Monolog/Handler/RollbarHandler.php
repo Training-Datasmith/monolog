@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\LogRecord;
-use Rollbar\RollbarLogger;
+use Monolog\Log_Record;
+use Rollbar\Rollbar_Logger;
 use Throwable;
-
 /**
  * Sends errors to Rollbar
  *
@@ -34,86 +31,69 @@ use Throwable;
  *
  * @author Paul Statezny <paulstatezny@gmail.com>
  */
-class RollbarHandler extends AbstractProcessingHandler
+class Rollbar_Handler extends Abstract_Processing_Handler
 {
-    protected RollbarLogger $rollbarLogger;
-
+    protected Rollbar_Logger $rollbar_logger;
     /**
      * Records whether any log records have been added since the last flush of the rollbar notifier
      */
-    private bool $hasRecords = false;
-
+    private bool $has_records = false;
     protected bool $initialized = false;
-
     /**
      * @param RollbarLogger $rollbarLogger RollbarLogger object constructed with valid token
      */
-    public function __construct(RollbarLogger $rollbarLogger, int|string|Level $level = Level::Error, bool $bubble = true)
+    public function __construct(Rollbar_Logger $rollbar_logger, int|string|Level $level = Level::Error, bool $bubble = true)
     {
-        $this->rollbarLogger = $rollbarLogger;
-
+        $this->rollbar_logger = $rollbar_logger;
         parent::__construct($level, $bubble);
     }
-
     /**
      * Translates Monolog log levels to Rollbar levels.
      *
      * @return 'debug'|'info'|'warning'|'error'|'critical'
      */
-    protected function toRollbarLevel(Level $level): string
+    protected function to_rollbar_level(Level $level): string
     {
         return match ($level) {
-            Level::Debug     => 'debug',
-            Level::Info      => 'info',
-            Level::Notice    => 'info',
-            Level::Warning   => 'warning',
-            Level::Error     => 'error',
-            Level::Critical  => 'critical',
-            Level::Alert     => 'critical',
+            Level::Debug => 'debug',
+            Level::Info => 'info',
+            Level::Notice => 'info',
+            Level::Warning => 'warning',
+            Level::Error => 'error',
+            Level::Critical => 'critical',
+            Level::Alert => 'critical',
             Level::Emergency => 'critical',
         };
     }
-
     /**
      * @inheritDoc
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
         if (!$this->initialized) {
             // __destructor() doesn't get called on Fatal errors
             register_shutdown_function([$this, 'close']);
             $this->initialized = true;
         }
-
         $context = $record->context;
-        $context = array_merge($context, $record->extra, [
-            'level' => $this->toRollbarLevel($record->level),
-            'monolog_level' => $record->level->getName(),
-            'channel' => $record->channel,
-            'datetime' => $record->datetime->format('U'),
-        ]);
-
+        $context = array_merge($context, $record->extra, ['level' => $this->to_rollbar_level($record->level), 'monolog_level' => $record->level->get_name(), 'channel' => $record->channel, 'datetime' => $record->datetime->format('U')]);
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $exception = $context['exception'];
             unset($context['exception']);
-            $toLog = $exception;
+            $to_log = $exception;
         } else {
-            $toLog = $record->message;
+            $to_log = $record->message;
         }
-
-        $this->rollbarLogger->log($context['level'], $toLog, $context);
-
-        $this->hasRecords = true;
+        $this->rollbar_logger->log($context['level'], $to_log, $context);
+        $this->has_records = true;
     }
-
     public function flush(): void
     {
-        if ($this->hasRecords) {
-            $this->rollbarLogger->flush();
-            $this->hasRecords = false;
+        if ($this->has_records) {
+            $this->rollbar_logger->flush();
+            $this->has_records = false;
         }
     }
-
     /**
      * @inheritDoc
      */
@@ -121,14 +101,12 @@ class RollbarHandler extends AbstractProcessingHandler
     {
         $this->flush();
     }
-
     /**
      * @inheritDoc
      */
     public function reset(): void
     {
         $this->flush();
-
         parent::reset();
     }
 }

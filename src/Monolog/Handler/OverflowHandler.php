@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\Formatter_Interface;
 use Monolog\Level;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Handler to only pass log messages when a certain threshold of number of messages is reached.
  *
@@ -37,33 +34,26 @@ use Monolog\LogRecord;
  *
  * @author Kris Buist <krisbuist@gmail.com>
  */
-class OverflowHandler extends AbstractHandler implements FormattableHandlerInterface
+class Overflow_Handler extends Abstract_Handler implements Formattable_Handler_Interface
 {
     /** @var array<int, int> */
-    private array $thresholdMap = [];
-
+    private array $threshold_map = [];
     /**
      * Buffer of all messages passed to the handler before the threshold was reached
      *
      * @var mixed[][]
      */
     private array $buffer = [];
-
     /**
      * @param array<int, int> $thresholdMap Dictionary of log level value => threshold
      */
-    public function __construct(
-        private readonly HandlerInterface $handler,
-        array $thresholdMap = [],
-        int|string|\Monolog\Level $level = Level::Debug,
-        bool $bubble = true
-    ) {
-        foreach ($thresholdMap as $thresholdLevel => $threshold) {
-            $this->thresholdMap[$thresholdLevel] = $threshold;
+    public function __construct(private readonly Handler_Interface $handler, array $threshold_map = [], int|string|\Monolog\Level $level = Level::Debug, bool $bubble = true)
+    {
+        foreach ($threshold_map as $threshold_level => $threshold) {
+            $this->threshold_map[$threshold_level] = $threshold;
         }
         parent::__construct($level, $bubble);
     }
-
     /**
      * Handles a record.
      *
@@ -76,63 +66,51 @@ class OverflowHandler extends AbstractHandler implements FormattableHandlerInter
      *
      * @inheritDoc
      */
-    public function handle(LogRecord $record): bool
+    public function handle(Log_Record $record): bool
     {
-        if ($record->level->isLowerThan($this->level)) {
+        if ($record->level->is_lower_than($this->level)) {
             return false;
         }
-
         $level = $record->level->value;
-
-        if (!isset($this->thresholdMap[$level])) {
-            $this->thresholdMap[$level] = 0;
+        if (!isset($this->threshold_map[$level])) {
+            $this->threshold_map[$level] = 0;
         }
-
-        if ($this->thresholdMap[$level] > 0) {
+        if ($this->threshold_map[$level] > 0) {
             // The overflow threshold is not yet reached, so we're buffering the record and lowering the threshold by 1
-            $this->thresholdMap[$level]--;
+            $this->threshold_map[$level]--;
             $this->buffer[$level][] = $record;
-
             return false === $this->bubble;
         }
-
-        if ($this->thresholdMap[$level] === 0) {
+        if ($this->threshold_map[$level] === 0) {
             // This current message is breaking the threshold. Flush the buffer and continue handling the current record
             foreach ($this->buffer[$level] ?? [] as $buffered) {
                 $this->handler->handle($buffered);
             }
-            $this->thresholdMap[$level]--;
+            $this->threshold_map[$level]--;
             unset($this->buffer[$level]);
         }
-
         $this->handler->handle($record);
-
         return false === $this->bubble;
     }
-
     /**
      * @inheritDoc
      */
-    public function setFormatter(FormatterInterface $formatter): HandlerInterface
+    public function set_formatter(Formatter_Interface $formatter): Handler_Interface
     {
-        if ($this->handler instanceof FormattableHandlerInterface) {
-            $this->handler->setFormatter($formatter);
-
+        if ($this->handler instanceof Formattable_Handler_Interface) {
+            $this->handler->set_formatter($formatter);
             return $this;
         }
-
-        throw new \UnexpectedValueException('The nested handler of type '.$this->handler::class.' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type ' . $this->handler::class . ' does not support formatters.');
     }
-
     /**
      * @inheritDoc
      */
-    public function getFormatter(): FormatterInterface
+    public function get_formatter(): Formatter_Interface
     {
-        if ($this->handler instanceof FormattableHandlerInterface) {
-            return $this->handler->getFormatter();
+        if ($this->handler instanceof Formattable_Handler_Interface) {
+            return $this->handler->get_formatter();
         }
-
-        throw new \UnexpectedValueException('The nested handler of type '.$this->handler::class.' does not support formatters.');
+        throw new \UnexpectedValueException('The nested handler of type ' . $this->handler::class . ' does not support formatters.');
     }
 }

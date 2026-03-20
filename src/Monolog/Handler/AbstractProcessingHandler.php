@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Base Handler class providing the Handler structure, including processors and formatters
  *
@@ -23,40 +20,32 @@ use Monolog\LogRecord;
  * @author Jordi Boggiano <j.boggiano@seld.be>
  * @author Christophe Coevoet <stof@notk.org>
  */
-abstract class AbstractProcessingHandler extends AbstractHandler implements ProcessableHandlerInterface, FormattableHandlerInterface
+abstract class Abstract_Processing_Handler extends Abstract_Handler implements Processable_Handler_Interface, Formattable_Handler_Interface
 {
-    use ProcessableHandlerTrait;
-    use FormattableHandlerTrait;
-
+    use Processable_Handler_Trait;
+    use Formattable_Handler_Trait;
     /**
      * @inheritDoc
      */
-    public function handle(LogRecord $record): bool
+    public function handle(Log_Record $record): bool
     {
-        if (!$this->isHandling($record)) {
+        if (!$this->is_handling($record)) {
             return false;
         }
-
         if (\count($this->processors) > 0) {
-            $record = $this->processRecord($record);
+            $record = $this->process_record($record);
         }
-
-        $record->formatted = $this->getFormatter()->format($record);
-
+        $record->formatted = $this->get_formatter()->format($record);
         $this->write($record);
-
         return false === $this->bubble;
     }
-
     /**
      * Writes the (already formatted) record down to the log of the implementing handler
      */
-    abstract protected function write(LogRecord $record): void;
-
+    abstract protected function write(Log_Record $record): void;
     public function reset(): void
     {
         parent::reset();
-
-        $this->resetProcessors();
+        $this->reset_processors();
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Line_Formatter;
 use Monolog\Level;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Sends logs to Fleep.io using Webhook integrations
  *
@@ -26,12 +23,10 @@ use Monolog\LogRecord;
  * @see https://fleep.io/integrations/webhooks/ Fleep Webhooks Documentation
  * @author Ando Roots <ando@sqroot.eu>
  */
-class FleepHookHandler extends SocketHandler
+class Fleep_Hook_Handler extends Socket_Handler
 {
     protected const FLEEP_HOST = 'fleep.io';
-
     protected const FLEEP_HOOK_URI = '/hook/';
-
     /**
      * Construct a new Fleep.io Handler.
      *
@@ -41,33 +36,14 @@ class FleepHookHandler extends SocketHandler
      * @param  string                    $token Webhook token
      * @throws MissingExtensionException if OpenSSL is missing
      */
-    public function __construct(
-        protected string $token,
-        $level = Level::Debug,
-        bool $bubble = true,
-        bool $persistent = false,
-        float $timeout = 0.0,
-        float $writingTimeout = 10.0,
-        ?float $connectionTimeout = null,
-        ?int $chunkSize = null
-    ) {
+    public function __construct(protected string $token, $level = Level::Debug, bool $bubble = true, bool $persistent = false, float $timeout = 0.0, float $writing_timeout = 10.0, ?float $connection_timeout = null, ?int $chunk_size = null)
+    {
         if (!\extension_loaded('openssl')) {
-            throw new MissingExtensionException('The OpenSSL PHP extension is required to use the FleepHookHandler');
+            throw new Missing_Extension_Exception('The OpenSSL PHP extension is required to use the FleepHookHandler');
         }
-
-        $connectionString = 'ssl://' . static::FLEEP_HOST . ':443';
-        parent::__construct(
-            $connectionString,
-            $level,
-            $bubble,
-            $persistent,
-            $timeout,
-            $writingTimeout,
-            $connectionTimeout,
-            $chunkSize
-        );
+        $connection_string = 'ssl://' . static::FLEEP_HOST . ':443';
+        parent::__construct($connection_string, $level, $bubble, $persistent, $timeout, $writing_timeout, $connection_timeout, $chunk_size);
     }
-
     /**
      * Returns the default formatter to use with this handler
      *
@@ -75,52 +51,43 @@ class FleepHookHandler extends SocketHandler
      *
      * @return LineFormatter
      */
-    protected function getDefaultFormatter(): FormatterInterface
+    protected function get_default_formatter(): Formatter_Interface
     {
-        return new LineFormatter(null, null, true, true);
+        return new Line_Formatter(null, null, true, true);
     }
-
     /**
      * Handles a log record
      */
-    public function write(LogRecord $record): void
+    public function write(Log_Record $record): void
     {
         parent::write($record);
-        $this->closeSocket();
+        $this->close_socket();
     }
-
     /**
      * @inheritDoc
      */
-    protected function generateDataStream(LogRecord $record): string
+    protected function generate_data_stream(Log_Record $record): string
     {
-        $content = $this->buildContent($record);
-
-        return $this->buildHeader($content) . $content;
+        $content = $this->build_content($record);
+        return $this->build_header($content) . $content;
     }
-
     /**
      * Builds the header of the API Call
      */
-    private function buildHeader(string $content): string
+    private function build_header(string $content): string
     {
         $header = 'POST ' . static::FLEEP_HOOK_URI . $this->token . " HTTP/1.1\r\n";
         $header .= 'Host: ' . static::FLEEP_HOST . "\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= 'Content-Length: ' . \strlen($content) . "\r\n";
-
         return $header . "\r\n";
     }
-
     /**
      * Builds the body of API call
      */
-    private function buildContent(LogRecord $record): string
+    private function build_content(Log_Record $record): string
     {
-        $dataArray = [
-            'message' => $record->formatted,
-        ];
-
-        return http_build_query($dataArray);
+        $data_array = ['message' => $record->formatted];
+        return http_build_query($data_array);
     }
 }

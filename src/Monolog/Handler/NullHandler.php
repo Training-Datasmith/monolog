@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\LogRecord;
-use Psr\Log\LogLevel;
-
+use Monolog\Log_Record;
+use Psr\Log\Log_Level;
 /**
  * Blackhole
  *
@@ -26,10 +23,9 @@ use Psr\Log\LogLevel;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class NullHandler extends Handler
+class Null_Handler extends Handler
 {
     private readonly Level $level;
-
     /**
      * @param string|int|Level $level The minimum logging level at which this handler will be triggered
      *
@@ -37,21 +33,19 @@ class NullHandler extends Handler
      */
     public function __construct(string|int|Level $level = Level::Debug)
     {
-        $this->level = Logger::toMonologLevel($level);
+        $this->level = Logger::to_monolog_level($level);
     }
-
     /**
      * @inheritDoc
      */
-    public function isHandling(LogRecord $record): bool
+    public function is_handling(Log_Record $record): bool
     {
         return $record->level->value >= $this->level->value;
     }
-
     /**
      * @inheritDoc
      */
-    public function handle(LogRecord $record): bool
+    public function handle(Log_Record $record): bool
     {
         return $record->level->value >= $this->level->value;
     }

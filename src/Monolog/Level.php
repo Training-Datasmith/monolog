@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog;
 
-use Psr\Log\LogLevel;
-
+use Psr\Log\Log_Level;
 /**
  * Represents the log levels
  *
@@ -31,25 +28,22 @@ use Psr\Log\LogLevel;
  * To get the internal value for filtering, if the includes/isLowerThan/isHigherThan methods are
  * not enough, you can use ->value to get the enum case's integer value.
  */
-enum Level: int
+enum Level : int
 {
     /**
      * Detailed debug information
      */
     case Debug = 100;
-
     /**
      * Interesting events
      *
      * Examples: User logs in, SQL logs.
      */
     case Info = 200;
-
     /**
      * Uncommon events
      */
     case Notice = 250;
-
     /**
      * Exceptional occurrences that are not errors
      *
@@ -57,19 +51,16 @@ enum Level: int
      * undesirable things that are not necessarily wrong.
      */
     case Warning = 300;
-
     /**
      * Runtime errors
      */
     case Error = 400;
-
     /**
      * Critical conditions
      *
      * Example: Application component unavailable, unexpected exception.
      */
     case Critical = 500;
-
     /**
      * Action must be taken immediately
      *
@@ -77,17 +68,15 @@ enum Level: int
      * This should trigger the SMS alerts and wake you up.
      */
     case Alert = 550;
-
     /**
      * Urgent alert.
      */
     case Emergency = 600;
-
     /**
      * @param  value-of<self::NAMES>|LogLevel::*|'Debug'|'Info'|'Notice'|'Warning'|'Error'|'Critical'|'Alert'|'Emergency' $name
      * @return static
      */
-    public static function fromName(string $name): self
+    public static function from_name(string $name): self
     {
         return match (strtolower($name)) {
             'debug' => self::Debug,
@@ -100,16 +89,14 @@ enum Level: int
             'emergency' => self::Emergency,
         };
     }
-
     /**
      * @param  value-of<self::VALUES> $value
      * @return static
      */
-    public static function fromValue(int $value): self
+    public static function from_value(int $value): self
     {
         return self::from($value);
     }
-
     /**
      * Returns true if the passed $level is higher or equal to $this
      */
@@ -117,17 +104,14 @@ enum Level: int
     {
         return $this->value <= $level->value;
     }
-
-    public function isHigherThan(Level $level): bool
+    public function is_higher_than(Level $level): bool
     {
         return $this->value > $level->value;
     }
-
-    public function isLowerThan(Level $level): bool
+    public function is_lower_than(Level $level): bool
     {
         return $this->value < $level->value;
     }
-
     /**
      * Returns the monolog standardized all-capitals name of the level
      *
@@ -135,7 +119,7 @@ enum Level: int
      *
      * @return value-of<self::NAMES>
      */
-    public function getName(): string
+    public function get_name(): string
     {
         return match ($this) {
             self::Debug => 'DEBUG',
@@ -148,32 +132,30 @@ enum Level: int
             self::Emergency => 'EMERGENCY',
         };
     }
-
     /**
      * Returns the PSR-3 level matching this instance
      *
      * @phpstan-return \Psr\Log\LogLevel::*
      */
-    public function toPsrLogLevel(): string
+    public function to_psr_log_level(): string
     {
         return match ($this) {
-            self::Debug => LogLevel::DEBUG,
-            self::Info => LogLevel::INFO,
-            self::Notice => LogLevel::NOTICE,
-            self::Warning => LogLevel::WARNING,
-            self::Error => LogLevel::ERROR,
-            self::Critical => LogLevel::CRITICAL,
-            self::Alert => LogLevel::ALERT,
-            self::Emergency => LogLevel::EMERGENCY,
+            self::Debug => Log_Level::DEBUG,
+            self::Info => Log_Level::INFO,
+            self::Notice => Log_Level::NOTICE,
+            self::Warning => Log_Level::WARNING,
+            self::Error => Log_Level::ERROR,
+            self::Critical => Log_Level::CRITICAL,
+            self::Alert => Log_Level::ALERT,
+            self::Emergency => Log_Level::EMERGENCY,
         };
     }
-
     /**
      * Returns the RFC 5424 level matching this instance
      *
      * @phpstan-return int<0, 7>
      */
-    public function toRFC5424Level(): int
+    public function to_rfc5424level(): int
     {
         return match ($this) {
             self::Debug => 7,
@@ -186,26 +168,6 @@ enum Level: int
             self::Emergency => 0,
         };
     }
-
-    public const VALUES = [
-        100,
-        200,
-        250,
-        300,
-        400,
-        500,
-        550,
-        600,
-    ];
-
-    public const NAMES = [
-        'DEBUG',
-        'INFO',
-        'NOTICE',
-        'WARNING',
-        'ERROR',
-        'CRITICAL',
-        'ALERT',
-        'EMERGENCY',
-    ];
+    public const VALUES = [100, 200, 250, 300, 400, 500, 550, 600];
+    public const NAMES = ['DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR', 'CRITICAL', 'ALERT', 'EMERGENCY'];
 }

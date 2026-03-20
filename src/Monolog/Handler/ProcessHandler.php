@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Stores to STDIN of any process, specified by a command.
  *
@@ -27,7 +24,7 @@ use Monolog\LogRecord;
  *
  * @author Kolja Zuelsdorf <koljaz@web.de>
  */
-class ProcessHandler extends AbstractProcessingHandler
+class Process_Handler extends Abstract_Processing_Handler
 {
     /**
      * Holds the process to receive data on its STDIN.
@@ -35,25 +32,22 @@ class ProcessHandler extends AbstractProcessingHandler
      * @var resource|bool|null
      */
     private $process;
-
     private readonly string $command;
-
     private readonly ?string $cwd;
-
     /**
      * @var resource[]
      */
     private array $pipes = [];
-
     /**
      * @var array<int, list<string>>
      */
     protected const DESCRIPTOR_SPEC = [
-        0 => ['pipe', 'r'],  // STDIN is a pipe that the child will read from
-        1 => ['pipe', 'w'],  // STDOUT is a pipe that the child will write to
-        2 => ['pipe', 'w'],  // STDERR is a pipe to catch the any errors
+        0 => ['pipe', 'r'],
+        // STDIN is a pipe that the child will read from
+        1 => ['pipe', 'w'],
+        // STDOUT is a pipe that the child will write to
+        2 => ['pipe', 'w'],
     ];
-
     /**
      * @param  string                    $command Command for the process to start. Absolute paths are recommended,
      *                                            especially if you do not use the $cwd parameter.
@@ -69,47 +63,39 @@ class ProcessHandler extends AbstractProcessingHandler
         if ($cwd === '') {
             throw new \InvalidArgumentException('The optional CWD argument must be a non-empty string or null.');
         }
-
         parent::__construct($level, $bubble);
-
         $this->command = $command;
         $this->cwd = $cwd;
     }
-
     /**
      * Writes the record down to the log of the implementing handler
      *
      * @throws \UnexpectedValueException
      */
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
-        $this->ensureProcessIsStarted();
-
-        $this->writeProcessInput($record->formatted);
-
-        $errors = $this->readProcessErrors();
+        $this->ensure_process_is_started();
+        $this->write_process_input($record->formatted);
+        $errors = $this->read_process_errors();
         if ($errors !== '') {
             throw new \UnexpectedValueException(sprintf('Errors while writing to process: %s', $errors));
         }
     }
-
     /**
      * Makes sure that the process is actually started, and if not, starts it,
      * assigns the stream pipes, and handles startup errors, if any.
      */
-    private function ensureProcessIsStarted(): void
+    private function ensure_process_is_started(): void
     {
         if (\is_resource($this->process) === false) {
-            $this->startProcess();
-
-            $this->handleStartupErrors();
+            $this->start_process();
+            $this->handle_startup_errors();
         }
     }
-
     /**
      * Starts the actual process and sets all streams to non-blocking.
      */
-    private function startProcess(): void
+    private function start_process(): void
     {
         // Pass command as an array to proc_open to bypass shell interpretation
         // and prevent shell injection when parts of the command are derived from
@@ -117,66 +103,55 @@ class ProcessHandler extends AbstractProcessingHandler
         // whitespace-separated executable + arguments with no quoting.
         $cmd = explode(' ', $this->command);
         $this->process = proc_open($cmd, static::DESCRIPTOR_SPEC, $this->pipes, $this->cwd);
-
         foreach ($this->pipes as $pipe) {
             stream_set_blocking($pipe, false);
         }
     }
-
     /**
      * Selects the STDERR stream, handles upcoming startup errors, and throws an exception, if any.
      *
      * @throws \UnexpectedValueException
      */
-    private function handleStartupErrors(): void
+    private function handle_startup_errors(): void
     {
-        $selected = $this->selectErrorStream();
+        $selected = $this->select_error_stream();
         if (false === $selected) {
             throw new \UnexpectedValueException('Something went wrong while selecting a stream.');
         }
-
-        $errors = $this->readProcessErrors();
-
+        $errors = $this->read_process_errors();
         if (\is_resource($this->process) === false || $errors !== '') {
-            throw new \UnexpectedValueException(
-                sprintf('The process "%s" could not be opened: ' . $errors, $this->command)
-            );
+            throw new \UnexpectedValueException(sprintf('The process "%s" could not be opened: ' . $errors, $this->command));
         }
     }
-
     /**
      * Selects the STDERR stream.
      */
-    protected function selectErrorStream(): int|false
+    protected function select_error_stream(): int|false
     {
         $empty = [];
-        $errorPipes = [$this->pipes[2]];
-
+        $error_pipes = [$this->pipes[2]];
         $seconds = (int) $this->timeout;
-        return stream_select($errorPipes, $empty, $empty, $seconds, (int) (($this->timeout - $seconds) * 1000000));
+        return stream_select($error_pipes, $empty, $empty, $seconds, (int) (($this->timeout - $seconds) * 1000000));
     }
-
     /**
      * Reads the errors of the process, if there are any.
      *
      * @codeCoverageIgnore
      * @return string Empty string if there are no errors.
      */
-    protected function readProcessErrors(): string
+    protected function read_process_errors(): string
     {
         return (string) stream_get_contents($this->pipes[2]);
     }
-
     /**
      * Writes to the input stream of the opened process.
      *
      * @codeCoverageIgnore
      */
-    protected function writeProcessInput(string $string): void
+    protected function write_process_input(string $string): void
     {
         fwrite($this->pipes[0], $string);
     }
-
     /**
      * @inheritDoc
      */

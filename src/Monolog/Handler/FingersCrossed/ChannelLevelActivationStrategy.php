@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Monolog\Handler\FingersCrossed;
+namespace Monolog\Handler\Fingers_Crossed;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\LogRecord;
-use Psr\Log\LogLevel;
-
+use Monolog\Log_Record;
+use Psr\Log\Log_Level;
 /**
  * Channel and Error level based monolog activation strategy. Allows to trigger activation
  * based on level per channel. e.g. trigger activation on level 'ERROR' by default, except
@@ -38,15 +35,13 @@ use Psr\Log\LogLevel;
  *
  * @author Mike Meessen <netmikey@gmail.com>
  */
-class ChannelLevelActivationStrategy implements ActivationStrategyInterface
+class Channel_Level_Activation_Strategy implements Activation_Strategy_Interface
 {
-    private readonly Level $defaultActionLevel;
-
+    private readonly Level $default_action_level;
     /**
      * @var array<string, Level>
      */
-    private array $channelToActionLevel;
-
+    private array $channel_to_action_level;
     /**
      * @param int|string|Level|LogLevel::*                $defaultActionLevel   The default action level to be used if the record's category doesn't match any
      * @param array<string, int|string|Level|LogLevel::*> $channelToActionLevel An array that maps channel names to action levels.
@@ -54,18 +49,16 @@ class ChannelLevelActivationStrategy implements ActivationStrategyInterface
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $defaultActionLevel
      * @phpstan-param array<string, value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::*> $channelToActionLevel
      */
-    public function __construct(int|string|Level $defaultActionLevel, array $channelToActionLevel = [])
+    public function __construct(int|string|Level $default_action_level, array $channel_to_action_level = [])
     {
-        $this->defaultActionLevel = Logger::toMonologLevel($defaultActionLevel);
-        $this->channelToActionLevel = array_map(Logger::toMonologLevel(...), $channelToActionLevel);
+        $this->default_action_level = Logger::to_monolog_level($default_action_level);
+        $this->channel_to_action_level = array_map(Logger::to_monolog_level(...), $channel_to_action_level);
     }
-
-    public function isHandlerActivated(LogRecord $record): bool
+    public function is_handler_activated(Log_Record $record): bool
     {
-        if (isset($this->channelToActionLevel[$record->channel])) {
-            return $record->level->value >= $this->channelToActionLevel[$record->channel]->value;
+        if (isset($this->channel_to_action_level[$record->channel])) {
+            return $record->level->value >= $this->channel_to_action_level[$record->channel]->value;
         }
-
-        return $record->level->value >= $this->defaultActionLevel->value;
+        return $record->level->value >= $this->default_action_level->value;
     }
 }

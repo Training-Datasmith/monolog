@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Monolog\Utils;
-
 /**
  * Class FluentdFormatter
  *
@@ -37,49 +34,39 @@ use Monolog\Utils;
  *
  * @author Andrius Putna <fordnox@gmail.com>
  */
-class FluentdFormatter implements FormatterInterface
+class Fluentd_Formatter implements Formatter_Interface
 {
     public function __construct(
         /**
          * @var bool $levelTag should message level be a part of the fluentd tag
          */
-        protected bool $levelTag = false
-    ) {
-    }
-
-    public function isUsingLevelsInTag(): bool
+        protected bool $level_tag = false
+    )
     {
-        return $this->levelTag;
     }
-
-    public function format(LogRecord $record): string
+    public function is_using_levels_in_tag(): bool
+    {
+        return $this->level_tag;
+    }
+    public function format(Log_Record $record): string
     {
         $tag = $record->channel;
-        if ($this->levelTag) {
-            $tag .= '.' . $record->level->toPsrLogLevel();
+        if ($this->level_tag) {
+            $tag .= '.' . $record->level->to_psr_log_level();
         }
-
-        $message = [
-            'message' => $record->message,
-            'context' => $record->context,
-            'extra' => $record->extra,
-        ];
-
-        if (!$this->levelTag) {
+        $message = ['message' => $record->message, 'context' => $record->context, 'extra' => $record->extra];
+        if (!$this->level_tag) {
             $message['level'] = $record->level->value;
-            $message['level_name'] = $record->level->getName();
+            $message['level_name'] = $record->level->get_name();
         }
-
-        return Utils::jsonEncode([$tag, $record->datetime->getTimestamp(), $message]);
+        return Utils::json_encode([$tag, $record->datetime->get_timestamp(), $message]);
     }
-
-    public function formatBatch(array $records): string
+    public function format_batch(array $records): string
     {
         $message = '';
         foreach ($records as $record) {
             $message .= $this->format($record);
         }
-
         return $message;
     }
 }

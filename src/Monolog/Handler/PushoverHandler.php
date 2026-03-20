@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,68 +9,40 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Monolog\Utils;
-use Psr\Log\LogLevel;
-
+use Psr\Log\Log_Level;
 /**
  * Sends notifications through the pushover api to mobile phones
  *
  * @author Sebastian Göttschkes <sebastian.goettschkes@googlemail.com>
  * @see    https://www.pushover.net/api
  */
-class PushoverHandler extends SocketHandler
+class Pushover_Handler extends Socket_Handler
 {
     /** @var array<int|string> */
     private readonly array $users;
-
     private readonly string $title;
-
     private string|int|null $user = null;
-
-    private Level $highPriorityLevel;
-
-    private Level $emergencyLevel;
-
-    private bool $useFormattedMessage = false;
-
+    private Level $high_priority_level;
+    private Level $emergency_level;
+    private bool $use_formatted_message = false;
     /**
      * All parameters that can be sent to Pushover
      * @see https://pushover.net/api
      * @var array<string, bool>
      */
-    private array $parameterNames = [
-        'token' => true,
-        'user' => true,
-        'message' => true,
-        'device' => true,
-        'title' => true,
-        'url' => true,
-        'url_title' => true,
-        'priority' => true,
-        'timestamp' => true,
-        'sound' => true,
-        'retry' => true,
-        'expire' => true,
-        'callback' => true,
-    ];
-
+    private array $parameter_names = ['token' => true, 'user' => true, 'message' => true, 'device' => true, 'title' => true, 'url' => true, 'url_title' => true, 'priority' => true, 'timestamp' => true, 'sound' => true, 'retry' => true, 'expire' => true, 'callback' => true];
     /**
      * Sounds the api supports by default
      * @see https://pushover.net/api#sounds
      * @var string[]
      */
-    private array $sounds = [
-        'pushover', 'bike', 'bugle', 'cashregister', 'classical', 'cosmic', 'falling', 'gamelan', 'incoming',
-        'intermission', 'magic', 'mechanical', 'pianobar', 'siren', 'spacealarm', 'tugboat', 'alien', 'climb',
-        'persistent', 'echo', 'updown', 'none',
-    ];
-
+    private array $sounds = ['pushover', 'bike', 'bugle', 'cashregister', 'classical', 'cosmic', 'falling', 'gamelan', 'incoming', 'intermission', 'magic', 'mechanical', 'pianobar', 'siren', 'spacealarm', 'tugboat', 'alien', 'climb', 'persistent', 'echo', 'updown', 'none'];
     /**
      * @param string       $token  Pushover api token
      * @param string|array $users  Pushover user id or array of ids the message will be sent to
@@ -93,145 +64,93 @@ class PushoverHandler extends SocketHandler
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $highPriorityLevel
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $emergencyLevel
      */
-    public function __construct(
-        private readonly string $token,
-        $users,
-        ?string $title = null,
-        int|string|Level $level = Level::Critical,
-        bool $bubble = true,
-        bool $useSSL = true,
-        int|string|Level $highPriorityLevel = Level::Critical,
-        int|string|Level $emergencyLevel = Level::Emergency,
-        private readonly int $retry = 30,
-        private readonly int $expire = 25200,
-        bool $persistent = false,
-        float $timeout = 0.0,
-        float $writingTimeout = 10.0,
-        ?float $connectionTimeout = null,
-        ?int $chunkSize = null
-    ) {
-        $connectionString = $useSSL ? 'ssl://api.pushover.net:443' : 'api.pushover.net:80';
-        parent::__construct(
-            $connectionString,
-            $level,
-            $bubble,
-            $persistent,
-            $timeout,
-            $writingTimeout,
-            $connectionTimeout,
-            $chunkSize
-        );
+    public function __construct(private readonly string $token, $users, ?string $title = null, int|string|Level $level = Level::Critical, bool $bubble = true, bool $use_ssl = true, int|string|Level $high_priority_level = Level::Critical, int|string|Level $emergency_level = Level::Emergency, private readonly int $retry = 30, private readonly int $expire = 25200, bool $persistent = false, float $timeout = 0.0, float $writing_timeout = 10.0, ?float $connection_timeout = null, ?int $chunk_size = null)
+    {
+        $connection_string = $use_ssl ? 'ssl://api.pushover.net:443' : 'api.pushover.net:80';
+        parent::__construct($connection_string, $level, $bubble, $persistent, $timeout, $writing_timeout, $connection_timeout, $chunk_size);
         $this->users = (array) $users;
         $this->title = $title ?? (string) gethostname();
-        $this->highPriorityLevel = Logger::toMonologLevel($highPriorityLevel);
-        $this->emergencyLevel = Logger::toMonologLevel($emergencyLevel);
+        $this->high_priority_level = Logger::to_monolog_level($high_priority_level);
+        $this->emergency_level = Logger::to_monolog_level($emergency_level);
     }
-
-    protected function generateDataStream(LogRecord $record): string
+    protected function generate_data_stream(Log_Record $record): string
     {
-        $content = $this->buildContent($record);
-
-        return $this->buildHeader($content) . $content;
+        $content = $this->build_content($record);
+        return $this->build_header($content) . $content;
     }
-
-    private function buildContent(LogRecord $record): string
+    private function build_content(Log_Record $record): string
     {
         // Pushover has a limit of 512 characters on title and message combined.
-        $maxMessageLength = 512 - \strlen($this->title);
-
-        $message = ($this->useFormattedMessage) ? $record->formatted : $record->message;
-        $message = Utils::substr($message, 0, $maxMessageLength);
-
-        $timestamp = $record->datetime->getTimestamp();
-
-        $dataArray = [
-            'token' => $this->token,
-            'user' => $this->user,
-            'message' => $message,
-            'title' => $this->title,
-            'timestamp' => $timestamp,
-        ];
-
-        if ($record->level->value >= $this->emergencyLevel->value) {
-            $dataArray['priority'] = 2;
-            $dataArray['retry'] = $this->retry;
-            $dataArray['expire'] = $this->expire;
-        } elseif ($record->level->value >= $this->highPriorityLevel->value) {
-            $dataArray['priority'] = 1;
+        $max_message_length = 512 - \strlen($this->title);
+        $message = $this->use_formatted_message ? $record->formatted : $record->message;
+        $message = Utils::substr($message, 0, $max_message_length);
+        $timestamp = $record->datetime->get_timestamp();
+        $data_array = ['token' => $this->token, 'user' => $this->user, 'message' => $message, 'title' => $this->title, 'timestamp' => $timestamp];
+        if ($record->level->value >= $this->emergency_level->value) {
+            $data_array['priority'] = 2;
+            $data_array['retry'] = $this->retry;
+            $data_array['expire'] = $this->expire;
+        } elseif ($record->level->value >= $this->high_priority_level->value) {
+            $data_array['priority'] = 1;
         }
-
         // First determine the available parameters
-        $context = array_intersect_key($record->context, $this->parameterNames);
-        $extra = array_intersect_key($record->extra, $this->parameterNames);
-
+        $context = array_intersect_key($record->context, $this->parameter_names);
+        $extra = array_intersect_key($record->extra, $this->parameter_names);
         // Least important info should be merged with subsequent info
-        $dataArray = array_merge($extra, $context, $dataArray);
-
+        $data_array = array_merge($extra, $context, $data_array);
         // Only pass sounds that are supported by the API
-        if (isset($dataArray['sound']) && !\in_array($dataArray['sound'], $this->sounds, true)) {
-            unset($dataArray['sound']);
+        if (isset($data_array['sound']) && !\in_array($data_array['sound'], $this->sounds, true)) {
+            unset($data_array['sound']);
         }
-
-        return http_build_query($dataArray);
+        return http_build_query($data_array);
     }
-
-    private function buildHeader(string $content): string
+    private function build_header(string $content): string
     {
         $header = "POST /1/messages.json HTTP/1.1\r\n";
         $header .= "Host: api.pushover.net\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= 'Content-Length: ' . \strlen($content) . "\r\n";
-
         return $header . "\r\n";
     }
-
-    protected function write(LogRecord $record): void
+    protected function write(Log_Record $record): void
     {
         foreach ($this->users as $user) {
             $this->user = $user;
-
             parent::write($record);
-            $this->closeSocket();
+            $this->close_socket();
         }
-
         $this->user = null;
     }
-
     /**
      * @param  int|string|Level|LogLevel::* $level
      * @return $this
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $level
      */
-    public function setHighPriorityLevel(int|string|Level $level): self
+    public function set_high_priority_level(int|string|Level $level): self
     {
-        $this->highPriorityLevel = Logger::toMonologLevel($level);
-
+        $this->high_priority_level = Logger::to_monolog_level($level);
         return $this;
     }
-
     /**
      * @param  int|string|Level|LogLevel::* $level
      * @return $this
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $level
      */
-    public function setEmergencyLevel(int|string|Level $level): self
+    public function set_emergency_level(int|string|Level $level): self
     {
-        $this->emergencyLevel = Logger::toMonologLevel($level);
-
+        $this->emergency_level = Logger::to_monolog_level($level);
         return $this;
     }
-
     /**
      * Use the formatted message?
      *
      * @return $this
      */
-    public function useFormattedMessage(bool $useFormattedMessage): self
+    public function use_formatted_message(bool $use_formatted_message): self
     {
-        $this->useFormattedMessage = $useFormattedMessage;
-
+        $this->use_formatted_message = $use_formatted_message;
         return $this;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Serializes a log message to Logstash Event Format
  *
@@ -23,62 +20,53 @@ use Monolog\LogRecord;
  *
  * @author Tim Mower <timothy.mower@gmail.com>
  */
-class LogstashFormatter extends NormalizerFormatter
+class Logstash_Formatter extends Normalizer_Formatter
 {
     /**
      * @var string the name of the system for the Logstash log message, used to fill the @source field
      */
-    protected string $systemName;
-
+    protected string $system_name;
     /**
      * @param string      $applicationName The application that sends the data, used as the "type" field of logstash
      * @param string|null $systemName      The system/machine name, used as the "source" field of logstash, defaults to the hostname of the machine
      * @param string      $extraKey        The key for extra keys inside logstash "fields", defaults to extra
      * @param string      $contextKey      The key for context keys inside logstash "fields", defaults to context
      */
-    public function __construct(protected string $applicationName, ?string $systemName = null, protected string $extraKey = 'extra', protected string $contextKey = 'context')
+    public function __construct(protected string $application_name, ?string $system_name = null, protected string $extra_key = 'extra', protected string $context_key = 'context')
     {
         // logstash requires a ISO 8601 format date with optional millisecond precision.
         parent::__construct('Y-m-d\TH:i:s.uP');
-
-        $this->systemName = $systemName ?? (string) gethostname();
+        $this->system_name = $system_name ?? (string) gethostname();
     }
-
     /**
      * @inheritDoc
      */
-    public function format(LogRecord $record): string
+    public function format(Log_Record $record): string
     {
-        $recordData = parent::format($record);
-
-        $message = [
-            '@timestamp' => $recordData['datetime'],
-            '@version' => 1,
-            'host' => $this->systemName,
-        ];
-        if (isset($recordData['message'])) {
-            $message['message'] = $recordData['message'];
+        $record_data = parent::format($record);
+        $message = ['@timestamp' => $record_data['datetime'], '@version' => 1, 'host' => $this->system_name];
+        if (isset($record_data['message'])) {
+            $message['message'] = $record_data['message'];
         }
-        if (isset($recordData['channel'])) {
-            $message['type'] = $recordData['channel'];
-            $message['channel'] = $recordData['channel'];
+        if (isset($record_data['channel'])) {
+            $message['type'] = $record_data['channel'];
+            $message['channel'] = $record_data['channel'];
         }
-        if (isset($recordData['level_name'])) {
-            $message['level'] = $recordData['level_name'];
+        if (isset($record_data['level_name'])) {
+            $message['level'] = $record_data['level_name'];
         }
-        if (isset($recordData['level'])) {
-            $message['monolog_level'] = $recordData['level'];
+        if (isset($record_data['level'])) {
+            $message['monolog_level'] = $record_data['level'];
         }
-        if ('' !== $this->applicationName) {
-            $message['type'] = $this->applicationName;
+        if ('' !== $this->application_name) {
+            $message['type'] = $this->application_name;
         }
-        if (\count($recordData['extra']) > 0) {
-            $message[$this->extraKey] = $recordData['extra'];
+        if (\count($record_data['extra']) > 0) {
+            $message[$this->extra_key] = $record_data['extra'];
         }
-        if (\count($recordData['context']) > 0) {
-            $message[$this->contextKey] = $recordData['context'];
+        if (\count($record_data['context']) > 0) {
+            $message[$this->context_key] = $record_data['context'];
         }
-
-        return $this->toJson($message) . "\n";
+        return $this->to_json($message) . "\n";
     }
 }

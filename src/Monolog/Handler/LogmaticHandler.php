@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,18 +9,16 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LogmaticFormatter;
+use Monolog\Formatter\Formatter_Interface;
+use Monolog\Formatter\Logmatic_Formatter;
 use Monolog\Level;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * @author Julien Breux <julien.breux@gmail.com>
  */
-class LogmaticHandler extends SocketHandler
+class Logmatic_Handler extends Socket_Handler
 {
     /**
      * @param string $logToken Log token supplied by Logmatic.
@@ -31,60 +28,34 @@ class LogmaticHandler extends SocketHandler
      *
      * @throws MissingExtensionException If SSL encryption is set to true and OpenSSL is missing
      */
-    public function __construct(
-        private readonly string $logToken,
-        private readonly string $hostname = '',
-        private readonly string $appName = '',
-        bool $useSSL = true,
-        $level = Level::Debug,
-        bool $bubble = true,
-        bool $persistent = false,
-        float $timeout = 0.0,
-        float $writingTimeout = 10.0,
-        ?float $connectionTimeout = null,
-        ?int $chunkSize = null
-    ) {
-        if ($useSSL && !\extension_loaded('openssl')) {
-            throw new MissingExtensionException('The OpenSSL PHP extension is required to use SSL encrypted connection for LogmaticHandler');
+    public function __construct(private readonly string $log_token, private readonly string $hostname = '', private readonly string $app_name = '', bool $use_ssl = true, $level = Level::Debug, bool $bubble = true, bool $persistent = false, float $timeout = 0.0, float $writing_timeout = 10.0, ?float $connection_timeout = null, ?int $chunk_size = null)
+    {
+        if ($use_ssl && !\extension_loaded('openssl')) {
+            throw new Missing_Extension_Exception('The OpenSSL PHP extension is required to use SSL encrypted connection for LogmaticHandler');
         }
-
-        $endpoint = $useSSL ? 'ssl://api.logmatic.io:10515' : 'api.logmatic.io:10514';
+        $endpoint = $use_ssl ? 'ssl://api.logmatic.io:10515' : 'api.logmatic.io:10514';
         $endpoint .= '/v1/';
-
-        parent::__construct(
-            $endpoint,
-            $level,
-            $bubble,
-            $persistent,
-            $timeout,
-            $writingTimeout,
-            $connectionTimeout,
-            $chunkSize
-        );
+        parent::__construct($endpoint, $level, $bubble, $persistent, $timeout, $writing_timeout, $connection_timeout, $chunk_size);
     }
-
     /**
      * @inheritDoc
      */
-    protected function generateDataStream(LogRecord $record): string
+    protected function generate_data_stream(Log_Record $record): string
     {
-        return $this->logToken . ' ' . $record->formatted;
+        return $this->log_token . ' ' . $record->formatted;
     }
-
     /**
      * @inheritDoc
      */
-    protected function getDefaultFormatter(): FormatterInterface
+    protected function get_default_formatter(): Formatter_Interface
     {
-        $formatter = new LogmaticFormatter();
-
+        $formatter = new Logmatic_Formatter();
         if ($this->hostname !== '') {
-            $formatter->setHostname($this->hostname);
+            $formatter->set_hostname($this->hostname);
         }
-        if ($this->appName !== '') {
-            $formatter->setAppName($this->appName);
+        if ($this->app_name !== '') {
+            $formatter->set_app_name($this->app_name);
         }
-
         return $formatter;
     }
 }

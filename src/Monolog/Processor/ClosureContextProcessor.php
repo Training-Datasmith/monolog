@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Processor;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Generates a context from a Closure if the Closure is the only value
  * in the context
@@ -26,28 +23,22 @@ use Monolog\LogRecord;
  * using FingersCrossedHandler or other filtering handlers to conditionally
  * log records.
  */
-class ClosureContextProcessor implements ProcessorInterface
+class Closure_Context_Processor implements Processor_Interface
 {
-    public function __invoke(LogRecord $record): LogRecord
+    public function __invoke(Log_Record $record): Log_Record
     {
         $context = $record->context;
         if (isset($context[0]) && 1 === \count($context) && $context[0] instanceof \Closure) {
             try {
                 $context = $context[0]();
             } catch (\Throwable $e) {
-                $context = [
-                    'error_on_context_generation' => $e->getMessage(),
-                    'exception' => $e,
-                ];
+                $context = ['error_on_context_generation' => $e->get_message(), 'exception' => $e];
             }
-
             if (!\is_array($context)) {
                 $context = [$context];
             }
-
             $record = $record->with(context: $context);
         }
-
         return $record;
     }
 }

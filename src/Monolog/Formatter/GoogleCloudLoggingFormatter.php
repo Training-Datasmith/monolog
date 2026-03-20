@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,12 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
 use DateTimeInterface;
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * Encodes message information into JSON in a format compatible with Cloud logging.
  *
@@ -24,19 +21,16 @@ use Monolog\LogRecord;
  *
  * @author Luís Cobucci <lcobucci@gmail.com>
  */
-class GoogleCloudLoggingFormatter extends JsonFormatter
+class Google_Cloud_Logging_Formatter extends Json_Formatter
 {
-    protected function normalizeRecord(LogRecord $record): array
+    protected function normalize_record(Log_Record $record): array
     {
-        $normalized = parent::normalizeRecord($record);
-
+        $normalized = parent::normalize_record($record);
         // Re-key level for GCP logging
         $normalized['severity'] = $normalized['level_name'];
         $normalized['time'] = $record->datetime->format(DateTimeInterface::RFC3339_EXTENDED);
-
         // Remove keys that are not used by GCP
         unset($normalized['level'], $normalized['level_name'], $normalized['datetime']);
-
         return $normalized;
     }
 }

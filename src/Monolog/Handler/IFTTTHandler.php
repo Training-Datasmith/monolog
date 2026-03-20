@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Monolog\Utils;
-
 /**
  * IFTTTHandler uses cURL to trigger IFTTT Maker actions
  *
@@ -28,7 +25,7 @@ use Monolog\Utils;
  *
  * @author Nehal Patel <nehal@nehalpatel.me>
  */
-class IFTTTHandler extends AbstractProcessingHandler
+class Ifttt_Handler extends Abstract_Processing_Handler
 {
     /**
      * @param string $eventName The name of the IFTTT Maker event that should be triggered
@@ -36,36 +33,26 @@ class IFTTTHandler extends AbstractProcessingHandler
      *
      * @throws MissingExtensionException If the curl extension is missing
      */
-    public function __construct(private readonly string $eventName, private readonly string $secretKey, int|string|Level $level = Level::Error, bool $bubble = true)
+    public function __construct(private readonly string $event_name, private readonly string $secret_key, int|string|Level $level = Level::Error, bool $bubble = true)
     {
         if (!\extension_loaded('curl')) {
-            throw new MissingExtensionException('The curl extension is needed to use the IFTTTHandler');
+            throw new Missing_Extension_Exception('The curl extension is needed to use the IFTTTHandler');
         }
-
         parent::__construct($level, $bubble);
     }
-
     /**
      * @inheritDoc
      */
-    public function write(LogRecord $record): void
+    public function write(Log_Record $record): void
     {
-        $postData = [
-            'value1' => $record->channel,
-            'value2' => $record['level_name'],
-            'value3' => $record->message,
-        ];
-        $postString = Utils::jsonEncode($postData);
-
+        $post_data = ['value1' => $record->channel, 'value2' => $record['level_name'], 'value3' => $record->message];
+        $post_string = Utils::json_encode($post_data);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://maker.ifttt.com/trigger/' . $this->eventName . '/with/key/' . $this->secretKey);
+        curl_setopt($ch, CURLOPT_URL, 'https://maker.ifttt.com/trigger/' . $this->event_name . '/with/key/' . $this->secret_key);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-        ]);
-
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         Curl\Util::execute($ch);
     }
 }

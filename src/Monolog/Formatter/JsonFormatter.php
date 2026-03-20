@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,13 +9,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
-use Monolog\LogRecord;
+use Monolog\Log_Record;
 use Stringable;
 use Throwable;
-
 /**
  * Encodes whatever record data is passed to it as json
  *
@@ -24,19 +21,17 @@ use Throwable;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class JsonFormatter extends NormalizerFormatter
+class Json_Formatter extends Normalizer_Formatter
 {
     public const BATCH_MODE_JSON = 1;
     public const BATCH_MODE_NEWLINES = 2;
-
     /**
      * @param self::BATCH_MODE_* $batchMode
      */
-    public function __construct(protected int $batchMode = self::BATCH_MODE_JSON, protected bool $appendNewline = true, protected bool $ignoreEmptyContextAndExtra = false, protected bool $includeStacktraces = false)
+    public function __construct(protected int $batch_mode = self::BATCH_MODE_JSON, protected bool $append_newline = true, protected bool $ignore_empty_context_and_extra = false, protected bool $include_stacktraces = false)
     {
         parent::__construct();
     }
-
     /**
      * The batch mode option configures the formatting style for
      * multiple records. By default, multiple records will be
@@ -44,103 +39,89 @@ class JsonFormatter extends NormalizerFormatter
      * compatibility with some API endpoints, alternative styles
      * are available.
      */
-    public function getBatchMode(): int
+    public function get_batch_mode(): int
     {
-        return $this->batchMode;
+        return $this->batch_mode;
     }
-
     /**
      * True if newlines are appended to every formatted record
      */
-    public function isAppendingNewlines(): bool
+    public function is_appending_newlines(): bool
     {
-        return $this->appendNewline;
+        return $this->append_newline;
     }
-
     /**
      * @inheritDoc
      */
-    public function format(LogRecord $record): string
+    public function format(Log_Record $record): string
     {
-        $normalized = $this->normalizeRecord($record);
-
-        return $this->toJson($normalized, true) . ($this->appendNewline ? "\n" : '');
+        $normalized = $this->normalize_record($record);
+        return $this->to_json($normalized, true) . ($this->append_newline ? "\n" : '');
     }
-
     /**
      * @inheritDoc
      */
-    public function formatBatch(array $records): string
+    public function format_batch(array $records): string
     {
-        return match ($this->batchMode) {
-            static::BATCH_MODE_NEWLINES => $this->formatBatchNewlines($records),
-            default => $this->formatBatchJson($records),
+        return match ($this->batch_mode) {
+            static::BATCH_MODE_NEWLINES => $this->format_batch_newlines($records),
+            default => $this->format_batch_json($records),
         };
     }
-
     /**
      * @return $this
      */
-    public function includeStacktraces(bool $include = true): self
+    public function include_stacktraces(bool $include = true): self
     {
-        $this->includeStacktraces = $include;
-
+        $this->include_stacktraces = $include;
         return $this;
     }
-
     /**
      * @return array<array<mixed>|bool|float|int|\stdClass|string|null>
      */
-    protected function normalizeRecord(LogRecord $record): array
+    protected function normalize_record(Log_Record $record): array
     {
-        $normalized = parent::normalizeRecord($record);
-
+        $normalized = parent::normalize_record($record);
         if (isset($normalized['context']) && $normalized['context'] === []) {
-            if ($this->ignoreEmptyContextAndExtra) {
+            if ($this->ignore_empty_context_and_extra) {
                 unset($normalized['context']);
             } else {
                 $normalized['context'] = new \stdClass();
             }
         }
         if (isset($normalized['extra']) && $normalized['extra'] === []) {
-            if ($this->ignoreEmptyContextAndExtra) {
+            if ($this->ignore_empty_context_and_extra) {
                 unset($normalized['extra']);
             } else {
                 $normalized['extra'] = new \stdClass();
             }
         }
-
         return $normalized;
     }
-
     /**
      * Return a JSON-encoded array of records.
      *
      * @phpstan-param LogRecord[] $records
      */
-    protected function formatBatchJson(array $records): string
+    protected function format_batch_json(array $records): string
     {
-        $formatted = array_map($this->normalizeRecord(...), $records);
-
-        return $this->toJson($formatted, true);
+        $formatted = array_map($this->normalize_record(...), $records);
+        return $this->to_json($formatted, true);
     }
-
     /**
      * Use new lines to separate records instead of a
      * JSON-encoded array.
      *
      * @phpstan-param LogRecord[] $records
      */
-    protected function formatBatchNewlines(array $records): string
+    protected function format_batch_newlines(array $records): string
     {
-        $oldNewline = $this->appendNewline;
-        $this->appendNewline = false;
+        $old_newline = $this->append_newline;
+        $this->append_newline = false;
         $formatted = array_map($this->format(...), $records);
-        $this->appendNewline = $oldNewline;
-
+        $this->append_newline = $old_newline;
         return implode("\n", $formatted);
     }
-
     /**
      * Normalizes given $data.
      *
@@ -148,40 +129,32 @@ class JsonFormatter extends NormalizerFormatter
      */
     protected function normalize(mixed $data, int $depth = 0): mixed
     {
-        if ($depth > $this->maxNormalizeDepth) {
-            return 'Over '.$this->maxNormalizeDepth.' levels deep, aborting normalization';
+        if ($depth > $this->max_normalize_depth) {
+            return 'Over ' . $this->max_normalize_depth . ' levels deep, aborting normalization';
         }
-
         if (\is_array($data)) {
             $normalized = [];
-
             $count = 1;
             foreach ($data as $key => $value) {
-                if ($count++ > $this->maxNormalizeItemCount) {
-                    $normalized['...'] = 'Over '.$this->maxNormalizeItemCount.' items ('.\count($data).' total), aborting normalization';
+                if ($count++ > $this->max_normalize_item_count) {
+                    $normalized['...'] = 'Over ' . $this->max_normalize_item_count . ' items (' . \count($data) . ' total), aborting normalization';
                     break;
                 }
-
                 $normalized[$key] = $this->normalize($value, $depth + 1);
             }
-
             return $normalized;
         }
-
         if (\is_object($data)) {
             if ($data instanceof \DateTimeInterface) {
-                return $this->formatDate($data);
+                return $this->format_date($data);
             }
-
             if ($data instanceof Throwable) {
-                return $this->normalizeException($data, $depth);
+                return $this->normalize_exception($data, $depth);
             }
-
             // if the object has specific json serializability we want to make sure we skip the __toString treatment below
             if ($data instanceof \JsonSerializable) {
                 return $data;
             }
-
             if ($data instanceof Stringable) {
                 try {
                     return $data->__toString();
@@ -189,34 +162,28 @@ class JsonFormatter extends NormalizerFormatter
                     return $data::class;
                 }
             }
-
             if ($data::class === '__PHP_Incomplete_Class') {
                 return new \ArrayObject($data);
             }
-
             return $data;
         }
-
         if (\is_resource($data)) {
             return parent::normalize($data);
         }
-
         return $data;
     }
-
     /**
      * Normalizes given exception with or without its own stack trace based on
      * `includeStacktraces` property.
      *
      * @return array<array-key, string|int|array<string|int|array<string>>>
      */
-    protected function normalizeException(Throwable $e, int $depth = 0): array
+    protected function normalize_exception(Throwable $e, int $depth = 0): array
     {
-        $data = parent::normalizeException($e, $depth);
-        if (!$this->includeStacktraces) {
+        $data = parent::normalize_exception($e, $depth);
+        if (!$this->include_stacktraces) {
             unset($data['trace']);
         }
-
         return $data;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,20 +9,18 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Processor;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * An optional interface to allow labelling Monolog processors.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
-interface ProcessorInterface
+interface Processor_Interface
 {
     /**
      * @return LogRecord The processed record
      */
-    public function __invoke(LogRecord $record);
+    public function __invoke(Log_Record $record);
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,11 +9,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
-use Monolog\LogRecord;
-
+use Monolog\Log_Record;
 /**
  * No-op
  *
@@ -24,20 +21,19 @@ use Monolog\LogRecord;
  *
  * @author Roel Harbers <roelharbers@gmail.com>
  */
-class NoopHandler extends Handler
+class Noop_Handler extends Handler
 {
     /**
      * @inheritDoc
      */
-    public function isHandling(LogRecord $record): bool
+    public function is_handling(Log_Record $record): bool
     {
         return true;
     }
-
     /**
      * @inheritDoc
      */
-    public function handle(LogRecord $record): bool
+    public function handle(Log_Record $record): bool
     {
         return false;
     }

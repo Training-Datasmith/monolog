@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
@@ -10,14 +9,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Monolog\LogRecord;
-use Psr\Log\LogLevel;
-
+use Monolog\Log_Record;
+use Psr\Log\Log_Level;
 /**
  * Simple handler wrapper that deduplicates log records across multiple requests
  *
@@ -38,13 +35,11 @@ use Psr\Log\LogLevel;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class DeduplicationHandler extends BufferHandler
+class Deduplication_Handler extends Buffer_Handler
 {
-    protected string $deduplicationStore;
-
-    protected Level $deduplicationLevel;
+    protected string $deduplication_store;
+    protected Level $deduplication_level;
     protected bool $gc = false;
-
     /**
      * @param HandlerInterface             $handler            Handler.
      * @param string|null                  $deduplicationStore The file/path where the deduplication log should be kept
@@ -54,34 +49,28 @@ class DeduplicationHandler extends BufferHandler
      *
      * @phpstan-param value-of<Level::VALUES>|value-of<Level::NAMES>|Level|LogLevel::* $deduplicationLevel
      */
-    public function __construct(HandlerInterface $handler, ?string $deduplicationStore = null, int|string|Level $deduplicationLevel = Level::Error, protected int $time = 60, bool $bubble = true)
+    public function __construct(Handler_Interface $handler, ?string $deduplication_store = null, int|string|Level $deduplication_level = Level::Error, protected int $time = 60, bool $bubble = true)
     {
         parent::__construct($handler, 0, Level::Debug, $bubble);
-
-        $this->deduplicationStore = $deduplicationStore ?? sys_get_temp_dir() . '/monolog-dedup-' . substr(md5(__FILE__), 0, 20) . '.log';
-        $this->deduplicationLevel = Logger::toMonologLevel($deduplicationLevel);
+        $this->deduplication_store = $deduplication_store ?? sys_get_temp_dir() . '/monolog-dedup-' . substr(md5(__FILE__), 0, 20) . '.log';
+        $this->deduplication_level = Logger::to_monolog_level($deduplication_level);
     }
-
     public function flush(): void
     {
-        if ($this->bufferSize === 0) {
+        if ($this->buffer_size === 0) {
             return;
         }
-
         $store = null;
-
-        if (file_exists($this->deduplicationStore)) {
-            $store = file($this->deduplicationStore, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (file_exists($this->deduplication_store)) {
+            $store = file($this->deduplication_store, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         }
-
         $passthru = null;
-
         foreach ($this->buffer as $record) {
-            if ($record->level->value >= $this->deduplicationLevel->value) {
-                $passthru = $passthru === true || !\is_array($store) || !$this->isDuplicate($store, $record);
+            if ($record->level->value >= $this->deduplication_level->value) {
+                $passthru = $passthru === true || !\is_array($store) || !$this->is_duplicate($store, $record);
                 if ($passthru) {
-                    $line = $this->buildDeduplicationStoreEntry($record);
-                    file_put_contents($this->deduplicationStore, $line . "\n", FILE_APPEND | LOCK_EX);
+                    $line = $this->build_deduplication_store_entry($record);
+                    file_put_contents($this->deduplication_store, $line . "\n", FILE_APPEND | LOCK_EX);
                     if (!\is_array($store)) {
                         $store = [];
                     }
@@ -89,94 +78,74 @@ class DeduplicationHandler extends BufferHandler
                 }
             }
         }
-
         // default of null is valid as well as if no record matches duplicationLevel we just pass through
         if ($passthru === true || $passthru === null) {
-            $this->handler->handleBatch($this->buffer);
+            $this->handler->handle_batch($this->buffer);
         }
-
         $this->clear();
-
         if ($this->gc) {
-            $this->collectLogs();
+            $this->collect_logs();
         }
     }
-
     /**
      * If there is a store entry older than e.g. a day, this method should set `$this->gc` to `true` to trigger garbage collection.
      * @param string[] $store The deduplication store
      */
-    protected function isDuplicate(array $store, LogRecord $record): bool
+    protected function is_duplicate(array $store, Log_Record $record): bool
     {
-        $timestampValidity = $record->datetime->getTimestamp() - $this->time;
-        $expectedMessage = preg_replace('{[\r\n].*}', '', $record->message);
+        $timestamp_validity = $record->datetime->get_timestamp() - $this->time;
+        $expected_message = preg_replace('{[\r\n].*}', '', $record->message);
         $yesterday = time() - 86400;
-
         for ($i = \count($store) - 1; $i >= 0; $i--) {
             $parts = explode(':', $store[$i], 3);
-
             if (\count($parts) < 3) {
                 // Skip invalid/incomplete lines (e.g. partially written due to concurrent access)
                 continue;
             }
-
             [$timestamp, $level, $message] = $parts;
-
-            if ($level === $record->level->getName() && $message === $expectedMessage && $timestamp > $timestampValidity) {
+            if ($level === $record->level->get_name() && $message === $expected_message && $timestamp > $timestamp_validity) {
                 return true;
             }
-
             if ($timestamp < $yesterday) {
                 $this->gc = true;
             }
         }
-
         return false;
     }
-
     /**
      * @return string The given record serialized as a single line of text
      */
-    protected function buildDeduplicationStoreEntry(LogRecord $record): string
+    protected function build_deduplication_store_entry(Log_Record $record): string
     {
-        return $record->datetime->getTimestamp() . ':' . $record->level->getName() . ':' . preg_replace('{[\r\n].*}', '', $record->message);
+        return $record->datetime->get_timestamp() . ':' . $record->level->get_name() . ':' . preg_replace('{[\r\n].*}', '', $record->message);
     }
-
-    private function collectLogs(): void
+    private function collect_logs(): void
     {
-        if (!file_exists($this->deduplicationStore)) {
+        if (!file_exists($this->deduplication_store)) {
             return;
         }
-
-        $handle = fopen($this->deduplicationStore, 'r+');
-
+        $handle = fopen($this->deduplication_store, 'r+');
         if (false === $handle) {
-            throw new \RuntimeException('Failed to open file for reading and writing: ' . $this->deduplicationStore);
+            throw new \RuntimeException('Failed to open file for reading and writing: ' . $this->deduplication_store);
         }
-
         if (false === flock($handle, LOCK_EX)) {
             return;
         }
-        $validLogs = [];
-
-        $timestampValidity = time() - $this->time;
-
+        $valid_logs = [];
+        $timestamp_validity = time() - $this->time;
         while (!feof($handle)) {
             $log = fgets($handle);
-            if (\is_string($log) && '' !== $log && substr($log, 0, 10) >= $timestampValidity) {
-                $validLogs[] = $log;
+            if (\is_string($log) && '' !== $log && substr($log, 0, 10) >= $timestamp_validity) {
+                $valid_logs[] = $log;
             }
         }
-
         ftruncate($handle, 0);
         rewind($handle);
-        foreach ($validLogs as $log) {
+        foreach ($valid_logs as $log) {
             fwrite($handle, $log);
         }
-
         flock($handle, LOCK_UN);
         fclose($handle);
-
         $this->gc = false;
     }
 }

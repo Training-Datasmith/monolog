@@ -150,14 +150,31 @@ class Logger implements Logger_Interface, Resettable_Interface
         $this->timezone = $timezone ?? new DateTimeZone(date_default_timezone_get());
         $this->fiber_log_depth = new \WeakMap();
     }
+    /**
+     * Returns the channel name assigned to this logger.
+     *
+     * The channel name identifies this logger in the output of every handler,
+     * making it easy to distinguish log records from different parts of an
+     * application (e.g. 'app', 'security', 'db').
+     *
+     * @return string The channel name (as set in the constructor or via with_name()).
+     * @since  1.0
+     */
     public function get_name(): string
     {
         return $this->name;
     }
+
     /**
-     * Return a new cloned instance with the name changed
+     * Returns a new Logger instance that shares all handlers and processors of
+     * this instance but uses a different channel name.
      *
-     * @return static
+     * Useful for creating sub-loggers for different subsystems without
+     * duplicating handler configuration.
+     *
+     * @param  string $name The new channel name for the cloned logger.
+     * @return static A new Logger instance with the same handlers/processors.
+     * @since  1.6
      */
     public function with_name(string $name): self
     {
@@ -166,9 +183,17 @@ class Logger implements Logger_Interface, Resettable_Interface
         return $new;
     }
     /**
-     * Pushes a handler on to the stack.
+     * Pushes a handler onto the top of the handler stack.
      *
-     * @return $this
+     * Handlers are processed in LIFO order: the last handler pushed is the
+     * first one called. The handler's bubbling setting controls whether
+     * subsequent handlers also receive the record.
+     *
+     * @param  Handler_Interface $handler The handler to add to the top of the stack.
+     * @return $this Fluent interface.
+     * @since  1.0
+     * @see    pop_handler()  To remove the top handler.
+     * @see    set_handlers() To replace all handlers at once.
      */
     public function push_handler(Handler_Interface $handler): self
     {
@@ -243,16 +268,16 @@ class Logger implements Logger_Interface, Resettable_Interface
         return $this->processors;
     }
     /**
-     * Control the use of microsecond resolution timestamps in the 'datetime'
-     * member of new records.
+     * Controls whether log record timestamps include microsecond precision.
      *
-     * As of PHP7.1 microseconds are always included by the engine, so
-     * there is no performance penalty and Monolog 2 enabled microseconds
-     * by default. This function lets you disable them though in case you want
-     * to suppress microseconds from the output.
+     * As of PHP 7.1, microseconds are always captured by the engine with no
+     * performance overhead. Monolog 2+ enables microseconds by default.
+     * Call with `false` to suppress microseconds from output (e.g. for log
+     * aggregators that do not handle sub-second precision).
      *
-     * @param  bool  $micro True to use microtime() to create timestamps
-     * @return $this
+     * @param  bool $micro True to include microseconds (default); false to truncate to seconds.
+     * @return $this Fluent interface.
+     * @since  2.0
      */
     public function use_microsecond_timestamps(bool $micro): self
     {
@@ -260,7 +285,20 @@ class Logger implements Logger_Interface, Resettable_Interface
         return $this;
     }
     /**
-     * @return $this
+     * Enables or disables infinite logging-loop detection.
+     *
+     * When enabled (default), Monolog tracks how deeply `add_record` is
+     * nested. A warning is emitted at depth 3 and all further records are
+     * silently dropped at depth 5. This prevents stack overflows when a
+     * handler itself triggers a log call.
+     *
+     * Disable only when you have async handlers that intentionally call back
+     * into the logger from a different execution context (e.g. Fiber or
+     * ReactPHP event loop) and the depth counter creates false positives.
+     *
+     * @param  bool $detect_cycles True to enable loop detection (default); false to disable.
+     * @return $this Fluent interface.
+     * @since  2.6
      */
     public function use_logging_loop_detection(bool $detect_cycles): self
     {
@@ -268,16 +306,31 @@ class Logger implements Logger_Interface, Resettable_Interface
         return $this;
     }
     /**
-     * Adds a log record.
+     * Creates a log record and dispatches it through the handler stack.
      *
-     * @param  int                    $level    The logging level (a Monolog or RFC 5424 level)
-     * @param  string                 $message  The log message
-     * @param  mixed[]                $context  The log context
-     * @param  JsonSerializableDateTimeImmutable|null $datetime Optional log date to log into the past or future
+     * This is the core method invoked by all convenience methods (debug, info,
+     * warning, etc.). Processors are applied lazily: only after at least one
+     * handler agrees to handle the record (is_handling() returns true).
      *
-     * @return bool                   Whether the record has been processed
+     * Infinite loop protection: if add_record is called recursively (e.g. from
+     * inside a handler), a warning is emitted at depth 3 and the record is
+     * silently dropped at depth 5. This prevents stack overflows.
+     *
+     * @param  int|Level                              $level    The log severity. May be:
+     *                                                           - A `Level` enum case (preferred)
+     *                                                           - A Monolog integer constant (e.g. 200 for INFO)
+     *                                                           - An RFC 5424 integer (0–7)
+     * @param  string                                 $message  The human-readable log message.
+     * @param  array<string, mixed>                   $context  Contextual data to attach to the record.
+     *                                                           All values must be serialisable by the formatter.
+     * @param  ?Json_Serializable_Date_Time_Immutable $datetime Custom timestamp for the record; uses now() when null.
+     *                                                           Pass a past/future datetime to backfill log entries.
+     *
+     * @return bool True when at least one handler accepted the record; false when all handlers ignored it.
      *
      * @phpstan-param value-of<Level::VALUES>|Level $level
+     * @complexity O(h * p) where h = handler count and p = processor count.
+     * @since 1.0
      */
     public function add_record(int|Level $level, string $message, array $context = [], Json_Serializable_Date_Time_Immutable|null $datetime = null): bool
     {
@@ -396,6 +449,7 @@ class Logger implements Logger_Interface, Resettable_Interface
      */
     public static function get_level_name(int|Level $level): string
     {
+        trigger_error('Logger::get_level_name() is deprecated since Monolog 3.0; use Level->getName() instead.', E_USER_DEPRECATED);
         return self::to_monolog_level($level)->get_name();
     }
     /**
